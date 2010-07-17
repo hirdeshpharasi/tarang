@@ -171,25 +171,26 @@ int IMHD_main(string data_dir_name)
 			local_N1_start = my_id * local_N1;
 			local_N2_start = my_id * local_N2;		
 		}
+	}	
 		
-		else if (N[2] == 1)
+	else if (N[2] == 1)
+	{
+		if (basis_type == "FOUR")
 		{
-			if (basis_type == "FOUR")
-			{
-				
-				int alloc_local;											  
-				alloc_local = fftw_mpi_local_size_2d_transposed(N[1], N[3], MPI_COMM_WORLD,
-													&local_N1, &local_N1_start, &local_N2, &local_N2_start);
-			}
 			
-			else if (basis_type == "SCFT")
-			{
-				local_N1 = N[1]/numprocs;			
-				local_N2 = N[3]/numprocs;
-				local_N1_start = my_id * local_N1;
-				local_N2_start = my_id * local_N2;		
-			}
+			int alloc_local;											  
+			alloc_local = fftw_mpi_local_size_2d_transposed(N[1], N[3], MPI_COMM_WORLD,
+												&local_N1, &local_N1_start, &local_N2, &local_N2_start);
 		}
+		
+		else if (basis_type == "SCFT")
+		{
+			local_N1 = N[1]/numprocs;			
+			local_N2 = N[3]/numprocs;
+			local_N1_start = my_id * local_N1;
+			local_N2_start = my_id * local_N2;		
+		}
+	}
 		
 																									
 	if (my_id == master_id) cout << "No or processors = " << numprocs << endl << endl;

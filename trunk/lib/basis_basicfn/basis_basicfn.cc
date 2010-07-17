@@ -177,7 +177,7 @@ void Inverse_transpose_array(int N[], Array<complx,3> Atr, Array<complx,3> A)
 		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
 		static Array<complx,2> buffer2_piece(local_N2, local_N1);
 		
-			//	int data_size = 2* local_N1 * local_N2;								
+		int data_size = 2* local_N1 * local_N2;								
 		// 2 for complex to double
 
 		if (numprocs == 1)
@@ -225,7 +225,7 @@ void Inverse_transpose_array(int N[], Array<complx,3> Atr, Array<complx,3> A)
 		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
 		static Array<complx,2> buffer2_piece(local_N2, local_N1);
 		
-		int data_size = 2* local_N1 * local_N2;								
+			//		int data_size = 2* local_N1 * local_N2;								
 			// 2 for complex to double
 		
 		if (numprocs == 1)

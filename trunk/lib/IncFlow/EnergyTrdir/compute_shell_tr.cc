@@ -61,12 +61,6 @@ void IncVF::Compute_shell_tr()
 	
 	(*shelltoshell_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*shelltoshell_self_real) = 0.0;
-		(*shelltoshell_self_imag) = 0.0;
-	}
-	
 	
 	for (int shell_from_index = 1; shell_from_index < no_shells; shell_from_index++) 
 	{	
@@ -80,16 +74,7 @@ void IncVF::Compute_shell_tr()
 		// results(shell_index) in (*temp_shell_tr)(index)
 				
 		(*shelltoshell_self)(shell_from_index, Range::all()) = -*temp_shell_tr;
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);
-										
-			(*shelltoshell_self_real)(shell_from_index, Range::all()) = -(*temp_shell_tr_real);
-			(*shelltoshell_self_imag)(shell_from_index, Range::all()) = -(*temp_shell_tr_imag);																
-		}	
+			
 	}
 }
 
@@ -106,12 +91,6 @@ void IncVF::Compute_shell_tr(IncSF& T)
 	
 	(*shelltoshell_SF) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*shelltoshell_SF_real) = 0.0;
-		(*shelltoshell_SF_imag) = 0.0;
-	}
-	
 	
 	
 	for (int shell_from_index = 1; shell_from_index < no_shells; shell_from_index++) 
@@ -125,15 +104,7 @@ void IncVF::Compute_shell_tr(IncSF& T)
 						*temp_shell_tr, kfactor);	
 		
 		(*shelltoshell_SF)(shell_from_index, Range::all()) = -*temp_shell_tr;	
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-											
-			(*shelltoshell_SF_real)(shell_from_index, Range::all()) = -(*temp_shell_tr_real);
-			(*shelltoshell_SF_imag)(shell_from_index, Range::all()) = -(*temp_shell_tr_imag);																
-		}	
+			
 	}
 }
 
@@ -148,11 +119,6 @@ void IncVF::Compute_shell_tr(IncVF& W)
 	
 	(*W.shelltoshell_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*W.shelltoshell_self_real) = 0.0;
-		(*W.shelltoshell_self_imag) = 0.0;
-	}
 	
 	
 	// W to W
@@ -168,29 +134,12 @@ void IncVF::Compute_shell_tr(IncVF& W)
 
 		(*W.shelltoshell_self)(shell_from_index, Range::all()) = -*temp_shell_tr;	
 		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-										
-			(*W.shelltoshell_self_real)(shell_from_index, Range::all()) 
-											= -(*temp_shell_tr_real);
-			(*W.shelltoshell_self_imag)(shell_from_index, Range::all()) 
-											= -(*temp_shell_tr_imag);																
-		}	
 	}
 
 
 	// U to W
 	
 	(*shelltoshell_VF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*shelltoshell_VF_real) = 0.0;
-		(*shelltoshell_VF_imag) = 0.0;
-	}
 	
 
 	for (int shell_from_index = 1; shell_from_index < no_shells; shell_from_index++) 
@@ -205,16 +154,7 @@ void IncVF::Compute_shell_tr(IncVF& W)
 						
 		(*shelltoshell_VF)(shell_from_index, Range::all()) = *temp_shell_tr;
 			
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-										
-			(*shelltoshell_VF_real)(shell_from_index, Range::all()) = (*temp_shell_tr_real);
-			(*shelltoshell_VF_imag)(shell_from_index, Range::all()) = (*temp_shell_tr_imag);																
-		}
+
 	}
 	
 	
@@ -223,15 +163,6 @@ void IncVF::Compute_shell_tr(IncVF& W)
 	
 	(*shelltoshell_Elsasser) = 0.0;
 	(*W.shelltoshell_Elsasser) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*shelltoshell_Elsasser_real) = 0.0;
-		(*shelltoshell_Elsasser_imag) = 0.0;
-		(*W.shelltoshell_Elsasser_real) = 0.0;
-		(*W.shelltoshell_Elsasser_imag) = 0.0;
-	
-	}
 
 
 
@@ -252,18 +183,7 @@ void IncVF::Compute_shell_tr(IncVF& W)
 							
 		(*shelltoshell_Elsasser)(shell_from_index, Range::all()) = -*temp_shell_tr;	
 		
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-										
-			(*shelltoshell_Elsasser_real)(shell_from_index, Range::all()) 
-											= -(*temp_shell_tr_real);
-			(*shelltoshell_Elsasser_imag)(shell_from_index, Range::all()) 
-											= -(*temp_shell_tr_imag);
-		}									
+											
 	}
 
 	
@@ -281,18 +201,6 @@ void IncVF::Compute_shell_tr(IncVF& W)
 						
 		(*W.shelltoshell_Elsasser)(shell_from_index, Range::all()) = -*temp_shell_tr;	
 		
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-										
-			(*W.shelltoshell_Elsasser_real)(shell_from_index, Range::all()) 
-												= -(*temp_shell_tr_real);
-			(*W.shelltoshell_Elsasser_imag)(shell_from_index, Range::all()) 
-												= -(*temp_shell_tr_imag);																
-		}
 	}
 
 	IncVF::Elsasser_to_UB_field(W);													
@@ -312,12 +220,7 @@ void IncVF::Compute_shell_tr(IncVF& W, IncSF& T)
 	Compute_shell_tr(W);
 	
 	(*shelltoshell_SF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*shelltoshell_SF_real) = 0.0;
-		(*shelltoshell_SF_imag) = 0.0;
-	}
+
 	
 	
 	// T to T
@@ -333,15 +236,6 @@ void IncVF::Compute_shell_tr(IncVF& W, IncSF& T)
 							
 		(*shelltoshell_SF)(shell_from_index, Range::all()) = -*temp_shell_tr;	
 		
-		
-		if (ET_real_imag_switch == 1)
-		{
-			Shell_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, *shell_radius, 
-										*temp_shell_tr_real, *temp_shell_tr_imag, kfactor);	
-										
-			(*shelltoshell_SF_real)(shell_from_index, Range::all()) = -(*temp_shell_tr_real);
-			(*shelltoshell_SF_imag)(shell_from_index, Range::all()) = -(*temp_shell_tr_imag);																
-		}	
 	}
 		
 }	

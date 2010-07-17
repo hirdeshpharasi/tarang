@@ -110,39 +110,6 @@ DP Shell_mult_single_SCFT
 );								
 
 
-//*********************************************************************************************
-
-/** @brief Compute products 2*Real(A).Real(B) and 2*Imag(A).Imag(B) 
- *			[except for kx=0, factor =1] for a 2D shell = (inner_radius, outer_radius].
- *
- * @return  total_real =  \f$  2*\sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) ] \f$   
- * @return  total_imag = \f$ 2*\sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}'))  ] \f$ 
- *			for \f$ K' \in \f$ [inner_radius, outer_radius).
- *
- * @sa Shell_mult_single_SCFT(int N[], Array<complx,2> A, Array<complx,2> B, 
- *			DP inner_radius, DP outer_radius, DP kfactor[])
- */								
-void Local_shell_mult_single_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& local_real, DP& local_imag,
-	DP kfactor[] 
-);
-	
-											
-/// Sum local shell-mult results and place it in the master node.						
-void Shell_mult_single_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& total_real, DP& total_imag,
-	DP kfactor[]
-);
 
 
 //*********************************************************************************************
@@ -186,41 +153,7 @@ void Shell_mult_all_SCFT
 	Array<DP,1> result, 
 	DP kfactor[]
 );
-								
-//*********************************************************************************************
-								
-/** @brief Compute products 2*Real(A).Real(B) and 2*Imag(A).Imag(B) 
- *				[except for kx=0, factor =1] for all 2D shells.
- * 
- * @return  result_real(n) =  \f$  2*\sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) ] \f$   
- * @return  result_imag(n) = \f$ 2*\sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) ] \f$ 
- *				for \f$ K' \in (R^{sh}(n-1), R^{sh}(n) ] \f$, where \f$ R^{sh}(n-1) \f$ and 
- *				\f$ R^{sh}(n) \f$ are the inner and outer radius of the shell respectively.
- *
- * @sa Shell_mult_single_real_imag_SCFT(int N[], Array<complx,2> A, Array<complx,2> B, 
- *				DP inner_radius, DP outer_radius, DP kfactor[])
- */									
-void Local_shell_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> local_result_real, Array<DP,1> local_result_imag, 
-	DP kfactor[]
-);
-								
-/// Sum local shell-mult results and place it in the master node.								
-void Shell_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
-								
+																
 
 
 //*********************************************************************************************								
@@ -269,53 +202,6 @@ void Shell_mult_all_SCFT
 );
 
 
-//*********************************************************************************************	
-								
-/** @brief Compute local products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) 
- *			and imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D shells.
- *
- * @param  N[]  The size of the array A.
- * @param  Ax  x-component of vector field \f$ \vec{A} \f$.
- * @param  Ay  y-component of the vector field \f$ \vec{A} \f$.
- * @param  Az  z-component of the vector field \f$ \vec{A} \f$.
- * @param  Bx  x-component of the vector field \f$ \vec{B} \f$.
- * @param  By  y-component of the vector field \f$ \vec{B} \f$.
- * @param  Bz  z-component of the vector field \f$ \vec{B} \f$.
- * @param  shell_radius_array The shell radii are stored here 
- *				\f$ R^{sh} = 0,2,4...,R_{max},\infty \f$.
- * @param  kfactor[]  factor to compute actual wavenumber given grid wavenumber.
- *
- *
- * @return local_result_real(n) = \f$ \sum[ \Re(\vec{A}(\vec{K}')) 
- *									* \Re(\vec{B}^{*}(\vec{K}')) /2 ] \f$  
- * @return local_result_imag(n) = \f$ \sum[ \Im(\vec{A}(\vec{K}')) 
- *									* \Im(\vec{B}^{*}(\vec{K}')) /2 ] \f$, 
- *									for \f$ K' \in [R^{sh}(n-1), R^{sh}(n) ) \f$,
- */									
-void Local_shell_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz,   
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> local_result_real, Array<DP,1> local_result_imag, 
-	DP kfactor[]
-);
-								
-/// Sum local shell-mult results and place it in the master node.								
-void Shell_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
-
-
 /**********************************************************************************************
 
 			RING MULT
@@ -360,39 +246,6 @@ void Ring_mult_all_SCFT(
 );
 
 
-
-//*********************************************************************************************	
-								
-/** @brief Compute products 2*Real(A).Real(B) and 2*Imag(A).Imag(B) 
- *				[except for kx=0, factor =1] over all 3D rings.
- *
- * @return  result_real(n,m) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) /2 ] \f$  
- * @return  result_imag(n,m) = 	\f$  \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) /2 ] \f$ for  
- *			\f$ K' = (R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ] \f$.
- *
- */									
-void Local_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-								
-/// Sum local ring-mult results and place it in the master node.								
-void Ring_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);								
 
 
 //*********************************************************************************************	
@@ -444,44 +297,6 @@ void Ring_mult_all_SCFT
 	Array<DP,2> result, 
 	DP kfactor[]
 );
-
-
-//*********************************************************************************************									
-
-/** @brief Compute products \f$ 2 \Re(\vec{A}).\Re(\vec{B}) \f$ and 
- *				\f$ 2 \Im(\vec{A} ).\Im( \vec{B}) \f$ 
- *				[except for kx=0, factor =1] over all 3D rings.
- *
- * @return  result_real(n) = \f$  2 \sum[ \Re(\vec{A}(\vec{K}')) 
- *				* \Re(\vec{B}^{*}(\vec{K}')) ] \f$  
- * @return	result_imag(n) = \f$  2 \sum[ \Im(\vec{A}(\vec{K}')) 
- *				* \Im(\vec{B}^{*}(\vec{K}'))  ] \f$ for   
- *				\f$ K' = (R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ] \f$.
- */ 								
-void Local_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-								
-/// Sum local ring-mult results and place it in the master node.																							
-void Ring_mult_all_real_imag_SCFT
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz,
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);	
 								
 
 
@@ -531,39 +346,6 @@ void Cyl_ring_mult_all_SCFT
 );
 
 
-//*********************************************************************************************
-
-/** @brief Compute products Real(A).Real(B) and Real(A).Real(B) over all 3D rings.
- *
- * @return  result_real(n,m) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}'))  ] \f$  
- * @return  result_imag(n,m) = 	\f$  \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}'))  ] \f$ for  
- *			\f$ K' = (R^{ring}(n-1), H(m-1); R^{ring}(n), H(m) ] \f$.
- *
- */	
-void Local_cyl_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-
-
-/// Sum local ring sums and send to the master node.
-void Cyl_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
-
 
 //*********************************************************************************************
 
@@ -611,43 +393,7 @@ void Cyl_ring_mult_all_SCFT
 	DP kfactor[]
 );
 
-//*********************************************************************************************
 
-/** @brief Compute products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) and 
- *						imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D cyl_rings.
- *
- * @return  result_real(n) = \f$ \sum[ \Re(\vec{A}(\vec{K}')) * 
- *									\Re(\vec{B}^{*}(\vec{K}'))  ] \f$  
- * @return	result_imag(n) = \f$  \sum[ \Im(\vec{A}(\vec{K}')) * 
- *									\Im(\vec{B}^{*}(\vec{K}')) ] \f$ for   
- *					\f$ K' = (R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ] \f$.
- *
- */ 
-void Local_cyl_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-
-
-/// Sum local ring and send to the master node.
-void Cyl_ring_mult_all_real_imag_SCFT
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
 
 
 /**********************************************************************************************

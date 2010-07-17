@@ -177,7 +177,8 @@ int Ipassive_scalar_main(string data_dir_name)
 			local_N1_start = my_id * local_N1;
 			local_N2_start = my_id * local_N2;		
 		}
-		
+	}
+	
 	else if (N[2] == 1)
 	{
 		if (basis_type == "FOUR")

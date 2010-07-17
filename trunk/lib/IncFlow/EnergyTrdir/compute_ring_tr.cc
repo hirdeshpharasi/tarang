@@ -62,12 +62,6 @@ void IncVF::Compute_ring_tr()
 	
 	(*ring_to_ring_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*ring_to_ring_self_real) = 0.0;
-		(*ring_to_ring_self_imag) = 0.0;
-	}
-	
 	
 	// skip the last shell -- outer rad = infty			
 	for (int ring_shell_from_i = 1; ring_shell_from_i < no_ring_shells; ring_shell_from_i++) 
@@ -87,21 +81,6 @@ void IncVF::Compute_ring_tr()
 			(*ring_to_ring_self)(ring_shell_from_i, sector_from_i, Range::all(), Range::all()) 
 							= -*temp_ring_tr;	
 										
-			
-			if (ET_real_imag_switch == 1)
-			{
-		
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);
-											
-				(*ring_to_ring_self_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*ring_to_ring_self_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}		
 		}
 }
 
@@ -117,12 +96,6 @@ void IncVF::Compute_ring_tr(IncSF& T)
 	
 	// T to T
 	(*ring_to_ring_SF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*ring_to_ring_SF_real) = 0.0;
-		(*ring_to_ring_SF_imag) = 0.0;
-	}
 	
 	
 	// skip the last shell -- outer rad = infty				
@@ -140,20 +113,6 @@ void IncVF::Compute_ring_tr(IncSF& T)
 											
 			(*ring_to_ring_SF)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = -*temp_ring_tr;	
-			
-			if (ET_real_imag_switch == 1)
-			{
-	
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);	
-											
-				(*ring_to_ring_SF_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*ring_to_ring_SF_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}
 						
 		}	
 }
@@ -169,12 +128,6 @@ void IncVF::Compute_ring_tr(IncVF& W)
 	
 	// W to W
 	(*W.ring_to_ring_self) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*W.ring_to_ring_self_real) = 0.0;
-		(*W.ring_to_ring_self_imag) = 0.0;
-	}	
 
 	
 	for (int ring_shell_from_i = 1; ring_shell_from_i < no_shells; ring_shell_from_i++) 
@@ -194,20 +147,6 @@ void IncVF::Compute_ring_tr(IncVF& W)
 			(*W.ring_to_ring_self)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = -*temp_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{
-	
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);
-										
-				(*W.ring_to_ring_self_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*W.ring_to_ring_self_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}		
 		}						
 
 	
@@ -215,12 +154,6 @@ void IncVF::Compute_ring_tr(IncVF& W)
 	//
 	// U to W
 	(*ring_to_ring_VF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*ring_to_ring_VF_real) = 0.0;
-		(*ring_to_ring_VF_imag) = 0.0;
-	}
 	
 	
 	for (int ring_shell_from_i = 1; ring_shell_from_i < no_shells; ring_shell_from_i++) 
@@ -240,20 +173,6 @@ void IncVF::Compute_ring_tr(IncVF& W)
 			(*ring_to_ring_VF)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = *temp_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{	
-	
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);	
-									
-				(*ring_to_ring_VF_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = (*temp_ring_tr_real);
-										
-				(*ring_to_ring_VF_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = (*temp_ring_tr_imag);																
-			}
 		}
 	
 	
@@ -262,14 +181,7 @@ void IncVF::Compute_ring_tr(IncVF& W)
 	
 	(*ring_to_ring_Elsasser) = 0.0;
 	(*W.ring_to_ring_Elsasser) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*ring_to_ring_Elsasser_real) = 0.0;
-		(*ring_to_ring_Elsasser_imag) = 0.0;
-		(*W.ring_to_ring_Elsasser_real) = 0.0;
-		(*W.ring_to_ring_Elsasser_imag) = 0.0;
-	}
+
 	
 	IncVF::UB_to_Elsasser_field(W);											
 	// U=Zp=(U+B); B=Zm=(U-B);
@@ -291,21 +203,7 @@ void IncVF::Compute_ring_tr(IncVF& W)
 										
 			(*ring_to_ring_Elsasser)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = -*temp_ring_tr;	
-			
-			if (ET_real_imag_switch == 1)
-			{
-			
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);	
-										
-				(*ring_to_ring_Elsasser_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*ring_to_ring_Elsasser_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}
+
 		}
 	
 	// ring_to_ring: Zm to Zm	
@@ -328,20 +226,6 @@ void IncVF::Compute_ring_tr(IncVF& W)
 			(*W.ring_to_ring_Elsasser)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = -*temp_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{
-			
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);	
-										
-				(*W.ring_to_ring_Elsasser_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*W.ring_to_ring_Elsasser_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}
 		}
 
 
@@ -365,11 +249,7 @@ void IncVF::Compute_ring_tr(IncVF& W, IncSF& T)
 	// T to T
 	(*ring_to_ring_SF) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*ring_to_ring_SF_real) = 0.0;
-		(*ring_to_ring_SF_imag) = 0.0;
-	}	
+
 	
 	// skip the last shell -- outer rad = infty				
 	for (int ring_shell_from_i = 1; ring_shell_from_i < no_shells; ring_shell_from_i++) 
@@ -387,20 +267,7 @@ void IncVF::Compute_ring_tr(IncVF& W, IncSF& T)
 											
 			(*ring_to_ring_SF)(ring_shell_from_i, sector_from_i, 
 										Range::all(), Range::all()) = -*temp_ring_tr;	
-			
-			if (ET_real_imag_switch == 1)
-			{
-			
-				Ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, 
-										*ring_shell_radius, *sector_angle_ring_tr, 
-										*temp_ring_tr_real, *temp_ring_tr_imag, kfactor);	
-										
-				(*ring_to_ring_SF_real)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_real);
-										
-				(*ring_to_ring_SF_imag)(ring_shell_from_i, sector_from_i, 
-										Range::all(), Range::all()) = -(*temp_ring_tr_imag);																
-			}
+
 		}
 }		
 

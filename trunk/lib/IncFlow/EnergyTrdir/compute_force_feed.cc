@@ -72,12 +72,7 @@ void IncVF::Compute_force_feed_shell()
 
 	Shell_mult_all(basis_type, alias_switch, N, *Force1, *Force2, *Force3, *V1, *V2, *V3, 
 								*shell_radius, *forceV_shell, kfactor);
-	
-	if (ET_real_imag_switch == 1)
-		Shell_mult_all_real_imag(basis_type, alias_switch, N, *Force1, *Force2, *Force3, 
-								*V1, *V2, *V3, *shell_radius, 
-								*forceV_shell_real, *forceV_shell_imag, kfactor);
-											
+												
 }
 
 
@@ -90,10 +85,7 @@ void IncVF::Compute_force_feed_shell(IncSF& T)
 		
 	Shell_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
 									*forceSF_shell, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Shell_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
-									*forceSF_shell_real, *forceSF_shell_imag, kfactor);															
+															
 }
 
 
@@ -106,11 +98,6 @@ void IncVF::Compute_force_feed_shell(IncVF& W)
 	
 	Shell_mult_all(basis_type, alias_switch, N, *W.Force1, *W.Force2, *W.Force3, 
 							*W.V1, *W.V2, *W.V3, *shell_radius, *W.forceV_shell, kfactor);
-	
-	if (ET_real_imag_switch == 1)
-		Shell_mult_all_real_imag(basis_type, alias_switch, N, *W.Force1, 
-							*W.Force2, *W.Force3, *W.V1, *W.V2, *W.V3, *shell_radius, 
-							*W.forceV_shell_real, *W.forceV_shell_imag, kfactor);
 											
 }
 
@@ -125,10 +112,6 @@ void IncVF::Compute_force_feed_shell(IncVF& W, IncSF& T)
 		
 	Shell_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
 							*forceSF_shell, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Shell_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
-							*forceSF_shell_real, *forceSF_shell_imag, kfactor);															
 
 }
 
@@ -164,12 +147,7 @@ void IncVF::Compute_force_feed_ring()
 	
 	Ring_mult_all(basis_type, alias_switch, N, *Force1, *Force2, *Force3, *V1, *V2, *V3, 
 					*ring_shell_radius, *sector_angle_ring_tr, *forceV_ring, kfactor);		
-			
-	if (ET_real_imag_switch == 1)
-		Ring_mult_all_real_imag(basis_type, alias_switch, N, *Force1, *Force2, *Force3, 
-								*V1, *V2, *V3, 
-								*ring_shell_radius, *sector_angle_ring_tr, 
-								*forceV_ring_real,  *forceV_ring_imag, kfactor);			
+					
 			
 }
 
@@ -181,11 +159,6 @@ void IncVF::Compute_force_feed_ring(IncSF& T)
 	
 	Ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *ring_shell_radius, 
 								*sector_angle_ring_tr, *forceSF_ring, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Ring_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, 
-								*ring_shell_radius, *sector_angle_ring_tr, 
-								*forceSF_ring_real, *forceSF_ring_imag, kfactor);												
 }
 
 
@@ -202,10 +175,6 @@ void IncVF::Compute_force_feed_ring(IncVF& W)
 								*W.V1, *W.V2, *W.V3, 
 								*ring_shell_radius, *sector_angle_ring_tr, *W.forceV_ring, kfactor);
 
-	if (ET_real_imag_switch == 1)
-		Ring_mult_all_real_imag(basis_type, alias_switch, N, *W.Force1, *W.Force2, *W.Force3, 
-								*W.V1, *W.V2, *W.V3, *ring_shell_radius, *sector_angle_ring_tr,  
-								*W.forceV_ring_real,  *W.forceV_ring_imag, kfactor);
 }
 
 //
@@ -221,11 +190,7 @@ void IncVF::Compute_force_feed_ring(IncVF& W, IncSF& T)
 
 	Ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *ring_shell_radius, 
 						*sector_angle_ring_tr, *forceSF_ring, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Ring_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, 
-								*ring_shell_radius, *sector_angle_ring_tr, 
-								*forceSF_ring_real, *forceSF_ring_imag, kfactor);	
+		
 }
 
 //
@@ -263,12 +228,6 @@ void IncVF::Compute_force_feed_cylinder_ring()
 						*cylinder_shell_radius, *cylinder_kpll_array_tr, 
 						*forceV_cylinder_ring, kfactor);		
 			
-	if (ET_real_imag_switch == 1)
-		Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *Force1, *Force2, *Force3, 
-						*V1, *V2, *V3, 
-						*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-						*forceV_cylinder_ring_real,  *forceV_cylinder_ring_imag, kfactor);			
-			
 }
 
 void IncVF::Compute_force_feed_cylinder_ring(IncSF& T)
@@ -279,12 +238,7 @@ void IncVF::Compute_force_feed_cylinder_ring(IncSF& T)
 	Cyl_ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, 
 								*cylinder_shell_radius, *cylinder_kpll_array_tr, 
 								*forceSF_cylinder_ring, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, 
-								*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-								*forceSF_cylinder_ring_real, *forceSF_cylinder_ring_imag, 
-								kfactor);												
+					
 }
 
 
@@ -301,11 +255,6 @@ void IncVF::Compute_force_feed_cylinder_ring(IncVF& W)
 								*cylinder_shell_radius, *cylinder_kpll_array_tr, 
 								*W.forceV_cylinder_ring, kfactor);
 
-	if (ET_real_imag_switch == 1)
-		Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *W.Force1, *W.Force2, *W.Force3, 
-							*W.V1, *W.V2, *W.V3, *cylinder_shell_radius, *cylinder_kpll_array_tr,  
-							*W.forceV_cylinder_ring_real,  *W.forceV_cylinder_ring_imag, 
-							kfactor);
 }
 
 //
@@ -320,12 +269,7 @@ void IncVF::Compute_force_feed_cylinder_ring(IncVF& W, IncSF& T)
 	
 	Cyl_ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *cylinder_shell_radius, 
 								*cylinder_kpll_array_tr, *forceSF_cylinder_ring, kfactor);		
-	
-	if (ET_real_imag_switch == 1)
-		Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *T.Force, *T.F, 
-								*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-								*forceSF_cylinder_ring_real, *forceSF_cylinder_ring_imag, 
-								kfactor);	
+		
 }
 
 //

@@ -57,16 +57,7 @@ void IncFluid::Output_flux()
 		{
 			flux_file << i << " " << (*sphere_radius)(i) << " "  
 					  << (*flux_self)(i)				<< "  "
-					  << (*forceV_shell)(i);
-			
-			
-			if (ET_real_imag_switch == 1)
-				flux_file  <<  "     " 
-					<< (*flux_self_real)(i)				<< " " 
-					<<  (*forceV_shell_real)(i)			<< "    " 
-					<< (*flux_self_imag)(i)				<< " " 
-					<<  (*forceV_shell_imag)(i);
-			flux_file << endl;
+					  << (*forceV_shell)(i)				<< endl;
 			
 		}
 						
@@ -92,20 +83,7 @@ void IncFluid::Output_flux(IncSF& T)
 					<< (*flux_self)(i)					<< " "   
 					<< (*flux_SF)(i)					<< "  " 
 					<< (*forceV_shell)(i)				<< " "  
-					<< (*forceSF_shell)(i);
-					
-			
-			if (ET_real_imag_switch == 1) 
-				flux_file << "     " 
-					<< (*flux_self_real)(i)				<< " "	
-					<< (*flux_SF_real)(i)				<< "  " 
-					<<  (*forceV_shell_real)(i)			<< " "	
-					<< (*forceSF_shell_real)(i)			<< "         "
-					<< (*flux_self_imag)(i)				<< " "	
-					<< (*flux_SF_imag)(i)				<< " " 
-					<<  (*forceV_shell_imag)(i)			<< " "	
-					<< (*forceSF_shell_imag)(i);
-			flux_file << endl;		
+					<< (*forceSF_shell)(i)				<< endl;
 		}
 		
 	if (my_id == master_id)		flux_file << endl;
@@ -139,34 +117,7 @@ void IncFluid::Output_flux(IncVF& W)
 						<< (*flux_Elsasser)(i)			<< " "		
 						<< (*W.flux_Elsasser)(i)		<< "    "
 						<< (*forceV_shell)(i)			<< " "		
-						<< (*W.forceV_shell)(i);
-
-			
-			if (ET_real_imag_switch == 1)
-				flux_file  << "    " 
-						<< (*flux_self_real)(i)			<< " " 
-						<< (*flux_VF_in_out_real)(i)	<< " "
-						<< (*flux_VF_in_in_real)(i)		<< "   " 
-						<< (*W.flux_self_real)(i)		<< " " 
-						<< (*W.flux_VF_in_out_real)(i)	<< " "  
-						<< (*W.flux_VF_in_in_real)(i)	<< " " 
-						<< (*W.flux_VF_out_out_real)(i) << "     " 
-						<< (*flux_Elsasser_real)(i)		<< " " 
-						<< (*W.flux_Elsasser_real)(i)	<< "    "
-						<< (*forceV_shell_real)(i)		<< " " 
-						<< (*W.forceV_shell_real)(i)	<< "       "
-						<< (*flux_self_imag)(i)			<< " " 
-						<< (*flux_VF_in_out_imag)(i)	<< " "
-						<< (*flux_VF_in_in_imag)(i)		<< "   " 
-						<< (*W.flux_self_imag)(i)		<< " " 
-						<< (*W.flux_VF_in_out_imag)(i)	<< " "  
-						<< (*W.flux_VF_in_in_imag)(i)	<< " " 
-						<< (*W.flux_VF_out_out_imag)(i) <<  "     "
-						<< (*flux_Elsasser_imag)(i)		<< " " 
-						<< (*W.flux_Elsasser_imag)(i)	<< " " 
-						<< (*forceV_shell_imag)(i)		<< " " 
-						<< (*W.forceV_shell_imag)(i);
-			flux_file << endl;			
+						<< (*W.forceV_shell)(i)			<< endl;
 		}				
 					
 	if (my_id == master_id)		flux_file << endl;
@@ -199,38 +150,8 @@ void IncFluid::Output_flux(IncVF& W, IncSF &T)
 						<< (*flux_SF)(i)				<< "      " 
 						<< (*forceV_shell)(i)			<< " " 
 						<< (*W.forceV_shell)(i)			<< " " 
-						<< (*forceSF_shell)(i);
+						<< (*forceSF_shell)(i)			<< endl;
 										
-		
-				if (ET_real_imag_switch == 1)			
-					flux_file << "    "  
-						<< (*flux_self_real)(i)			<< " " 
-						<< (*flux_VF_in_out_real)(i)	<< " "
-						<< (*flux_VF_in_in_real)(i)		<< "   " 
-						<< (*W.flux_self_real)(i)		<< " " 
-						<< (*W.flux_VF_in_out_real)(i)	<< " "  
-						<< (*W.flux_VF_in_in_real)(i)	<< " " 
-						<< (*W.flux_VF_out_out_real)(i) << " " 
-						<< (*flux_Elsasser_real)(i)		<< " " 
-						<< (*W.flux_Elsasser_real)(i)	<< "    "
-						<< (*flux_SF_real)(i)			<< "     " 
-						<< (*forceV_shell_real)(i)		<< " " 
-						<< (*W.forceV_shell_real)(i)	<< " " 
-						<< (*forceSF_shell_real)(i)		<< "          " 
-						<< (*flux_self_imag)(i)			<< " " 
-						<< (*flux_VF_in_out_imag)(i)	<< " "
-						<< (*flux_VF_in_in_imag)(i)		<< "   " 
-						<< (*W.flux_self_imag)(i)		<< " " 
-						<< (*W.flux_VF_in_out_imag)(i) << " "  
-						<< (*W.flux_VF_in_in_imag)(i)	<< " " 
-						<< (*W.flux_VF_out_out_imag)(i) << " " 
-						<< (*flux_Elsasser_imag)(i)		<< " " 
-						<< (*W.flux_Elsasser_imag)(i)	<< "    "
-						<< (*flux_SF_imag)(i)			<< "      "  
-						<< (*forceV_shell_imag)(i)		<< " " 
-						<< (*W.forceV_shell_imag)(i)	<< " " 
-						<< (*forceSF_shell_imag)(i);
-			flux_file << endl;			
 		}
 	
 	if (my_id == master_id)			flux_file << endl;
@@ -280,16 +201,6 @@ void IncFluid::Output_shell_to_shell()
 		shell_to_shell_file << "%% U to U: " << endl 
 				<< (*shelltoshell_self)(ra,ra2) << endl << endl;
 		
-		
-		if (ET_real_imag_switch == 1) 
-		{
-			shell_to_shell_file << "%% U to U_real: " << endl 
-				<< (*shelltoshell_self_real)(ra,ra2) << endl;
-			
-			shell_to_shell_file << "%% U to U_imag: " << endl 
-				<< (*shelltoshell_self_imag)(ra,ra2) 
-				<< endl << endl << endl;
-		}
 	}
 }  
  
@@ -313,22 +224,7 @@ void IncFluid::Output_shell_to_shell(IncSF& T)
 				
 		shell_to_shell_file << "%% T to T: "			<< endl 
 				<< (*shelltoshell_SF)(ra,ra2)			<< endl << endl;
-		
-		if (ET_real_imag_switch == 1) 
-		{
-			shell_to_shell_file << "%% U to U_real: "	<< endl 
-				<< (*shelltoshell_self_real)(ra,ra2)		<< endl;
-			
-			shell_to_shell_file << "%% T to T_real: "	<< endl 
-				<< (*shelltoshell_SF_real)(ra,ra2)		<< endl;
-				
-			shell_to_shell_file << "%% U to U_imag: "	<< endl 
-				<< (*shelltoshell_self_imag)(ra,ra2)		<< endl;	
-			
-			shell_to_shell_file << "%% T to T_imag: "	<< endl 
-				<< (*shelltoshell_SF_imag)(ra,ra2) 
-				<< endl << endl << endl;
-		}
+	
 	}	
 } 
 
@@ -374,41 +270,6 @@ void IncFluid::Output_shell_to_shell(IncVF& W)
 			shell_to_shell_file << "%% b to u due to B0 " << endl 
 					<< (*energy_tr_shell_B0)(ra2)		  << endl;
 					
-		
-		
-		if (ET_real_imag_switch == 1) 
-		{
-			shell_to_shell_file << "%% U to U_real: "	<< endl 
-				<< (*shelltoshell_self_real)(ra,ra2)		<< endl;
-			
-			shell_to_shell_file << "%% W to W_real: "	<< endl 
-				<< (*W.shelltoshell_self_real)(ra,ra2)	<< endl;
-			
-			shell_to_shell_file << "%% U to W_real: "	<< endl 
-				<< (*shelltoshell_VF_real)(ra,ra2)		<< endl;	
-			
-			shell_to_shell_file << "%% Zp to Zp_real: " << endl 
-				<< (*shelltoshell_Elsasser_real)(ra,ra2) << endl;
-			
-			shell_to_shell_file << "%% Zm to Zm_real: " << endl 
-				<< (*W.shelltoshell_Elsasser_real)(ra,ra2) << endl;	
-				
-			
-			shell_to_shell_file << "%% U to U_imag: "	<< endl 
-				<< (*shelltoshell_self_imag)(ra,ra2)		<< endl;		
-			
-			shell_to_shell_file << "%% W to W_imag: "	<< endl 
-				<< (*W.shelltoshell_self_imag)(ra,ra2)	<< endl;
-			
-			shell_to_shell_file << "%% U to W_imag: "	<< endl 
-				<< (*shelltoshell_VF_imag)(ra,ra2)		<< endl;
-			
-			shell_to_shell_file << "%% Zp to Zp_imag: "	<< endl 
-				<< (*shelltoshell_Elsasser_imag)(ra,ra2) << endl;
-			
-			shell_to_shell_file << "%% Zm to Zm_imag: " << endl 
-				<< (*W.shelltoshell_Elsasser_imag)(ra,ra2) << endl;	
-		}
 	}
 				
 } 
@@ -457,48 +318,6 @@ void IncFluid::Output_shell_to_shell(IncVF& W, IncSF& T)
 			shell_to_shell_file << "%% b to u due to B0 "<< endl 
 					<< (*energy_tr_shell_B0)(ra)		<< endl;
 			
-		
-		if (ET_real_imag_switch == 1) 
-		{
-			shell_to_shell_file << "%% U to U_real: "	<< endl 
-				<< (*shelltoshell_self_real)(ra,ra2)		<< endl;
-			
-			shell_to_shell_file << "%% W to W_real: "	<< endl 
-				<< (*W.shelltoshell_self_real)(ra,ra2)	<< endl;
-			
-			shell_to_shell_file << "%% U to W_real: "	<< endl 
-				<< (*shelltoshell_VF_real)(ra,ra2)		<< endl;	
-			
-			shell_to_shell_file << "%% Zp to Zp_real: " << endl 
-				<< (*shelltoshell_Elsasser_real)(ra,ra2) << endl;
-			
-			shell_to_shell_file << "%% Zm to Zm_real: " << endl 
-				<< (*W.shelltoshell_Elsasser_real)(ra,ra2) << endl;	
-			
-			shell_to_shell_file << "%% T to T_real: "	<< endl 
-				<< (*shelltoshell_SF_real)(ra,ra2)		<< endl;
-
-
-				
-			shell_to_shell_file << "%% U to U_imag: "	<< endl 
-				<< (*shelltoshell_self_imag)(ra,ra2)		<< endl;		
-			
-			shell_to_shell_file << "%% W to W_imag: "	<< endl 
-				<< (*W.shelltoshell_self_imag)(ra,ra2)	<< endl;
-			
-			shell_to_shell_file << "%% U to W_imag: "	<< endl 
-				<< (*shelltoshell_VF_imag)(ra,ra2)		<< endl;
-			
-			shell_to_shell_file << "%% Zp to Zp_imag: " << endl 
-				<< (*shelltoshell_Elsasser_imag)(ra,ra2) << endl;
-			
-			shell_to_shell_file << "%% Zm to Zm_imag: " << endl 
-				<< (*W.shelltoshell_Elsasser_imag)(ra,ra2) << endl;	
-			
-			shell_to_shell_file << "%% T to T_imag: "	<< endl 
-				<< (*shelltoshell_SF_imag)(ra,ra2)		
-				<< endl << endl << endl;	
-		}
 	}				
 } 
 
@@ -549,21 +368,6 @@ void IncFluid::Output_ring_to_ring()
 			ring_to_ring_file << "%% Force feed: "					<< endl
 				<< (*forceV_ring)(ra1,ra2)							<< endl << endl;
 				
-				
-			if (ET_real_imag_switch == 1) 
-			{
-				ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*ring_to_ring_self_real)(ra1,ra2,ra1,ra2)	<< endl;
-					
-				ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*ring_to_ring_self_imag)(ra1,ra2,ra1,ra2)	<< endl << endl;
-			
-				ring_to_ring_file << "%% Force feed real: "			<< endl
-					<< (*forceV_ring_real)(ra1,ra2)					<< endl;
-				
-				ring_to_ring_file << "%% Force feed imag: "			<< endl
-					<< (*forceV_ring_imag)(ra1,ra2)					<< endl << endl;
-			}
 		}		
 	}	
 }  
@@ -599,33 +403,6 @@ void IncFluid::Output_ring_to_ring(IncSF& T)
 			ring_to_ring_file << "%% Force feed (Ftheta * theta): " << endl
 				<< (*forceSF_ring)(ra1,ra2)							<< endl << endl;
 					
-			
-			if (ET_real_imag_switch == 1) 
-			{
-				ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*ring_to_ring_self_real)(ra1,ra2,ra1,ra2)	<< endl;
-					
-				ring_to_ring_file << "%% T to T_real: "				<< endl 
-					<< (*ring_to_ring_SF_real)(ra1,ra2,ra1,ra2)		<< endl;
-					
-				ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*ring_to_ring_self_imag)(ra1,ra2,ra1,ra2)	<< endl;	
-					
-				ring_to_ring_file << "%% T to T_imag: "				<< endl 
-					<< (*ring_to_ring_SF_imag)(ra1,ra2,ra1,ra2)		<< endl << endl;
-				
-				ring_to_ring_file << "%% Force feed real(Fv * V): " << endl
-					<< (*forceV_ring_real)(ra1,ra2)					<< endl << endl;
-				
-				ring_to_ring_file << "%% Force feed real(Ftheta * theta): " << endl
-					<< (*forceSF_ring_real)(ra1,ra2)				<< endl << endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Fv * V): " << endl
-					<< (*forceV_ring_imag)(ra1,ra2)					<< endl << endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Ftheta * theta): " << endl
-					<< (*forceSF_ring_imag)(ra1,ra2)				<< endl << endl;	
-			}
 		}	
 	}	
 } 
@@ -677,54 +454,7 @@ void IncFluid::Output_ring_to_ring(IncVF& W)
 			ring_to_ring_file << "%% Force feed (Fw * W): "				<< endl
 				<< (*W.forceV_ring)(ra1,ra2)							<< endl << endl;
 				
-				
-			 
-			if (ET_real_imag_switch == 1) 
-			{
-				ring_to_ring_file << "%% U to U_real: "					<< endl 
-					<< (*ring_to_ring_self_real)(ra1,ra2,ra1,ra2)		<< endl;
-				
-				ring_to_ring_file << "%% W to W_real: "					<< endl 
-					<< (*W.ring_to_ring_self_real)(ra1,ra2,ra1,ra2)		<< endl;
-				
-				ring_to_ring_file << "%% U to W_real: "					<< endl 
-					<< (*ring_to_ring_VF_real)(ra1,ra2,ra1,ra2)			<< endl;	
-				
-				ring_to_ring_file << "%% Zp to Zp_real: "				<< endl 
-					<< (*ring_to_ring_Elsasser_real)(ra1,ra2,ra1,ra2)	<< endl;
-				
-				
-				ring_to_ring_file << "%% Zm to Zm_real: "				<< endl 
-					<< (*W.ring_to_ring_Elsasser_real)(ra1,ra2,ra1,ra2)	<< endl;	
-				
-				
-				ring_to_ring_file << "%% U to U_imag: "					<< endl 
-					<< (*ring_to_ring_self_imag)(ra1,ra2,ra1,ra2)		<< endl;		
-				
-				ring_to_ring_file << "%% W to W_imag: "					<< endl 
-					<< (*W.ring_to_ring_self_imag)(ra1,ra2,ra1,ra2)		<< endl;
-				
-				ring_to_ring_file << "%% U to W_imag: "					<< endl 
-					<< (*ring_to_ring_VF_imag)(ra1,ra2,ra1,ra2)			<< endl;
-				
-				ring_to_ring_file << "%% Zp to Zp_imag: "				<< endl 
-					<< (*ring_to_ring_Elsasser_imag)(ra1,ra2,ra1,ra2)	<< endl;
-				
-				ring_to_ring_file << "%% Zm to Zm_imag: "				<< endl 
-					<< (*W.ring_to_ring_Elsasser_imag)(ra1,ra2,ra1,ra2)	<< endl;	
 			
-				ring_to_ring_file << "%% Force feed real(Fv * V): "		<< endl
-					<< (*forceV_ring_real)(ra1,ra2)						<< endl << endl;
-				
-				ring_to_ring_file << "%% Force feed real(Fw * W): "		<< endl
-					<< (*W.forceV_ring_real)(ra1,ra2)					<< endl << endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Fv * V): "		<< endl
-					<< (*forceV_ring_imag)(ra1,ra2)						<< endl << endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Fw * W): "		<< endl
-					<< (*W.forceV_ring_imag)(ra1,ra2)					<< endl << endl;	
-			}
 		}		
 	}		
 } 
@@ -784,66 +514,6 @@ void IncFluid::Output_ring_to_ring(IncVF& W, IncSF& T)
 			ring_to_ring_file << "%% Force feed (Ftheta * theta): "		<< endl
 				<< (*forceSF_ring)(ra1,ra2)								<< endl;	
 			
-		
-				
-			if (ET_real_imag_switch == 1) 
-			{
-				ring_to_ring_file << "%% U to U_real: "					<< endl 
-					<< (*ring_to_ring_self_real)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				ring_to_ring_file << "%% W to W_real: "					<< endl 
-					<< (*W.ring_to_ring_self_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				ring_to_ring_file << "%% U to W_real: "					<< endl 
-					<< (*ring_to_ring_VF_real)(ra1,ra2, ra1,ra2)		<< endl;	
-				
-				ring_to_ring_file << "%% Zp to Zp_real: "				<< endl 
-					<< (*ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				ring_to_ring_file << "%% Zm to Zm_real: "				<< endl 
-					<< (*W.ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)<< endl;	
-				
-				ring_to_ring_file << "%% T to T_real: "					<< endl 
-					<< (*ring_to_ring_SF_real)(ra1,ra2, ra1,ra2)		<< endl;
-
-					
-				ring_to_ring_file << "%% U to U_imag: "					<< endl 
-					<< (*ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)		<< endl;		
-				
-				ring_to_ring_file << "%% W to W_imag: "					<< endl 
-					<< (*W.ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				ring_to_ring_file << "%% U to W_imag: "					<< endl 
-					<< (*ring_to_ring_VF_imag)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				ring_to_ring_file << "%% Zp to Zp_imag: "				<< endl 
-					<< (*ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				ring_to_ring_file << "%% Zm to Zm_imag: "				<< endl 
-					<< (*W.ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)<< endl;	
-				
-				ring_to_ring_file << "%% T to T_imag: "					<< endl 
-					<< (*ring_to_ring_SF_imag)(ra1,ra2, ra1,ra2)		<< endl << endl;	
-			
-				ring_to_ring_file << "%% Force feed real(Fv * V): "		<< endl
-					<< (*forceV_ring_real)(ra1,ra2)						<< endl;
-				
-				ring_to_ring_file << "%% Force feed real(Fw * W): "		<< endl
-					<< (*W.forceV_ring_real)(ra1,ra2)					<< endl;
-					
-				ring_to_ring_file << "%% Force feed real(Ftheta * theta): " << endl
-					<< (*forceSF_ring_real)(ra1,ra2)					<< endl;	
-					
-				ring_to_ring_file << "%% Force feed imag(Fv * V): "		<< endl
-					<< (*forceV_ring_imag)(ra1,ra2)						<< endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Fw * W): "		<< endl
-					<< (*W.forceV_ring_imag)(ra1,ra2)					<< endl;
-					
-				ring_to_ring_file << "%% Force feed imag(Ftheta * theta): " << endl
-					<< (*forceSF_ring_imag)(ra1,ra2) 
-					<< endl << endl;			
-			}
 		}	
 	}										
 } 
@@ -896,22 +566,7 @@ void IncFluid::Output_cylinder_ring_to_ring()
 				
 			cylinder_ring_to_ring_file << "%% Force feed: "						<< endl
 				<< (*forceV_cylinder_ring)(ra1,ra2)								<< endl;
-				
-				
-			if (ET_real_imag_switch == 1) 
-			{
-				cylinder_ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)		<< endl;
-					
-				cylinder_ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)		<< endl << endl;
-				
-				cylinder_ring_to_ring_file << "%% Force feed real: "			<< endl
-					<< (*forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Force feed imag: "			<< endl
-					<< (*forceV_cylinder_ring_imag)(ra1,ra2)					<< endl;
-			}
+			
 		}	
 	}	
 	
@@ -947,34 +602,7 @@ void IncFluid::Output_cylinder_ring_to_ring(IncSF& T)
 				
 			cylinder_ring_to_ring_file << "%% Force feed (Ftheta * theta): "	<< endl
 				<< (*forceSF_cylinder_ring)(ra1,ra2)							<< endl << endl;
-				
-				
-			if (ET_real_imag_switch == 1) 
-			{
-				cylinder_ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)		<< endl;
-					
-				cylinder_ring_to_ring_file << "%% T to T_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_SF_real)(ra1,ra2, ra1,ra2)		<< endl;
-					
-				cylinder_ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)		<< endl;	
-					
-				cylinder_ring_to_ring_file << "%% T to T_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_SF_imag)(ra1,ra2, ra1,ra2)		<< endl << endl;
 			
-				cylinder_ring_to_ring_file << "%% Force feed real(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Force feed real(Ftheta * theta): "<< endl
-					<< (*forceSF_cylinder_ring_real)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_imag)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Ftheta * theta): "<< endl
-					<< (*forceSF_cylinder_ring_imag)(ra1,ra2)					<< endl;	
-			}
 		}	
 	}	
 } 
@@ -1027,54 +655,6 @@ void IncFluid::Output_cylinder_ring_to_ring(IncVF& W)
 				<< (*W.forceV_cylinder_ring)(ra1,ra2)							<< endl;
 				
 				
-				
-			
-			if (ET_real_imag_switch == 1) 
-			{
-				cylinder_ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				cylinder_ring_to_ring_file << "%% W to W_real: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% U to W_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_VF_real)(ra1,ra2, ra1,ra2)		<< endl;	
-				
-				cylinder_ring_to_ring_file << "%% Zp to Zp_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				
-				cylinder_ring_to_ring_file << "%% Zm to Zm_real: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)	<< endl;	
-				
-				
-				cylinder_ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)		<< endl;		
-				
-				cylinder_ring_to_ring_file << "%% W to W_imag: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% U to W_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_VF_imag)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Zp to Zp_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Zm to Zm_imag: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)	<< endl;	
-				
-				cylinder_ring_to_ring_file << "%% Force feed real(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Force feed real(Fw * W): "	<< endl
-					<< (*W.forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_imag)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Fw * W): "	<< endl
-					<< (*W.forceV_cylinder_ring_imag)(ra1,ra2)					<< endl << endl;	
-			}
 		}	
 	}			
 } 
@@ -1133,65 +713,7 @@ void IncFluid::Output_cylinder_ring_to_ring(IncVF& W, IncSF& T)
 				
 			cylinder_ring_to_ring_file << "%% Force feed (Ftheta * theta): "	<< endl
 				<< (*forceSF_cylinder_ring)(ra1,ra2)							<< endl;
-				
 			
-			if (ET_real_imag_switch == 1) 
-			{
-				cylinder_ring_to_ring_file << "%% U to U_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				cylinder_ring_to_ring_file << "%% W to W_real: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_self_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% U to W_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_VF_real)(ra1,ra2, ra1,ra2)		<< endl;	
-				
-				cylinder_ring_to_ring_file << "%% Zp to Zp_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Zm to Zm_real: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_Elsasser_real)(ra1,ra2, ra1,ra2)	<< endl;	
-				
-				cylinder_ring_to_ring_file << "%% T to T_real: "				<< endl 
-					<< (*cylinder_ring_to_ring_SF_real)(ra1,ra2, ra1,ra2)		<< endl;
-
-					
-				cylinder_ring_to_ring_file << "%% U to U_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)		<< endl;		
-				
-				cylinder_ring_to_ring_file << "%% W to W_imag: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_self_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% U to W_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_VF_imag)(ra1,ra2, ra1,ra2)		<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Zp to Zp_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)	<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Zm to Zm_imag: "				<< endl 
-					<< (*W.cylinder_ring_to_ring_Elsasser_imag)(ra1,ra2, ra1,ra2)	<< endl;	
-				
-				cylinder_ring_to_ring_file << "%% T to T_imag: "				<< endl 
-					<< (*cylinder_ring_to_ring_SF_imag)(ra1,ra2, ra1,ra2)		<< endl << endl;	
-			
-				cylinder_ring_to_ring_file << "%% Force feed real(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-				
-				cylinder_ring_to_ring_file << "%% Force feed real(Fw * W): "	<< endl
-					<< (*W.forceV_cylinder_ring_real)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed real(Ftheta * theta): "<< endl
-					<< (*forceSF_cylinder_ring_real)(ra1,ra2)					<< endl;	
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Fv * V): "	<< endl
-					<< (*forceV_cylinder_ring_imag)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Fw * W): "	<< endl
-					<< (*W.forceV_cylinder_ring_imag)(ra1,ra2)					<< endl;
-					
-				cylinder_ring_to_ring_file << "%% Force feed imag(Ftheta * theta): "<< endl
-					<< (*forceSF_cylinder_ring_imag)(ra1,ra2)					<< endl;			
-			}
 		}	
 	}						
 } 

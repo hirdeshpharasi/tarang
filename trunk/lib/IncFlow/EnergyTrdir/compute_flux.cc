@@ -54,13 +54,6 @@ void IncVF::Compute_flux()
 	
 	(*flux_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_self_real) = 0.0;
-		(*flux_self_imag) = 0.0;
-	}
-	
-	DP tot_real, tot_imag;
 
 	for (int sphere_index = 1; sphere_index <= no_spheres; sphere_index++) 
 	{	
@@ -71,13 +64,7 @@ void IncVF::Compute_flux()
 		
 		(*flux_self)(sphere_index) = - Prod_out_sphere_nlinV(sphere_index);	
 		// flux_self = -(U.grad U<). U>
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, tot_real, tot_imag);
-			(*flux_self_real)(sphere_index) = -tot_real;
-			(*flux_self_imag)(sphere_index) = -tot_imag;	
-		}						
+							
 	}
 }
 
@@ -92,14 +79,6 @@ void IncVF::Compute_flux(IncSF& T)
 
 	(*flux_SF) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_SF_real) = 0.0;
-		(*flux_SF_imag) = 0.0;
-	}
-	
-	
-	DP tot_real, tot_imag;
 	
 	Compute_flux();									
 	// flux_self = (U.grad U<). U>	
@@ -113,13 +92,7 @@ void IncVF::Compute_flux(IncSF& T)
 		
 		(*flux_SF)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index, T);		
 		// T.flux = (U.grad T<). T>		
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, T, tot_real, tot_imag);
-			(*flux_SF_real)(sphere_index) = -tot_real;
-			(*flux_SF_imag)(sphere_index) = -tot_imag;	
-		}						
+							
 	}
 }
 
@@ -134,17 +107,6 @@ void IncVF::Compute_flux(IncVF& W)
 	(*flux_VF_in_out) = 0.0;
 	(*flux_VF_in_in) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_VF_in_out_real) = 0.0;
-		(*flux_VF_in_out_imag) = 0.0;
-		
-		(*flux_VF_in_in_real) = 0.0;
-		(*flux_VF_in_in_imag) = 0.0;
-	}
-	
-	
-	DP tot_real, tot_imag;
 
 	Compute_flux();									
 	// flux_self = (U.grad U<). U>
@@ -161,17 +123,7 @@ void IncVF::Compute_flux(IncVF& W)
 		
 		(*flux_VF_in_in)(sphere_index) = Prod_in_sphere_nlinV(sphere_index, W);		
 		// (W.graad U<). W<
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, W, tot_real, tot_imag);		
-			(*flux_VF_in_out_real)(sphere_index) = tot_real;
-			(*flux_VF_in_out_imag)(sphere_index) = tot_imag;
-		
-			Prod_in_sphere_nlinV_real_imag(sphere_index, W, tot_real, tot_imag);
-			(*flux_VF_in_in_real)(sphere_index) = tot_real;
-			(*flux_VF_in_in_imag)(sphere_index) = tot_imag;
-		}	
+			
 	}
 	
 	
@@ -181,11 +133,6 @@ void IncVF::Compute_flux(IncVF& W)
 	
 	(*W.flux_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*W.flux_self_real) = 0.0;
-		(*W.flux_self_imag)= 0.0;
-	}
 	
 	for (int sphere_index = 1; sphere_index <= no_spheres; sphere_index++) 
 	{	
@@ -197,13 +144,7 @@ void IncVF::Compute_flux(IncVF& W)
 		
 		(*W.flux_self)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index, W);		
 		// -(U.graad W<). W>
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, W, tot_real, tot_imag);		
-			(*W.flux_self_real)(sphere_index) = -tot_real;
-			(*W.flux_self_imag)(sphere_index) = -tot_imag;	
-		}		
+				
 	}
 	
 	
@@ -212,15 +153,6 @@ void IncVF::Compute_flux(IncVF& W)
 	
 	(*W.flux_VF_in_out) = 0.0;
 	(*W.flux_VF_in_in) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*W.flux_VF_in_out_real) = 0.0;
-		(*W.flux_VF_in_out_imag) = 0.0;
-		
-		(*W.flux_VF_in_in_real) = 0.0;
-		(*W.flux_VF_in_in_imag) = 0.0;
-	}
 	
 	
 	for (int sphere_index = 1; sphere_index <= no_spheres; sphere_index++) 
@@ -236,29 +168,13 @@ void IncVF::Compute_flux(IncVF& W)
 		
 		(*W.flux_VF_in_in)(sphere_index) = Prod_in_sphere_nlinV(sphere_index);		
 		//  (U.graad W<). U<
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, tot_real, tot_imag);		
-			(*W.flux_VF_in_out_real)(sphere_index) = tot_real;
-			(*W.flux_VF_in_out_imag)(sphere_index) = tot_imag;
-		
-			Prod_in_sphere_nlinV_real_imag(sphere_index, tot_real, tot_imag);
-			(*W.flux_VF_in_in_real)(sphere_index) = tot_real;
-			(*W.flux_VF_in_in_imag)(sphere_index) = tot_imag;
-		}			
+					
 	}
 	
 	
 	// U> to W>
 	
 	(*flux_VF_out_out) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_VF_out_out_real) = 0.0;
-		(*flux_VF_out_out_imag) = 0.0;
-	}
 	
 	
 	for (int sphere_index = 1; sphere_index <= no_spheres; sphere_index++) 
@@ -272,12 +188,6 @@ void IncVF::Compute_flux(IncVF& W)
 		(*flux_VF_out_out)(sphere_index) = Prod_out_sphere_nlinV(sphere_index, W);	
 		// (W.graad U>). W>
 		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, W, tot_real, tot_imag);
-			(*flux_VF_out_out_real)(sphere_index) = tot_real;
-			(*flux_VF_out_out_imag)(sphere_index) = tot_imag;
-		}	
 	}
 	
 	// Flux for Elsasser vars
@@ -285,15 +195,6 @@ void IncVF::Compute_flux(IncVF& W)
 	
 	(*flux_Elsasser) = 0.0;
 	(*W.flux_Elsasser) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_Elsasser_real)= 0.0;
-		(*flux_Elsasser_imag)= 0.0;
-		
-		(*W.flux_Elsasser_real)= 0.0;
-		(*W.flux_Elsasser_imag)= 0.0;
-	}
 	
 	
 	IncVF::UB_to_Elsasser_field(W);												
@@ -310,13 +211,7 @@ void IncVF::Compute_flux(IncVF& W)
 		
 		(*flux_Elsasser)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index);	
 		// (Zm.graad Zp<). Zp>
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, tot_real, tot_imag);
-			(*flux_Elsasser_real)(sphere_index) = -tot_real;
-			(*flux_Elsasser_imag)(sphere_index) = -tot_imag;
-		}	
+	
 	}	
 	
 	
@@ -331,13 +226,7 @@ void IncVF::Compute_flux(IncVF& W)
 		
 		(*W.flux_Elsasser)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index, W);	
 		// (Zp.graad Zm<). Zm>
-		
-		if (ET_real_imag_switch == 1) 
-		{	
-			Prod_out_sphere_nlinV_real_imag(sphere_index, W, tot_real, tot_imag);
-			(*W.flux_Elsasser_real)(sphere_index) = -tot_real;
-			(*W.flux_Elsasser_imag)(sphere_index) = -tot_imag;
-		}	
+	
 	}																																			// Flux: Zp to Zp
 	
 	IncVF::Elsasser_to_UB_field(W);													
@@ -354,14 +243,6 @@ void IncVF::Compute_flux(IncVF& W, IncSF& T)
 	
 	(*flux_SF) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*flux_SF_real) = 0.0;
-		(*flux_SF_imag) = 0.0;
-	}
-	
-	
-	DP tot_real, tot_imag;
 	
 	Compute_flux(W);
 	
@@ -374,13 +255,7 @@ void IncVF::Compute_flux(IncVF& W, IncSF& T)
 		
 		(*flux_SF)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index, T);		
 		// T.flux = (U.grad T<). T>		
-		
-		if (ET_real_imag_switch == 1) 
-		{			
-			Prod_out_sphere_nlinV_real_imag(sphere_index, T, tot_real, tot_imag);
-			(*flux_SF_real)(sphere_index) = -tot_real;
-			(*flux_SF_imag)(sphere_index) = -tot_imag;
-		}	
+	
 	}
 }
 

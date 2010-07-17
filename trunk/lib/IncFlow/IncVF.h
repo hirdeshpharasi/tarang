@@ -365,13 +365,6 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	DP Prod_in_sphere_nlinV(int sphere_index, IncSF& T);
 	DP Prod_in_sphere_nlinV(int sphere_index, IncVF& W);
 	
-	void Prod_out_sphere_nlinV_real_imag(int sphere_index, DP& tot_real, DP& tot_imag);
-	void Prod_out_sphere_nlinV_real_imag(int sphere_index, IncSF& T, DP& tot_real, DP& tot_imag);
-	void Prod_out_sphere_nlinV_real_imag(int sphere_index, IncVF& W, DP& tot_real, DP& tot_imag);
-	
-	void Prod_in_sphere_nlinV_real_imag(int sphere_index, DP& tot_real, DP& tot_imag);
-	void Prod_in_sphere_nlinV_real_imag(int sphere_index, IncSF& T, DP& tot_real, DP& tot_imag);
-	void Prod_in_sphere_nlinV_real_imag(int sphere_index, IncVF& W, DP& tot_real, DP& tot_imag);
 	
 	DP Prod_out_sphere_nlin_vorticity(int sphere_index);
 	DP Prod_out_sphere_nlin_vector_potential(int sphere_index, IncVF& W);

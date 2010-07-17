@@ -119,19 +119,6 @@ DP	Shell_mult_single
 	DP kfactor[]
 );
 					
-/// Compute product  Real(A).Real(B) & Imag(A).Imag(B) with appropriate factor for energy 
-///		for a 3D shell = (inner_radius, outer_radius].						
-void Shell_mult_single_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& total_real, DP& total_imag,
-	DP kfactor[]
-);															
-
 
 /// Compute product  Real(A.B*) with appropriate factor for energy for all 3D shells. 	
 ///		The result is in array 'result'.								
@@ -147,21 +134,7 @@ void Shell_mult_all
 );
 
 
-								
-/// Compute product  Real(A).Real(B) & Imag(A).Imag(B) with appropriate factor for energy 
-///		for all 3D shells. 	
-///		The results are in arrays 'result_real' & 'result_imag'.																																				
-void Shell_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A,  Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
-								
+														
 								
 /// Compute product  \f$ \Re(\vec{A} \cdot \vec{B}^{*}) \f$ with appropriate factor for energy 
 ///		for all 3D shells. 	
@@ -177,22 +150,6 @@ void Shell_mult_all
 	Array<DP,1> result, 
 	DP kfactor[]
 );
-								
-/// Compute product  \f$ \Re(\vec{A}) \cdot \Re(\vec{B}) \f$ and 
-///		\f$ \Im(\vec{A}) \cdot \Im(\vec{B}) \f$ 
-///		with appropriate factor for energy for all 3D shells. 								
-void Shell_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
-
 
 //*********************************************************************************************
 								
@@ -210,19 +167,7 @@ void Ring_mult_all
 	Array<DP,2> result, 
 	DP kfactor[]
 );
-								
-/// Compute product  Real(A).Real(B) & Imag(A).Imag(B) with appropriate factor for energy 
-///		for all 3D rings.
-void Ring_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, Array<DP, 1> sector_angle_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);	
+	
 
 /// Compute product  \f$ \Re(\vec{A} \cdot \vec{B}^{*}) \f$ with appropriate factor for energy 
 ///		for all 3D rings. 	
@@ -239,21 +184,7 @@ void Ring_mult_all
 	DP kfactor[]
 );
 								
-/// Compute product  \f$ \Re(\vec{A}) \cdot \Re(\vec{B}) \f$ and 
-///		\f$ \Im(\vec{A}) \cdot \Im(\vec{B}) \f$ 
-///		with appropriate factor for energy for all 3D rings. 								
-void Ring_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, Array<DP, 1> sector_angle_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
-								
+							
 //*********************************************************************************************
 
 //
@@ -271,16 +202,6 @@ void Cyl_ring_mult_all
 	DP kfactor[]
 );
 
-void Cyl_ring_mult_all_real_imag
-(
-	string basis_type,
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
 
 void Cyl_ring_mult_all
 (
@@ -294,17 +215,7 @@ void Cyl_ring_mult_all
 	DP kfactor[]
 );
 
-void Cyl_ring_mult_all_real_imag
-(
-	string basis_type,
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
+
 
 
 //*********************************************************************************************

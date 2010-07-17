@@ -131,8 +131,6 @@ EnergyTr::EnergyTr
 	shell_radius = new Array<DP,1>(no_shells+1);
 	
 	temp_shell_tr = new Array<DP,1>(no_shells+1);
-	temp_shell_tr_real = new Array<DP,1>(no_shells+1);
-	temp_shell_tr_imag = new Array<DP,1>(no_shells+1);
 	
 	
 	if (shell_input_scheme == 0)  // Fill using 2^(n/4) schele
@@ -195,8 +193,7 @@ EnergyTr::EnergyTr
 		
 		
 		temp_ring_tr = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-		temp_ring_tr_real = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-		temp_ring_tr_imag = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
+	
 		
 		if (ring_shell_input_scheme == 0)  // Fill using 2^(n/4) scheme
 		{
@@ -300,12 +297,7 @@ EnergyTr::EnergyTr
 		
 		temp_cylinder_ring_tr = new Array<DP,2>(no_cylinder_shells+1, 
 													no_cylinder_kpll_slabs+1);
-													
-		temp_cylinder_ring_tr_real = new Array<DP,2>(no_cylinder_shells+1, 
-													 no_cylinder_kpll_slabs+1);
-													 
-		temp_cylinder_ring_tr_imag = new Array<DP,2>(no_cylinder_shells+1,  
-													 no_cylinder_kpll_slabs+1);
+									
 		
 		if (cylinder_shell_input_scheme == 0)  // Fill using 2^(n/4) scheme
 		{
@@ -437,68 +429,6 @@ EnergyTr::EnergyTr
 	
 	*energy_tr_shell_B0 = 0.0;
 		
-		
-	if (ET_real_imag_switch == 1)
-	{
-		flux_self_real = new Array<DP,1>(no_shells+1);
-		flux_VF_in_in_real = new Array<DP,1>(no_shells+1);
-		flux_VF_in_out_real = new Array<DP,1>(no_shells+1);
-		flux_VF_out_out_real = new Array<DP,1>(no_shells+1);
-		flux_Elsasser_real = new Array<DP,1>(no_shells+1);
-		flux_SF_real = new Array<DP,1>(no_shells+1);
-		
-		*flux_self_real = 0.0;  
-		*flux_VF_in_in_real = 0.0; 
-		*flux_VF_in_out_real = 0.0; 
-		*flux_Elsasser_real = 0.0;
-		*flux_VF_out_out_real = 0.0;
-		*flux_SF_real = 0.0; 
-		
-		
-		flux_self_imag = new Array<DP,1>(no_shells+1);
-		flux_VF_in_in_imag = new Array<DP,1>(no_shells+1);
-		flux_VF_in_out_imag = new Array<DP,1>(no_shells+1);
-		flux_VF_out_out_imag = new Array<DP,1>(no_shells+1);
-		flux_Elsasser_imag = new Array<DP,1>(no_shells+1);
-		flux_SF_imag = new Array<DP,1>(no_shells+1);
-		
-		*flux_self_imag = 0.0;  
-		*flux_VF_in_in_imag = 0.0; 
-		*flux_VF_in_out_imag = 0.0; 
-		*flux_Elsasser_imag = 0.0;
-		*flux_VF_out_out_imag = 0.0; 
-		*flux_SF_imag = 0.0; 
-		
-		forceV_shell_real = new Array<DP,1>(no_shells+1);
-		forceSF_shell_real = new Array<DP,1>(no_shells+1);
-		forceV_shell_imag = new Array<DP,1>(no_shells+1);
-		forceSF_shell_imag = new Array<DP,1>(no_shells+1);
-			
-		*forceV_shell_real = 0.0;
-		*forceSF_shell_real = 0.0;
-		*forceV_shell_imag = 0.0; 
-		*forceSF_shell_imag = 0.0;
-		
-		shelltoshell_self_real = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_VF_real = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_Elsasser_real = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_SF_real = new Array<DP,2>(no_shells+1, no_shells+1);
-		
-		*shelltoshell_self_real = 0.0;  
-		*shelltoshell_VF_real = 0.0;	
-		*shelltoshell_SF_real = 0.0;
-		*shelltoshell_Elsasser_real = 0.0;	
-		
-		shelltoshell_self_imag = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_VF_imag = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_Elsasser_imag = new Array<DP,2>(no_shells+1, no_shells+1);
-		shelltoshell_SF_imag = new Array<DP,2>(no_shells+1, no_shells+1);
-		
-		*shelltoshell_self_imag = 0.0;  
-		*shelltoshell_VF_imag = 0.0;	
-		*shelltoshell_SF_imag = 0.0;
-		*shelltoshell_Elsasser_imag = 0.0;
-	}	
 	
 	// ring_to_ring
 	
@@ -532,55 +462,6 @@ EnergyTr::EnergyTr
 		
 		*energy_tr_ring_B0 = 0.0;
 		
-		
-		if (ET_real_imag_switch == 1)
-		{
-			ring_to_ring_self_real	= new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_VF_real	= new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_Elsasser_real= new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_SF_real	= new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-			
-			*ring_to_ring_self_real = 0.0;  
-			*ring_to_ring_VF_real = 0.0;	
-			*ring_to_ring_SF_real = 0.0;
-			*ring_to_ring_Elsasser_real = 0.0;
-			
-			
-			ring_to_ring_self_imag = new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_VF_imag = new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_Elsasser_imag = new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-										
-			ring_to_ring_SF_imag = new Array<DP,4>(no_ring_shells+1, no_sectors_ring_tr+1, 
-										no_ring_shells+1, no_sectors_ring_tr+1);
-			
-			*ring_to_ring_self_imag = 0.0;  
-			*ring_to_ring_VF_imag = 0.0;	
-			*ring_to_ring_SF_imag = 0.0;
-			*ring_to_ring_Elsasser_imag = 0.0;
-			
-			
-			forceV_ring_real = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-			forceSF_ring_real = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-			forceV_ring_imag = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-			forceSF_ring_imag = new Array<DP,2>(no_ring_shells+1, no_sectors_ring_tr+1);
-			
-			*forceV_ring_real = 0.0;
-			*forceSF_ring_real = 0.0;
-			*forceV_ring_imag = 0.0;
-			*forceSF_ring_imag = 0.0;
-		}
 	}
 
 	//
@@ -615,60 +496,6 @@ EnergyTr::EnergyTr
 													no_cylinder_kpll_slabs+1);	
 		*energy_tr_cylinder_ring_B0 = 0.0;
 		
-		
-		if (ET_real_imag_switch == 1)
-		{
-			cylinder_ring_to_ring_self_real = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);
-			
-			cylinder_ring_to_ring_VF_real = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);	
-			
-			cylinder_ring_to_ring_Elsasser_real = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);			
-			
-			cylinder_ring_to_ring_SF_real = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);
-			
-			*cylinder_ring_to_ring_self_real = 0.0;
-			*cylinder_ring_to_ring_VF_real = 0.0;	
-			*cylinder_ring_to_ring_Elsasser_real = 0.0;			
-			*cylinder_ring_to_ring_SF_real = 0.0;
-			
-			
-			
-			cylinder_ring_to_ring_self_imag = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);
-			
-			cylinder_ring_to_ring_VF_imag = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);	
-			
-			cylinder_ring_to_ring_Elsasser_imag = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);			
-			
-			cylinder_ring_to_ring_SF_imag = new Array<DP,4>(no_cylinder_shells+1,
-					no_cylinder_kpll_slabs+1, no_cylinder_shells+1, no_cylinder_kpll_slabs+1);	
-			
-			*cylinder_ring_to_ring_self_imag = 0.0;
-			*cylinder_ring_to_ring_VF_imag = 0.0;	
-			*cylinder_ring_to_ring_Elsasser_imag = 0.0;			
-			*cylinder_ring_to_ring_SF_imag = 0.0;	
-			
-			
-			forceV_cylinder_ring_real	= new Array<DP,2>(no_cylinder_shells+1,
-														no_cylinder_kpll_slabs+1);				
-			forceSF_cylinder_ring_real	= new Array<DP,2>(no_cylinder_shells+1,
-														no_cylinder_kpll_slabs+1);		
-			forceV_cylinder_ring_imag	= new Array<DP,2>(no_cylinder_shells+1,
-														no_cylinder_kpll_slabs+1);			
-			forceSF_cylinder_ring_imag	= new Array<DP,2>(no_cylinder_shells+1,
-														no_cylinder_kpll_slabs+1);	
-			
-			*forceV_cylinder_ring_real = 0.0;				
-			*forceSF_cylinder_ring_real = 0.0;		
-			*forceV_cylinder_ring_imag = 0.0;			
-			*forceSF_cylinder_ring_imag = 0.0;	
-		}
 	}	// end of if (ET_anisotropic_cylinder_switch == 1)
 	
 }

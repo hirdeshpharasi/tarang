@@ -160,18 +160,13 @@ public:
 	
 	//! for energy transfer to be passed Shell_mult_all
 	Array<DP,1>  *temp_shell_tr;				
-	Array<DP,1>  *temp_shell_tr_real;
-	Array<DP,1>  *temp_shell_tr_imag;
 	
 	//! for energy transfer to be passed Shell_mult_all
 	Array<DP,2>  *temp_ring_tr;					
-	Array<DP,2>  *temp_ring_tr_real;
-	Array<DP,2>  *temp_ring_tr_imag;
-	
+
 	//! for energy transfer to be passed Shell_mult_all
 	Array<DP,2>  *temp_cylinder_ring_tr;		
-	Array<DP,2>  *temp_cylinder_ring_tr_real;
-	Array<DP,2>  *temp_cylinder_ring_tr_imag;
+
 	
 	// S(k,p,q) calculations
 	
@@ -191,31 +186,12 @@ public:
 	Array<DP,1>  *flux_Elsasser;				//  From Z to Z
 	Array<DP,1>  *flux_SF;						//  T< to T>
 	
-	Array<DP,1>  *flux_self_real;	
-	Array<DP,1>  *flux_VF_in_in_real;			// real parts of the above
-	Array<DP,1>  *flux_VF_in_out_real;		
-	Array<DP,1>  *flux_VF_out_out_real;		
-	Array<DP,1>  *flux_Elsasser_real;
-	Array<DP,1>  *flux_SF_real;	
-	
-	Array<DP,1>  *flux_self_imag;	
-	Array<DP,1>  *flux_VF_in_in_imag;			// Imag part of the above
-	Array<DP,1>  *flux_VF_in_out_imag;		
-	Array<DP,1>  *flux_VF_out_out_imag;		
-	Array<DP,1>  *flux_Elsasser_imag;
-	Array<DP,1>  *flux_SF_imag;	
-	
 	Array<DP,1>  *flux_hk;
 	
 	// force*V
 	
 	Array<DP,1>  *forceV_shell;					// fu(k)*u(k)
 	Array<DP,1>  *forceSF_shell;				// fT(k)*T(k)
-	
-	Array<DP,1>  *forceV_shell_real;				
-	Array<DP,1>  *forceSF_shell_real;		
-	Array<DP,1>  *forceV_shell_imag;			
-	Array<DP,1>  *forceSF_shell_imag;	
 
 	
 	// Isotropic shell-to-shell
@@ -224,16 +200,6 @@ public:
 	Array<DP,2>  *shelltoshell_VF;				// from Ufrom to extern VF B
 	Array<DP,2>  *shelltoshell_Elsasser;		// from Z to Z
 	Array<DP,2>  *shelltoshell_SF;				// theta->theta
-	
-	Array<DP,2>  *shelltoshell_self_real;
-	Array<DP,2>  *shelltoshell_VF_real;	
-	Array<DP,2>  *shelltoshell_Elsasser_real;			
-	Array<DP,2>  *shelltoshell_SF_real;
-	
-	Array<DP,2>  *shelltoshell_self_imag;
-	Array<DP,2>  *shelltoshell_VF_imag;	
-	Array<DP,2>  *shelltoshell_Elsasser_imag;			
-	Array<DP,2>  *shelltoshell_SF_imag;		
 	
 	Array<DP,2>  *shelltoshell_hk;
   
@@ -244,23 +210,10 @@ public:
 	Array<DP,4>  *ring_to_ring_Elsasser;			// from Z to Z
 	Array<DP,4>  *ring_to_ring_SF;				// theta->theta
 	
-	Array<DP,4>  *ring_to_ring_self_real;
-	Array<DP,4>  *ring_to_ring_VF_real;	
-	Array<DP,4>  *ring_to_ring_Elsasser_real;			
-	Array<DP,4>  *ring_to_ring_SF_real;
-	
-	Array<DP,4>  *ring_to_ring_self_imag;
-	Array<DP,4>  *ring_to_ring_VF_imag;	
-	Array<DP,4>  *ring_to_ring_Elsasser_imag;			
-	Array<DP,4>  *ring_to_ring_SF_imag;	
 	
 	Array<DP,2>  *forceV_ring;					// fu(k)*u(k)
 	Array<DP,2>  *forceSF_ring;					// fT(k)*T(k)
 	
-	Array<DP,2>  *forceV_ring_real;				
-	Array<DP,2>  *forceSF_ring_real;		
-	Array<DP,2>  *forceV_ring_imag;			
-	Array<DP,2>  *forceSF_ring_imag;
 	
 	// Cylinderical ring to ring
 	
@@ -269,23 +222,9 @@ public:
 	Array<DP,4>  *cylinder_ring_to_ring_Elsasser;		// from Z to Z
 	Array<DP,4>  *cylinder_ring_to_ring_SF;				// theta->theta
 	
-	Array<DP,4>  *cylinder_ring_to_ring_self_real;
-	Array<DP,4>  *cylinder_ring_to_ring_VF_real;	
-	Array<DP,4>  *cylinder_ring_to_ring_Elsasser_real;			
-	Array<DP,4>  *cylinder_ring_to_ring_SF_real;
-	
-	Array<DP,4>  *cylinder_ring_to_ring_self_imag;
-	Array<DP,4>  *cylinder_ring_to_ring_VF_imag;	
-	Array<DP,4>  *cylinder_ring_to_ring_Elsasser_imag;			
-	Array<DP,4>  *cylinder_ring_to_ring_SF_imag;	
-	
 	Array<DP,2>  *forceV_cylinder_ring;					// fu(k)*u(k)
 	Array<DP,2>  *forceSF_cylinder_ring;					// fT(k)*T(k)
 	
-	Array<DP,2>  *forceV_cylinder_ring_real;				
-	Array<DP,2>  *forceSF_cylinder_ring_real;		
-	Array<DP,2>  *forceV_cylinder_ring_imag;			
-	Array<DP,2>  *forceSF_cylinder_ring_imag;
 	
 	// B0 effect
 	//! Energy transfer from b to u due to B0.

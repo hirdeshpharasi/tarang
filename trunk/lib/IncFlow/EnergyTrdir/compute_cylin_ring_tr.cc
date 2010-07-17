@@ -56,12 +56,6 @@ void IncVF::Compute_cylinder_ring_tr()
 	
 	(*cylinder_ring_to_ring_self) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*cylinder_ring_to_ring_self_real) = 0.0;
-		(*cylinder_ring_to_ring_self_imag) = 0.0;
-	}	
-	
 				
 	for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
 										cylinder_shell_from_i++) 
@@ -82,21 +76,6 @@ void IncVF::Compute_cylinder_ring_tr()
 			(*cylinder_ring_to_ring_self)(cylinder_shell_from_i, slab_from_i, 
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);
-											
-				(*cylinder_ring_to_ring_self_real)(cylinder_shell_from_i, slab_from_i, 
-							Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-							
-				(*cylinder_ring_to_ring_self_imag)(cylinder_shell_from_i, slab_from_i,
-							Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																
-			}			
-			
 		}
 			
 }
@@ -113,12 +92,7 @@ void IncVF::Compute_cylinder_ring_tr(IncSF& T)
 	
 	// T to T
 	(*cylinder_ring_to_ring_SF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*cylinder_ring_to_ring_SF_real) = 0.0;
-		(*cylinder_ring_to_ring_SF_imag) = 0.0;
-	}	
+		
 	
 	// skip the last shell -- outer rad = infty				
 	for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
@@ -138,20 +112,6 @@ void IncVF::Compute_cylinder_ring_tr(IncSF& T)
 			(*cylinder_ring_to_ring_SF)(cylinder_shell_from_i, slab_from_i, 
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-											
-				(*cylinder_ring_to_ring_SF_real)(cylinder_shell_from_i, slab_from_i, 
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-								
-				(*cylinder_ring_to_ring_SF_imag)(cylinder_shell_from_i, slab_from_i,
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																	
-			}
-			
 		}
 					
 }
@@ -169,12 +129,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 	
 	// W to W
 	(*W.cylinder_ring_to_ring_self) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*W.cylinder_ring_to_ring_self_real) = 0.0;
-		(*W.cylinder_ring_to_ring_self_imag) = 0.0;
-	}
 		
 	
 	for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
@@ -196,22 +150,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 			(*W.cylinder_ring_to_ring_self)(cylinder_shell_from_i, slab_from_i, 
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
 			
-			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, 
-										*nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr,  
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-											
-				(*W.cylinder_ring_to_ring_self_real)(cylinder_shell_from_i, slab_from_i, 
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-									
-				(*W.cylinder_ring_to_ring_self_imag)(cylinder_shell_from_i, slab_from_i,  
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																
-			}	
 		
 		}	// of for loop					
 
@@ -219,12 +157,7 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 
 	// U to W
 	(*cylinder_ring_to_ring_VF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*cylinder_ring_to_ring_VF_real) = 0.0;
-		(*cylinder_ring_to_ring_VF_imag) = 0.0;
-	}	
+		
 	
 	for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
 										cylinder_shell_from_i++) 
@@ -242,24 +175,7 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 										*temp_cylinder_ring_tr, kfactor);
 											
 			(*cylinder_ring_to_ring_VF)(cylinder_shell_from_i, slab_from_i,
-										Range::all(), Range::all()) = *temp_cylinder_ring_tr;	
-			
-			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, 
-										*nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-									
-				(*cylinder_ring_to_ring_VF_real)(cylinder_shell_from_i, slab_from_i, 
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-								
-				(*cylinder_ring_to_ring_VF_imag)(cylinder_shell_from_i, slab_from_i,  
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);															
-			}
+										Range::all(), Range::all()) = *temp_cylinder_ring_tr;
 
 			
 		}  // end of for loop
@@ -270,14 +186,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 	(*cylinder_ring_to_ring_Elsasser) = 0.0;
 	(*W.cylinder_ring_to_ring_Elsasser) = 0.0;
 	
-	if (ET_real_imag_switch == 1)
-	{
-		(*cylinder_ring_to_ring_Elsasser_real) = 0.0;
-		(*cylinder_ring_to_ring_Elsasser_imag) = 0.0;
-	
-		(*W.cylinder_ring_to_ring_Elsasser_real) = 0.0;
-		(*W.cylinder_ring_to_ring_Elsasser_imag) = 0.0;
-	}	
 	
 	IncVF::UB_to_Elsasser_field(W);								
 	// U=Zp=(U+B); B=Zm=(U-B);
@@ -302,22 +210,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 			(*cylinder_ring_to_ring_Elsasser)(cylinder_shell_from_i, slab_from_i,
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
 			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, 
-										*nlin1, *nlin2, *nlin3, 
-										*V1, *V2, *V3, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-										
-				(*cylinder_ring_to_ring_Elsasser_real)(cylinder_shell_from_i, slab_from_i,  
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-								
-				(*cylinder_ring_to_ring_Elsasser_imag)(cylinder_shell_from_i, slab_from_i,  
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																
-			}
-			
 		}		// end of for loop
 	
 	// ring_to_ring: Zm to Zm	
@@ -340,22 +232,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W)
 			(*W.cylinder_ring_to_ring_Elsasser)(cylinder_shell_from_i, slab_from_i,
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;
 			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, 
-										*nlin1, *nlin2, *nlin3, 
-										*W.V1, *W.V2, *W.V3, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-										
-				(*W.cylinder_ring_to_ring_Elsasser_real)(cylinder_shell_from_i, slab_from_i, 
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-								
-				(*W.cylinder_ring_to_ring_Elsasser_imag)(cylinder_shell_from_i, slab_from_i,  
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																
-			}
-			
 		}
 
 
@@ -373,12 +249,7 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W, IncSF& T)
 	Compute_cylinder_ring_tr(W);
 	
 	(*cylinder_ring_to_ring_SF) = 0.0;
-	
-	if (ET_real_imag_switch == 1)
-	{
-		(*cylinder_ring_to_ring_SF_real) = 0.0;
-		(*cylinder_ring_to_ring_SF_imag) = 0.0;
-	}	
+		
 	
 	// skip the last shell -- outer rad = infty				
 	for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
@@ -397,20 +268,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W, IncSF& T)
 											
 			(*cylinder_ring_to_ring_SF)(cylinder_shell_from_i, slab_from_i,
 										Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
-			
-			if (ET_real_imag_switch == 1)
-			{
-				Cyl_ring_mult_all_real_imag(basis_type, alias_switch, N, *nlin1, *T.F, 
-										*cylinder_shell_radius, *cylinder_kpll_array_tr, 
-										*temp_cylinder_ring_tr_real, 
-										*temp_cylinder_ring_tr_imag, kfactor);	
-										
-				(*cylinder_ring_to_ring_SF_real)(cylinder_shell_from_i, slab_from_i, 
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_real);
-								
-				(*cylinder_ring_to_ring_SF_imag)(cylinder_shell_from_i, slab_from_i,
-								Range::all(), Range::all()) = -(*temp_cylinder_ring_tr_imag);																
-			}
 			
 		}		
 }		

@@ -114,53 +114,6 @@ DP Shell_mult_single_FOUR
 
 //*********************************************************************************************
 
-/** @brief Compute local products Real(A).Real(B) and Imag(A).Imag(B) for a 3D shell
- *
- * @param  N[]  The size of the array A.
- * @param  A  a complex array.
- * @param  B  a complex array.
- * @param  inner_radius  The inner radius of the shell.
- * @param  outer_radius  The outer radius of the shell.
- * @param  kfactor[]  factor to compute actual wavenumber given grid wavenumber.
- * 
- * @return  local_real =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) ] \f$   
- * @return  local_imag = \f$ \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) ] \f$.
- *
- */								
-void Local_shell_mult_single_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& local_real, DP& local_imag,
-	DP kfactor[] 
-);
-
-
-/** @brief Compute the total products Real(A).Real(B) and Imag(A).Imag(B) for a 3D shell  
- *				by summing the local_prod_sum.
- *
- * @return  total_real =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) /2 ] \f$   
- * @return  total_imag = \f$ \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) /2 ] \f$ by 
- *							summing local_real(n) and local_imag(n).
- *
- * @sa Local_shell_mult_single_real_imag_FOUR(int N[],  Array<complx,3> A, Array<complx,3> B, 
- *			DP inner_radius, DP outer_radius, DP kfactor[], DP& local_real, DP& local_imag)
- */	
-void Shell_mult_single_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& total_real, DP& total_imag,
-	DP kfactor[]
-);
-
-
-//*********************************************************************************************
-
 /** @brief Compute local product Real(A.B*) for all 3D shell.
  *
  * @param  N[]  The size of the array A.
@@ -201,56 +154,6 @@ void Shell_mult_all_FOUR
 	DP kfactor[]
 );
 
-
-//*********************************************************************************************
-
-/** @brief Compute local products Real(A).Real(B) and Imag(A).Imag(B) for all 3D shells by 
-*					summing local_result(n).
- *
- * @param  N[]  The size of the array A.
- * @param  A  a complex array.
- * @param  B  a complex array.
- * @param  shell_radius_array The shell radii are stored here 
- *					\f$ R^{sh} = 0,2,4...,R_{max},\infty \f$.
- * @param  kfactor[]  factor to compute actual wavenumber given grid wavenumber.
- * 
- * @return  local_result_real(n) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) /2 ] \f$   
- * @return  local_result_imag(n) = \f$ \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) /2 ] \f$ 
- *	for \f$ K' \in [R^{sh}(n-1), R^{sh}(n) ) \f$,
- */	
-void Local_shell_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> local_result_real, Array<DP,1> local_result_imag, 
-	DP kfactor[]
-);
-
-/** @brief Compute products Real(A).Real(B) and Imag(A).Imag(B) for all 3D shell.
- *
- * @param  N[]  The size of the array A.
- * @param  A  a complex array.
- * @param  B  a complex array.
- * @param  shell_radius_array The shell radii are stored here 
- *				\f$ R^{sh} = 0,2,4...,R_{max},\infty \f$.
- * @param  kfactor[]  factor to compute actual wavenumber given grid wavenumber.
- * 
- * @return  result_real(n) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) /2 ] \f$   
- * @return  result_imag(n) = \f$ \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) /2 ] \f$ 
- *			by summing up local_result_real(n) and local_result_imag(n).
- *
- */	
-void Shell_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
 
 
 //*********************************************************************************************
@@ -304,60 +207,6 @@ void Shell_mult_all_FOUR
 	DP kfactor[]
 );
 
-//*********************************************************************************************	
-
-/** @brief Compute local products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) 
- *			and imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D shells.
- *
- * @param  N[]  The size of the array A.
- * @param  Ax  x-component of vector field \f$ \vec{A} \f$.
- * @param  Ay  y-component of the vector field \f$ \vec{A} \f$.
- * @param  Az  z-component of the vector field \f$ \vec{A} \f$.
- * @param  Bx  x-component of the vector field \f$ \vec{B} \f$.
- * @param  By  y-component of the vector field \f$ \vec{B} \f$.
- * @param  Bz  z-component of the vector field \f$ \vec{B} \f$.
- * @param  shell_radius_array The shell radii are stored here 
- *				\f$ R^{sh} = 0,2,4...,R_{max},\infty \f$.
- * @param  kfactor[]  factor to compute actual wavenumber given grid wavenumber.
- *
- *
- * @return local_result_real(n) = \f$ \sum[ \Re(\vec{A}(\vec{K}')) 
- *									* \Re(\vec{B}^{*}(\vec{K}')) /2 ] \f$  
- * @return local_result_imag(n) = \f$ \sum[ \Im(\vec{A}(\vec{K}')) 
- *									* \Im(\vec{B}^{*}(\vec{K}')) /2 ] \f$, 
- *									for \f$ K' \in [R^{sh}(n-1), R^{sh}(n) ) \f$,
- */	
-void Local_shell_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz,   
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> local_result_real, Array<DP,1> local_result_imag, 
-	DP kfactor[]
-);
-
-
-/** @brief Compute products \f$ 2 \Re(\vec{A}).\Re(\vec{B}) \f$ 
- *					and \f$ 2 \Im(\vec{A} ).\Im( \vec{B}) \f$
- *					for all 3D shells by summing local_result(n).
- *
- * @return result_real(n) = \f$\sum[ \Re(\vec{A}(\vec{K}')) * \Re(\vec{B}^{*}(\vec{K}')) /2 ]\f$  
- * @return result_imag(n) = \f$\sum[ \Im(\vec{A}(\vec{K}')) * \Im(\vec{B}^{*}(\vec{K}')) /2 ]\f$  
- *			by summing up local_result_real(n) and local_result_imag(n).
- *
- */
-void Shell_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-);
 
 /**********************************************************************************************
 
@@ -410,45 +259,7 @@ void Ring_mult_all_FOUR
 	DP kfactor[]
 );
 
-//*********************************************************************************************
-
-
-/** @brief Compute local products Real(A).Real(B) and Real(A).Real(B) over all 3D rings.
- *
- * @return  local_result_real(n,m) = \f$  \sum[ \Re(A(\vec{K}')) *\Re(B^{*}(\vec{K}')) /2] \f$  
- * @return  local_result_imag(n,m) = \f$  \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}'))/2]\f$  
- *				for \f$ K' = [R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ) \f$.
- *
- */	
-void Local_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-
-/** @brief Compute products Real(A).Real(B) and Real(A).Real(B) over all 3D rings by 
- *			summing local_result(n).
- *
- * @return  result_real(n,m) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}')) /2 ] \f$  
- * @return  result_imag(n,m) =  \f$  \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}')) /2 ] \f$ for  
- *					by summing up local_result_real(n) and local_result_imag(n).
- *
- */	
-void Ring_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[],  
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);								
+			
 
 //*********************************************************************************************
 
@@ -502,51 +313,6 @@ void Ring_mult_all_FOUR
 	DP kfactor[]
 );
 
-//*********************************************************************************************
-
-
-/** @brief Compute local products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) 
- *			and imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D rings.
- *
- * @return  result_real(n) =\f$ \sum[ \Re(\vec{A}(\vec{K}')) * \Re(\vec{B}^{*}(\vec{K}')) /2]\f$  
- * @return	result_imag(n) =\f$ \sum[ \Im(\vec{A}(\vec{K}')) * \Im(\vec{B}^{*}(\vec{K}')) /2]\f$    
- *				for \f$ K' = [R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ) \f$.
- *
- */ 
-void Local_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);								
-
-
-/** @brief Compute products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) 
- *			and imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D rings
- *			by summing local_result(n).
- *
- * @return  result_real(n) =\f$ \sum[ \Re(\vec{A}(\vec{K}')) * \Re(\vec{B}^{*}(\vec{K}')) /2]\f$  
- * @return	result_imag(n) =\f$ \sum[ \Im(\vec{A}(\vec{K}')) * \Im(\vec{B}^{*}(\vec{K}')) /2]\f$      
- *				by summing up local_result_real(n) and local_result_imag(n).
- *
- */ 
-void Ring_mult_all_real_imag_FOUR
-(
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz,
-	Array<DP, 1> shell_radius_array, 
-	Array<DP, 1> sector_angle_array, 
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
-
 /**********************************************************************************************
 
 			Cylinderical rings
@@ -593,38 +359,6 @@ void Cyl_ring_mult_all_FOUR
 );
 
 
-//*********************************************************************************************
-
-/** @brief Compute products Real(A).Real(B) and Real(A).Real(B) over all 3D rings.
- *
- * @return  result_real(n,m) =  \f$  \sum[ \Re(A(\vec{K}')) * \Re(B^{*}(\vec{K}'))  ] \f$  
- * @return  result_imag(n,m) = 	\f$  \sum[ \Im(A(\vec{K}')) * \Im(B^{*}(\vec{K}'))  ] \f$ for  
- *			\f$ K' = (R^{ring}(n-1), H(m-1); R^{ring}(n), H(m) ] \f$.
- *
- */	
-void Local_cyl_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-
-
-/// Sum local ring sums and send to the master node.
-void Cyl_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
 
 
 //*********************************************************************************************
@@ -673,43 +407,6 @@ void Cyl_ring_mult_all_FOUR
 	DP kfactor[]
 );
 
-//*********************************************************************************************
-
-/** @brief Compute products real(\f$ \vec{A} \f$).real(\f$ \vec{B} \f$) and 
- *						imag(\f$ \vec{A} \f$).imag(\f$ \vec{B} \f$) over all 3D cyl_rings.
- *
- * @return  result_real(n) = \f$ \sum[ \Re(\vec{A}(\vec{K}')) * 
- *									\Re(\vec{B}^{*}(\vec{K}'))  ] \f$  
- * @return	result_imag(n) = \f$  \sum[ \Im(\vec{A}(\vec{K}')) * 
- *									\Im(\vec{B}^{*}(\vec{K}')) ] \f$ for   
- *					\f$ K' = (R^{ring}(n-1), \Theta(m-1); R^{ring}(n), \Theta(m) ] \f$.
- *
- */ 
-void Local_cyl_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> local_result_real, Array<DP,2> local_result_imag, 
-	DP kfactor[]
-);
-
-
-/// Sum local ring and send to the master node.
-void Cyl_ring_mult_all_real_imag_FOUR
-(
-	string alias_switch, 
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, 
-	Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-);
 
 
 /**********************************************************************************************

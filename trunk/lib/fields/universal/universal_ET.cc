@@ -153,28 +153,6 @@ DP	Shell_mult_single
 		return 0;  // for -Wall		
 }
 
-//
-//
-	
-
-void Shell_mult_single_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	DP inner_radius, DP outer_radius, 
-	DP& total_real, DP& total_imag,
-	DP kfactor[]
-)
-{
-	if (basis_type == "FOUR") 
-		Shell_mult_single_real_imag_FOUR(alias_switch, N, A, B, inner_radius, outer_radius, 
-													total_real, total_imag, kfactor);
-	else if (basis_type == "SCFT")
-		Shell_mult_single_real_imag_SCFT(alias_switch, N, A, B, inner_radius, outer_radius, 
-													total_real, total_imag, kfactor);
-}		
 
 
 //*********************************************************************************************
@@ -197,26 +175,7 @@ void Shell_mult_all
 		Shell_mult_all_SCFT(alias_switch, N, A, B, shell_radius_array, result, kfactor);
 }
 
-
-void Shell_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A,  Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-)
-{
-	if (basis_type == "FOUR") 
-		Shell_mult_all_real_imag_FOUR(alias_switch, N, A, B, shell_radius_array, 
-										result_real, result_imag, kfactor);
-										
-	else if (basis_type == "SCFT")
-		Shell_mult_all_real_imag_SCFT(alias_switch, N, A, B, shell_radius_array, 
-										result_real, result_imag, kfactor);
-}		
+	
 
 // 
 // DOT PROD
@@ -244,27 +203,6 @@ void Shell_mult_all
 }
 
 
-void Shell_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, 
-	Array<DP,1> result_real, Array<DP,1> result_imag, 
-	DP kfactor[]
-)
-{
-	if (basis_type == "FOUR") 
-		Shell_mult_all_real_imag_FOUR(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-										shell_radius_array, result_real, result_imag, kfactor);
-										
-	else if (basis_type == "SCFT")
-		Shell_mult_all_real_imag_SCFT(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-										shell_radius_array, result_real, result_imag, kfactor);
-}		
-
 
 //********************************************************************************************* 
 
@@ -290,25 +228,7 @@ void Ring_mult_all
 }
 
 
-void Ring_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> shell_radius_array, Array<DP, 1> sector_angle_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-)
-{
-	if (basis_type == "FOUR") 
-		Ring_mult_all_real_imag_FOUR(alias_switch, N, A, B, shell_radius_array, 
-									sector_angle_array,result_real, result_imag, kfactor);
-									
-	else if (basis_type == "SCFT")
-		Ring_mult_all_real_imag_SCFT(alias_switch, N, A, B, shell_radius_array, 
-									sector_angle_array, result_real, result_imag, kfactor);
-}	
+
 
 //
 // DOT PROD
@@ -334,32 +254,7 @@ void Ring_mult_all
 		Ring_mult_all_SCFT(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, shell_radius_array, 
 							sector_angle_array, result, kfactor);
 }
-
-//
-//
-
-void Ring_mult_all_real_imag
-(
-	string basis_type, 
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> shell_radius_array, Array<DP, 1> sector_angle_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-)
-{
-	if (basis_type == "FOUR") 
-		Ring_mult_all_real_imag_FOUR(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-										shell_radius_array,  sector_angle_array, 
-										result_real, result_imag, kfactor);
-								
-	else if (basis_type == "SCFT")
-		Ring_mult_all_real_imag_SCFT(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-										shell_radius_array,  sector_angle_array, 
-										result_real, result_imag, kfactor);
-}		
+	
 
 //*********************************************************************************************
 
@@ -384,30 +279,7 @@ void Cyl_ring_mult_all
 								cylinder_kpll_array, result, kfactor);
 }		
 
-//*********************************************************************************************
 
-void Cyl_ring_mult_all_real_imag
-(
-	string basis_type,
-	string alias_switch,
-	int N[], 
-	Array<complx,3> A, Array<complx,3> B, 
-	Array<DP, 1> cylinder_shell_radius_array, Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-)
-{
-
-	if (basis_type == "FOUR") 
-		Cyl_ring_mult_all_real_imag_FOUR(alias_switch, N, A, B, cylinder_shell_radius_array,  
-								cylinder_kpll_array, result_real, result_imag, kfactor);
-		
-	else if (basis_type == "SCFT")
-		Cyl_ring_mult_all_real_imag_SCFT(alias_switch, N, A, B, cylinder_shell_radius_array, 
-								cylinder_kpll_array, result_real, result_imag, kfactor);
-}	
-
-//*********************************************************************************************
 
 void Cyl_ring_mult_all
 (
@@ -431,32 +303,6 @@ void Cyl_ring_mult_all
 						cylinder_shell_radius_array, cylinder_kpll_array, result, kfactor);
 }	
 
-
-//*********************************************************************************************
-
-void Cyl_ring_mult_all_real_imag
-(
-	string basis_type,
-	string alias_switch,
-	int N[], 
-	Array<complx,3> Ax, Array<complx,3> Ay, Array<complx,3> Az,
-	Array<complx,3> Bx, Array<complx,3> By, Array<complx,3> Bz, 
-	Array<DP, 1> cylinder_shell_radius_array, Array<DP, 1> cylinder_kpll_array,
-	Array<DP,2> result_real, Array<DP,2> result_imag, 
-	DP kfactor[]
-)
-{
-
-	if (basis_type == "FOUR") 
-		Cyl_ring_mult_all_real_imag_FOUR(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-								cylinder_shell_radius_array, cylinder_kpll_array, 
-								result_real, result_imag, kfactor);
-		
-	else if (basis_type == "SCFT")
-		Cyl_ring_mult_all_real_imag_SCFT(alias_switch, N, Ax, Ay, Az, Bx, By, Bz, 
-								cylinder_shell_radius_array, cylinder_kpll_array, 
-								result_real, result_imag, kfactor);
-}		
 
 
 //*********************************************************************************************
