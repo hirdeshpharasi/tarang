@@ -155,22 +155,43 @@ int IMHD_main(string data_dir_name)
 	string basis_type  = string_switches[1];
 			
 	// Local_N1, local_N2 assignments 
-	if (basis_type == "FOUR")
+	if (N[2] > 1)
 	{
-		int alloc_local;											  
-		alloc_local = fftw_mpi_local_size_3d_transposed(N[1], N[2], N[3], MPI_COMM_WORLD,
-									&local_N1, &local_N1_start, &local_N2, &local_N2_start);
-	}
-	
-	else if (basis_type == "SCFT")
-	{
-		local_N1 = N[1]/numprocs;			
-		local_N2 = N[2]/numprocs;
-		local_N1_start = my_id * local_N1;
-		local_N2_start = my_id * local_N2;		
-	}
-
-																													
+		if (basis_type == "FOUR")
+		{
+			int alloc_local;											  
+			alloc_local = fftw_mpi_local_size_3d_transposed(N[1], N[2], N[3], MPI_COMM_WORLD,
+										&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+		}
+		
+		else if (basis_type == "SCFT")
+		{
+			local_N1 = N[1]/numprocs;			
+			local_N2 = N[2]/numprocs;
+			local_N1_start = my_id * local_N1;
+			local_N2_start = my_id * local_N2;		
+		}
+		
+		else if (N[2] == 1)
+		{
+			if (basis_type == "FOUR")
+			{
+				
+				int alloc_local;											  
+				alloc_local = fftw_mpi_local_size_2d_transposed(N[1], N[3], MPI_COMM_WORLD,
+													&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+			}
+			
+			else if (basis_type == "SCFT")
+			{
+				local_N1 = N[1]/numprocs;			
+				local_N2 = N[3]/numprocs;
+				local_N1_start = my_id * local_N1;
+				local_N2_start = my_id * local_N2;		
+			}
+		}
+		
+																									
 	if (my_id == master_id) cout << "No or processors = " << numprocs << endl << endl;
 	
 	cout << "MY ID, local_N1, local_N1_start, local_N2, local_N2_start = " << my_id << "  "
@@ -258,6 +279,10 @@ int IMHD_main(string data_dir_name)
 		}
 		
 		U.Output_all_inloop(W);
+		
+		U.Compute_divergence_field();
+		
+		W.Compute_divergence_field();
 			
 	}
 	while (U.Tnow < U.Tfinal);
