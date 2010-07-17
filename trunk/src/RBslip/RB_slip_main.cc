@@ -221,22 +221,44 @@ int RB_slip_main(string data_dir_name)
 	string basis_type  = string_switches[1];
 	
 	// Local_N1, local_N2 assignments 
-	if (basis_type == "FOUR")
+	if (N[2] > 1)
 	{
+		if (basis_type == "FOUR")
+		{
+			
+			int alloc_local;											  
+			alloc_local = fftw_mpi_local_size_3d_transposed(N[1], N[2], N[3], MPI_COMM_WORLD,
+										&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+		}
 		
-		int alloc_local;											  
-		alloc_local = fftw_mpi_local_size_3d_transposed(N[1], N[2], N[3], MPI_COMM_WORLD,
-									&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+		else if (basis_type == "SCFT")
+		{
+			local_N1 = N[1]/numprocs;			// basis_type = SCFT
+			local_N2 = N[2]/numprocs;
+			local_N1_start = my_id * local_N1;
+			local_N2_start = my_id * local_N2;		
+		}
 	}
 	
-	else if (basis_type == "SCFT")
+	else if (N[2] == 1)
 	{
-		local_N1 = N[1]/numprocs;			// basis_type = SCFT
-		local_N2 = N[2]/numprocs;
-		local_N1_start = my_id * local_N1;
-		local_N2_start = my_id * local_N2;		
-	}
-																													
+		if (basis_type == "FOUR")
+		{
+			
+			int alloc_local;											  
+			alloc_local = fftw_mpi_local_size_2d_transposed(N[1], N[3], MPI_COMM_WORLD,
+															&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+		}
+		
+		else if (basis_type == "SCFT")
+		{
+			local_N1 = N[1]/numprocs;			
+			local_N2 = N[3]/numprocs;
+			local_N1_start = my_id * local_N1;
+			local_N2_start = my_id * local_N2;		
+		}
+	}	
+	
 	if (my_id == master_id) cout << "No or processors = " << numprocs << endl << endl;
 	
 	cout << "MY ID, local_N1, local_N1_start, local_N2, local_N2_start = " << my_id << "  "
@@ -286,6 +308,45 @@ int RB_slip_main(string data_dir_name)
 	}
 
 
+	/*
+	 
+	 Testting module..
+	 ===============
+	real(*U.V1) =  tensor::k+  (N[1]*(tensor::i));
+	
+	cout << "LOCAL N1, N3 " << local_N1 << " "  << local_N2 << endl << endl;
+	
+	cout << "stage 1 " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  <<  (*U.V1)(0,0,1) << endl << endl;
+	
+	 Transpose_array(N,*U.V1, *U.VF_temp_r);
+	
+	cout << "stage 2 " << *U.VF_temp_r << " " << (*U.VF_temp_r)(1,0,1) << " "  <<  (*U.VF_temp_r)(0,0,1) << endl;
+	
+	Inverse_transpose_array(N, *U.VF_temp_r, *U.V1);
+
+	cout << "stage 3 " << *U.VF_temp_r << " " << (*U.VF_temp_r)(1,0,1) << " "  <<  (*U.VF_temp_r)(0,0,1) << endl;
+	
+
+	cout << "stage 1 " << *U.V1 << endl << endl;  
+	
+	
+		//	ArrayISFT_SCFT(isintr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
+	
+				 ArrayICFT_SCFT(icostr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
+	
+			cout << "After icft " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  << (*U.V1)(2,0,1) << endl<< endl ;
+	
+		//	ArraySFT_SCFT(sintr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
+	
+		 ArrayCFT_SCFT(costr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
+	
+			cout << "After cft " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  << (*U.V1)(2,0,1) << endl<< endl;
+	
+	
+	exit(1);
+	*/
+	
+
 	int  iter=0;  // iterations
 	U.Tnow = U.Tinit;
 	U.Output_all_inloop(T, Ra, Pr, Pr_switch, RB_Uscaling);		// for init cond
@@ -297,6 +358,16 @@ int RB_slip_main(string data_dir_name)
 		// Both for V and Temperature field
 	
 		U.Compute_nlin(T, Pr_switch);		
+		
+		/*
+		 Testing module
+		 cout << "NLIN " <<  sum(sqr(abs(*U.nlin1))) << " "  
+		<< sum(sqr(abs(*U.nlin2))) << " "  
+		<< sum(sqr(abs(*U.nlin3))) << " "  
+		<< (*U.nlin1)(Range(0,2), Range(0,2), Range(0,2)) << endl << endl;
+		*/
+		
+		
 		U.Output_field_k_inloop(T, Pr_switch);						
 		// T(k) in the output computation needs nlin at the present time
 		

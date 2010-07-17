@@ -89,7 +89,7 @@ using namespace blitz ;
  */
 void Init_fftw_plan_FOUR(int N[], Array<complx,3> A);
 
-void Init_fftw_plan_2D_FOUR(int NN[], Array<complx,2> A);
+	//void Init_fftw_plan_2D_FOUR(int NN[], Array<complx,2> A);
 
 
 //*********************************************************************************************

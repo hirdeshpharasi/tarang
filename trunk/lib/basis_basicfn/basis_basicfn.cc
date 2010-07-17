@@ -34,7 +34,8 @@
  * @version 4.0 Parallel version
  * @author  M. K. Verma
  * @date	Sept 2008
- * @bug		No known bug
+ * @bug		The Transpose for 2D is not working at present.. it must transport 
+ *				real array.
  */ 
 
 
@@ -48,48 +49,113 @@ using namespace blitz ;
 void Transpose_array(int N[], Array<complx,3> A, Array<complx,3> Atr)
 {
 	
-	static Array<complx,2> Axy(local_N1, N[2]);	
-	static Array<complx,2> Axy_tr(N[2], local_N1);
-	
-	static Array<complx,2> temp1(N[1], local_N2);
-	static Array<complx,2> temp2(N[2], local_N1);
-	
-	static Array<complx,2> buffer1_piece(local_N1, local_N2);		
-	static Array<complx,2> buffer2_piece(local_N2, local_N1);
-	
-	int data_size = 2* local_N1 * local_N2;								
-	// 2 for complex to double
-
-	if (numprocs == 1)
-		Atr = A.transpose(1,0,2);
-	
-	else
-		for (int i3=0; i3<=N[3]/2; i3++)
-		{
+	if (N[2] > 1)
+	{
+		static Array<complx,2> Axy(local_N1, N[2]);	
+		static Array<complx,2> Axy_tr(N[2], local_N1);
 		
-			Axy = A(Range::all(), Range::all(), i3);
+		static Array<complx,2> temp1(N[1], local_N2);
+		static Array<complx,2> temp2(N[2], local_N1);
+		
+		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
+		static Array<complx,2> buffer2_piece(local_N2, local_N1);
+		
+		int data_size = 2* local_N1 * local_N2;								
+		// 2 for complex to double
+
+		if (numprocs == 1)
+			Atr = A.transpose(1,0,2);
+		
+		else
+			for (int i3=0; i3<=N[3]/2; i3++)
+			{
+			
+				Axy = A(Range::all(), Range::all(), i3);
+				Axy_tr = Axy.transpose(1,0);
+				
+				// The jth block sent from process i is received by process j and 
+				// is placed in the ith block of recvbuf. 
+				
+				MPI_Alltoall(reinterpret_cast<double*>(Axy_tr.data()), data_size, MPI_DOUBLE, 
+								reinterpret_cast<double*>(temp2.data()),
+								data_size,  MPI_DOUBLE, MPI_COMM_WORLD);	
+							
+				for (int source = 0; source < numprocs; source++) 
+				{																	
+					buffer2_piece = temp2(Range(source*local_N2,(source+1)*local_N2-1), 
+											Range::all());
+					
+					buffer1_piece = buffer2_piece.transpose(1,0);				
+					
+					temp1(Range(source*local_N1,(source+1)*local_N1-1), Range::all()) 
+									= buffer1_piece;
+				}
+				
+				Atr(Range::all(), Range::all(), i3) = temp1.transpose(1,0);
+			}
+	}	
+	
+	// 2D case
+	else if (N[2] == 1)
+	{
+		
+		static Array<DP,2> Axy(local_N1, N[3]);	
+		static Array<DP,2> Axy_tr(N[3], local_N1);
+		
+		static Array<complx,2> temp1(N[1]/2, local_N2);
+		static Array<complx,2> temp2(N[3]/2, local_N1);
+		
+		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
+		static Array<complx,2> buffer2_piece(local_N2, local_N1);
+		
+			//	int data_size = 2* local_N1 * local_N2;								
+			// 2 for complex to double
+		
+		if (numprocs == 1)
+		{
+			// for (int l1=0; l1<N[1]; l1++)
+			for (int i2 = 0; i2 < N[3]/2; i2++)
+			{
+				Axy(Range::all(),2*i2) = real(A(Range::all(), 0, i2));
+				Axy(Range::all(),2*i2+1) = imag(A(Range::all(), 0, i2));
+			}
+		
+			Axy_tr = Axy.transpose(1,0);	
+			
+				//	cout << "Axy "  << Axy << endl << endl;
+				//			cout << "Axy_tr "  << Axy_tr << endl << endl;
+			
+			for (int i2 = 0; i2 < N[1]/2; i2++)
+			{
+				real(Atr(Range::all(), 0, i2)) = Axy_tr(Range::all(), 2*i2);
+				imag(Atr(Range::all(), 0, i2)) = Axy_tr(Range::all(), 2*i2+1);
+			}
+		}
+		
+	/*	else
+		{
+			Axy = A(Range::all(), 0, Range(0, N[3]/2));
 			Axy_tr = Axy.transpose(1,0);
 			
-			// The jth block sent from process i is received by process j and 
-			// is placed in the ith block of recvbuf. 
-			
 			MPI_Alltoall(reinterpret_cast<double*>(Axy_tr.data()), data_size, MPI_DOUBLE, 
-							reinterpret_cast<double*>(temp2.data()),
-							data_size,  MPI_DOUBLE, MPI_COMM_WORLD);	
-						
+						 reinterpret_cast<double*>(temp2.data()),
+						 data_size,  MPI_DOUBLE, MPI_COMM_WORLD);
+			
 			for (int source = 0; source < numprocs; source++) 
 			{																	
 				buffer2_piece = temp2(Range(source*local_N2,(source+1)*local_N2-1), 
-										Range::all());
+									  Range::all());
 				
 				buffer1_piece = buffer2_piece.transpose(1,0);				
 				
 				temp1(Range(source*local_N1,(source+1)*local_N1-1), Range::all()) 
-								= buffer1_piece;
+							  = buffer1_piece;
 			}
 			
-			Atr(Range::all(), Range::all(), i3) = temp1.transpose(1,0);
-		}	
+			Atr(Range::all(), 0, Range::all()) = temp1.transpose(1,0);
+		}	*/	
+	}
+	
 }
 
 //
@@ -100,49 +166,117 @@ void Transpose_array(int N[], Array<complx,3> A, Array<complx,3> Atr)
 void Inverse_transpose_array(int N[], Array<complx,3> Atr, Array<complx,3> A)
 {
 
-	static Array<complx,2> Axy(N[1], local_N2);
-	static Array<complx,2> Atr_xy(local_N2, N[1]);	
-	
-	static Array<complx,2> temp1(N[1], local_N2);
-	static Array<complx,2> temp2(N[2], local_N1);
-	
-	static Array<complx,2> buffer1_piece(local_N1, local_N2);		
-	static Array<complx,2> buffer2_piece(local_N2, local_N1);
-	
-	int data_size = 2* local_N1 * local_N2;								
-	// 2 for complex to double
-
-	if (numprocs == 1)
-		A = Atr.transpose(1,0,2);
-	
-	else
-		for (int i3=0; i3<=N[3]/2; i3++)
-		{
+	if (N[2] > 1)
+	{	
+		static Array<complx,2> Axy(N[1], local_N2);
+		static Array<complx,2> Atr_xy(local_N2, N[1]);	
 		
-			Atr_xy = Atr(Range::all(), Range::all(), i3);
+		static Array<complx,2> temp1(N[1], local_N2);
+		static Array<complx,2> temp2(N[2], local_N1);
+		
+		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
+		static Array<complx,2> buffer2_piece(local_N2, local_N1);
+		
+			//	int data_size = 2* local_N1 * local_N2;								
+		// 2 for complex to double
+
+		if (numprocs == 1)
+			A = Atr.transpose(1,0,2);
+		
+		else
+			for (int i3=0; i3<=N[3]/2; i3++)
+			{
+			
+				Atr_xy = Atr(Range::all(), Range::all(), i3);
+				Axy = Atr_xy.transpose(1,0);
+				
+				// The jth block sent from process i is received by process j and 
+				// is placed in the ith block of recvbuf. 
+				
+				MPI_Alltoall(reinterpret_cast<double*>(Axy.data()), data_size, MPI_DOUBLE, 
+								reinterpret_cast<double*>(temp1.data()),
+								data_size,  MPI_DOUBLE, MPI_COMM_WORLD);	
+							
+				for (int source = 0; source < numprocs; source++) 
+				{																	
+					buffer1_piece = temp1(Range(source*local_N1,(source+1)*local_N1-1), 
+											Range::all());
+					
+					buffer2_piece = buffer1_piece.transpose(1,0);				
+					
+					temp2(Range(source*local_N2,(source+1)*local_N2-1), Range::all()) 
+									= buffer2_piece;
+				}
+				
+				A(Range::all(), Range::all(), i3) = temp2.transpose(1,0);
+			}	
+	}
+	
+	// 2D case
+	else if (N[2] == 1)
+	{	
+		
+		static Array<DP,2> Axy(N[1], local_N2);
+		static Array<DP,2> Atr_xy(local_N2, N[1]);	
+		
+		static Array<complx,2> temp1(N[1], local_N2);
+		static Array<complx,2> temp2(N[3], local_N1);
+		
+		static Array<complx,2> buffer1_piece(local_N1, local_N2);		
+		static Array<complx,2> buffer2_piece(local_N2, local_N1);
+		
+		int data_size = 2* local_N1 * local_N2;								
+			// 2 for complex to double
+		
+		if (numprocs == 1)
+		{
+			
+			for (int i2 = 0; i2 < N[1]/2; i2++)
+			{
+				Atr_xy(Range::all(),2*i2) = real(Atr(Range::all(), 0, i2));
+				Atr_xy(Range::all(),2*i2+1) = imag(Atr(Range::all(), 0, i2));
+			}
+			
+			Axy = Atr_xy.transpose(1,0);	
+		
+				//			cout << "Axy_tr "  << Atr_xy << endl << endl;
+				// cout << "Axy "  << Axy << endl << endl;
+		
+			for (int i2 = 0; i2 < N[3]/2; i2++)
+			{
+				real(A(Range::all(), 0, i2)) = Axy(Range::all(), 2*i2);
+				imag(A(Range::all(), 0, i2)) = Axy(Range::all(), 2*i2+1);
+			}
+			
+		}
+			
+		
+	/*	else
+		{
+			Atr_xy = Atr(Range::all(), 0, Range::all());
 			Axy = Atr_xy.transpose(1,0);
 			
-			// The jth block sent from process i is received by process j and 
-			// is placed in the ith block of recvbuf. 
+				// The jth block sent from process i is received by process j and 
+				// is placed in the ith block of recvbuf. 
 			
 			MPI_Alltoall(reinterpret_cast<double*>(Axy.data()), data_size, MPI_DOUBLE, 
-							reinterpret_cast<double*>(temp1.data()),
-							data_size,  MPI_DOUBLE, MPI_COMM_WORLD);	
-						
+						 reinterpret_cast<double*>(temp1.data()),
+						 data_size,  MPI_DOUBLE, MPI_COMM_WORLD);	
+			
 			for (int source = 0; source < numprocs; source++) 
 			{																	
 				buffer1_piece = temp1(Range(source*local_N1,(source+1)*local_N1-1), 
-										Range::all());
+									  Range::all());
 				
 				buffer2_piece = buffer1_piece.transpose(1,0);				
 				
 				temp2(Range(source*local_N2,(source+1)*local_N2-1), Range::all()) 
-								= buffer2_piece;
+							  = buffer2_piece;
 			}
 			
-			A(Range::all(), Range::all(), i3) = temp2.transpose(1,0);
-		}	
-
+			A(Range::all(), 0, Range::all()) = temp2.transpose(1,0);
+		} */
+	}
 		
 }
 

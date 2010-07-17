@@ -161,6 +161,10 @@ void FT_Plane_SCFT(fftw_plan r2c_plan_SCFT, int N[], Array<complx,2> Plane);
 /// 2D FFTW Inverse Fourier transform Plane().	
 void IFT_Plane_SCFT(fftw_plan c2r_plan_SCFT, int N[], Array<complx,2> Plane);
 
+void FT_column_1d_SCFT(fftw_plan r2c_1d_plan_SCFT, int N[], Array<complx,1> temp_column_2d);
+
+void IFT_column_1d_SCFT(fftw_plan c2r_1d_plan_SCFT, int N[], Array<complx,1> temp_column_2d);
+
 /// Shift-right array A.  Before the shift kx=1..n.
 /// After the shift: kx=0..(n-1).  A(0,:,:)=0. kx=n mode thrown out.						 	 
 void ArrayShiftRight_SCFT(int N[], Array<complx,3> A);
@@ -190,6 +194,7 @@ void ArraySFT_SCFT_transpose_order
 (
 	fftw_plan sintr_plan_SCFT, 
 	fftw_plan r2c_plan_SCFT, 
+	fftw_plan r2c_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> Atr, 
 	Array<complx,3> A
@@ -214,7 +219,8 @@ void ArraySFT_SCFT_transpose_order
 void ArrayCFT_SCFT_transpose_order
 (
 	fftw_plan costr_plan_SCFT, 
-	fftw_plan r2c_plan_SCFT, 
+	fftw_plan r2c_plan_SCFT,
+	fftw_plan r2c_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> Atr, 
 	Array<complx,3> A
@@ -239,6 +245,7 @@ void ArrayISFT_SCFT_transpose_order
 (
 	fftw_plan isintr_plan_SCFT, 
 	fftw_plan c2r_plan_SCFT, 
+	fftw_plan c2r_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> Atr
@@ -262,6 +269,7 @@ void ArrayICFT_SCFT_transpose_order
 (
 	fftw_plan icostr_plan_SCFT, 
 	fftw_plan c2r_plan_SCFT, 
+	fftw_plan c2r_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> Atr
@@ -290,6 +298,7 @@ void ArraySFT_SCFT
 (
 	fftw_plan sintr_plan_SCFT, 
 	fftw_plan r2c_plan_SCFT, 
+	fftw_plan r2c_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> temp_r
@@ -314,6 +323,7 @@ void ArrayCFT_SCFT
 (
 	fftw_plan costr_plan_SCFT, 
 	fftw_plan r2c_plan_SCFT, 
+	fftw_plan r2c_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> temp_r
@@ -340,6 +350,7 @@ void ArrayISFT_SCFT
 (
 	fftw_plan isintr_plan_SCFT, 
 	fftw_plan c2r_plan_SCFT, 
+	fftw_plan c2r_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> temp_r
@@ -366,6 +377,7 @@ void ArrayICFT_SCFT
 (
 	fftw_plan icostr_plan_SCFT, 
 	fftw_plan c2r_plan_SCFT, 
+	fftw_plan c2r_1d_plan_SCFT,
 	int N[], 
 	Array<complx,3> A, 
 	Array<complx,3> temp_r

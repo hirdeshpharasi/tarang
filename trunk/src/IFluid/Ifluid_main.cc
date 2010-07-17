@@ -165,12 +165,6 @@ int Ifluid_main(string data_dir_name)
 			local_N1_start = my_id * local_N1;
 			local_N2_start = my_id * local_N2;		
 		}
-																	
-		if (my_id == master_id) cout << "No or processors = " << numprocs << endl << endl;
-		
-		cout << "MY ID, local_N1, local_N1_start, local_N2, local_N2_start = " << my_id << "  "
-			 << local_N1 << "  " << local_N1_start << "  " << local_N2 << "  " << local_N2_start
-			 << endl << endl;
 	}
 	
 	else if (N[2] == 1)
@@ -190,15 +184,14 @@ int Ifluid_main(string data_dir_name)
 			local_N1_start = my_id * local_N1;
 			local_N2_start = my_id * local_N2;		
 		}
-		
-		if (my_id == master_id) cout << "No or processors = " << numprocs << endl << endl;
-		
-		cout << "MY ID, local_N1, local_N1_start, local_N2, local_N2_start = " << my_id << "  "
-		<< local_N1 << "  " << local_N1_start << "  " << local_N2 << "  " << local_N2_start
-		<< endl << endl;
-	
 	}	
 	
+	if (my_id == master_id) 
+		cout << "No or processors = " << numprocs << endl << endl;
+	
+	cout << "MY ID, local_N1, local_N1_start, local_N2, local_N2_start = " << my_id << "  "
+		<< local_N1 << "  " << local_N1_start << "  " << local_N2 << "  " << local_N2_start
+		<< endl << endl;
 	
 	// Constructors of Vector field
 
@@ -242,18 +235,6 @@ int Ifluid_main(string data_dir_name)
 	U.Tnow = U.Tinit;
 	U.Output_all_inloop();  // for initial cond
 	
-	/*
-	cout << "Before transform " << *U.V1 << endl;
-	
-	ArrayIFFT_FOUR(c2r_plan_FOUR, N, *U.V1);
-	
-	cout << "After transform1 " << *U.V1 << endl;
-	
-	ArrayFFT_FOUR(r2c_plan_FOUR, N, *U.V1);
-	
-	cout << "After transform2 " << *U.V1 << endl;
-	 */
-
 		//	U.Open_output_files_hdf5(prefix_str, U.Tnow, N, 3);
 		// U.Output_all_inloop_hdf5();
 
@@ -262,7 +243,7 @@ int Ifluid_main(string data_dir_name)
 		
 		U.Compute_force();	
 
-		U.Compute_nlin();						
+		U.Compute_nlin();
 		U.Output_field_k_inloop();				// T(k) in the output computation needs nlin
 												// Output at the present time.
 													

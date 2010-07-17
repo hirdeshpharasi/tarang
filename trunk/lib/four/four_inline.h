@@ -346,7 +346,7 @@ inline DP Multiplicity_factor_FOUR(int l1, int l2, int l3, int N[])
 	else
 		factor = 0.5;
 		
-	if ( (kx == N[1]/2) || (ky == N[2]/2) )
+	if ( (kx == N[1]/2) || ((ky == N[2]/2)&& (N[2] > 1)) )
 		return 2*factor;		// for kx = -N[1]/2 or ky = -N[2]/2 ; 
 								// Ignoring corner which would have factor 4
 	else

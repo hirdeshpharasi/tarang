@@ -328,10 +328,10 @@ inline DP Multiplicity_factor_SCFT(int l1, int l2, int l3, int N[])
 		else				// kz = 0; m = 0 line
 			factor = 0.5;
 			
-	if (ky != N[2]/2)
+	if ((ky == N[2]/2) && (N[2] > 1))
+		return 2*factor;	// for both ky = N[2]/2 and -N[2]/2
+	else					
 		return factor;
-	else					// for both ky = N[2]/2 and -N[2]/2
-		return 2*factor;
 }
 
 

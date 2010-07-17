@@ -47,30 +47,12 @@
 
 void Init_fftw_plan_array(string basis_type, int N[], Array<complx,3> A)
 {
-	if (N[2] > 1)
-	{
-		if (basis_type == "FOUR")
-			Init_fftw_plan_FOUR(N, A);
-			
-		else if (basis_type == "SCFT")
-			Init_fftw_plan_SCFT(N, A);
-	}
 	
-	else if (N[2] == 1)		//2D in 3D box
-	{
-		static Array<complx,2> A2D(N[1], (N[3]/2)+1); 
-		
-		int NN[3];
-		
-		NN[0] = 0;   NN[1] = N[1]; NN[2] = N[3];
-		
-		if (basis_type == "FOUR")
-			Init_fftw_plan_2D_FOUR(N, A2D);
-		 
-		
-		else if (basis_type == "SCFT")
-			;
-	}	
+	if (basis_type == "FOUR")
+		Init_fftw_plan_FOUR(N, A);
+	
+	else if (basis_type == "SCFT")
+		Init_fftw_plan_SCFT(N, A);
 }
 
 
@@ -96,10 +78,10 @@ void Forward_transform_array
 	else if (basis_type == "SCFT")
 	{
 		if (parity == 0)					// even parity
-			ArrayCFT_SCFT(costr_plan_SCFT, r2c_plan_SCFT, N, A, temp_r);
+			ArrayCFT_SCFT(costr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, A, temp_r);
 			
 		else if (parity == 1)				// odd parity
-			ArraySFT_SCFT(sintr_plan_SCFT, r2c_plan_SCFT, N, A, temp_r);
+			ArraySFT_SCFT(sintr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, A, temp_r);
 	}		
 }
 
@@ -124,10 +106,12 @@ void Forward_transform_array_transpose_order
 	else if (basis_type == "SCFT") 
 	{
 		if (parity == 0)					// even parity
-			ArrayCFT_SCFT_transpose_order(costr_plan_SCFT, r2c_plan_SCFT, N, Atr, A);
+			ArrayCFT_SCFT_transpose_order(costr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, 
+													N, Atr, A);
 			
 		else if (parity == 1)				// odd parity
-			ArraySFT_SCFT_transpose_order(sintr_plan_SCFT, r2c_plan_SCFT, N, Atr, A);
+			ArraySFT_SCFT_transpose_order(sintr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, 
+													N, Atr, A);
 	}		
 }
 
@@ -154,10 +138,10 @@ void Inverse_transform_array
 	else if (basis_type == "SCFT") 
 	{
 		if (parity == 0)					// even parity
-			ArrayICFT_SCFT(icostr_plan_SCFT, c2r_plan_SCFT, N, A, temp_r);
+			ArrayICFT_SCFT(icostr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, A, temp_r);
 			
 		else if (parity == 1)				// odd parity
-			ArrayISFT_SCFT(isintr_plan_SCFT, c2r_plan_SCFT, N, A, temp_r);
+			ArrayISFT_SCFT(isintr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, A, temp_r);
 	}
 }
 
@@ -181,10 +165,12 @@ void Inverse_transform_array_transpose_order
 	else if (basis_type == "SCFT") 
 	{
 		if (parity == 0)					// even parity
-			ArrayICFT_SCFT_transpose_order(icostr_plan_SCFT, c2r_plan_SCFT, N, A, Atr);
+			ArrayICFT_SCFT_transpose_order(icostr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, 
+												N, A, Atr);
 			
 		else if (parity == 1)				// odd parity
-			ArrayISFT_SCFT_transpose_order(isintr_plan_SCFT, c2r_plan_SCFT, N, A, Atr);
+			ArrayISFT_SCFT_transpose_order(isintr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, 
+												N, A, Atr);
 	}		
 }
 

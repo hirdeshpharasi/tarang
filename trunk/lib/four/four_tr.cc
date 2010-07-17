@@ -30,7 +30,7 @@
  * @author  M. K. Verma
  * @version 4.0 Parallel 
  * @date	August 2008
- * @bug		Init_fftw_plan_2D_FOUR not working at present-- fftw does not support it.
+ * @bug		none known
  */ 
 
 
@@ -41,32 +41,38 @@ using namespace blitz ;
 
 //*********************************************************************************************
 
-void Init_fftw_plan_FOUR(int NN[], Array<complx,3> A)
+void Init_fftw_plan_FOUR(int N[], Array<complx,3> A)
 {
 
-	r2c_plan_FOUR = fftw_mpi_plan_dft_r2c_3d(NN[1], NN[2], NN[3], 
-					reinterpret_cast<double*>(A.data()), 
-					reinterpret_cast<fftw_complex*>(A.data()),  MPI_COMM_WORLD, FFTW_MEASURE);
-							
-	c2r_plan_FOUR = fftw_mpi_plan_dft_c2r_3d(NN[1], NN[2], NN[3], 
-					reinterpret_cast<fftw_complex*>(A.data()), 
-					reinterpret_cast<double*>(A.data()), MPI_COMM_WORLD, FFTW_MEASURE);		 
-}
-
-
-//*********************************************************************************************
-
-void Init_fftw_plan_2D_FOUR(int NN[], Array<complx,2> A)
-{
-
-	r2c_plan_FOUR = fftw_mpi_plan_dft_r2c_2d(NN[1], NN[3], 
-					 reinterpret_cast<double*>(A.data()), 
-					 reinterpret_cast<fftw_complex*>(A.data()),  MPI_COMM_WORLD, FFTW_MEASURE);
+	if (N[2] > 1)
+	{
+		r2c_plan_FOUR = fftw_mpi_plan_dft_r2c_3d(N[1], N[2], N[3], 
+							reinterpret_cast<double*>(A.data()), 
+							reinterpret_cast<fftw_complex*>(A.data()),  
+							MPI_COMM_WORLD, FFTW_MEASURE);
+								
+		c2r_plan_FOUR = fftw_mpi_plan_dft_c2r_3d(N[1], N[2], N[3], 
+							reinterpret_cast<fftw_complex*>(A.data()), 
+							reinterpret_cast<double*>(A.data()), 
+							MPI_COMM_WORLD, FFTW_MEASURE);		
+	}
 	
-	c2r_plan_FOUR = fftw_mpi_plan_dft_c2r_2d(NN[1], NN[3], 
-					 reinterpret_cast<fftw_complex*>(A.data()), 
-					 reinterpret_cast<double*>(A.data()), MPI_COMM_WORLD, FFTW_MEASURE);	
+	else if (N[2] ==1)
+	{
+		static Array<complx,2> A2d(N[1], (N[3]/2)+1);
+		
+		r2c_plan_FOUR = fftw_mpi_plan_dft_r2c_2d(N[1], N[3], 
+							reinterpret_cast<double*>(A2d.data()), 
+							reinterpret_cast<fftw_complex*>(A2d.data()),  
+							MPI_COMM_WORLD, FFTW_MEASURE);
+		
+		c2r_plan_FOUR = fftw_mpi_plan_dft_c2r_2d(N[1], N[3], 
+							reinterpret_cast<fftw_complex*>(A2d.data()), 
+							reinterpret_cast<double*>(A2d.data()), 
+							MPI_COMM_WORLD, FFTW_MEASURE);
+	}
 }
+
 
 //*********************************************************************************************
 
@@ -146,13 +152,13 @@ void Norm_FOUR(int N[], Array<complx,3> A)
 
 //*********************************************************************************************
 
-void Xderiv_FOUR(int NN[],Array<complx,3> A, Array<complx,3> B, DP kfactor[])
+void Xderiv_FOUR(int N[],Array<complx,3> A, Array<complx,3> B, DP kfactor[])
 {
 	int k1;
 	
 	for (int l1 = 0; l1 < local_N1; l1++) 			// l1 is the local array-index along x
 	{
-		k1 = Get_kx_FOUR(l1, NN);
+		k1 = Get_kx_FOUR(l1, N);
 		
 		B(l1,Range::all(),Range::all()) = 
 		    complex<DP>(0, kfactor[1])*((DP) 1.0*k1)*( A(l1,Range::all(),Range::all()) ); 	
@@ -163,25 +169,25 @@ void Xderiv_FOUR(int NN[],Array<complx,3> A, Array<complx,3> B, DP kfactor[])
 //*********************************************************************************************
 
 
-void Yderiv_FOUR(int NN[], Array<complx,3> A, Array<complx,3> B, DP kfactor[])
+void Yderiv_FOUR(int N[], Array<complx,3> A, Array<complx,3> B, DP kfactor[])
 {
 	secondIndex l2;
-	B(Range::all(),Range(0,NN[2]/2),Range::all()) = 
+	B(Range::all(),Range(0,N[2]/2),Range::all()) = 
 		complex<DP>(0, kfactor[2])*((DP) 1.0*l2)
-		* ( A(Range::all(),Range(0,NN[2]/2),Range::all()) ); 
+		* ( A(Range::all(),Range(0,N[2]/2),Range::all()) ); 
 		// l2 = 0:N2/2; k2 = l2.
 	
-	if (NN[2] > 1)
-		B(Range::all(),Range(NN[2]/2+1,NN[2]-1),Range::all()) = 
-			complex<DP>(0, kfactor[2])*((DP) 1.0*(l2+1-NN[2]/2))*
-			( A(Range::all(),Range(NN[2]/2+1,NN[2]-1),Range::all()) );
+	if (N[2] > 1)
+		B(Range::all(),Range(N[2]/2+1,N[2]-1),Range::all()) = 
+			complex<DP>(0, kfactor[2])*((DP) 1.0*(l2+1-N[2]/2))*
+			( A(Range::all(),Range(N[2]/2+1,N[2]-1),Range::all()) );
 			// l2 = 0:N2/2;  k2 = l2-N2/2+1.
 }
 
 //*********************************************************************************************
 
 
-void Zderiv_FOUR(int NN[],Array<complx,3> A, Array<complx,3> B, DP kfactor[])
+void Zderiv_FOUR(int N[],Array<complx,3> A, Array<complx,3> B, DP kfactor[])
 {
 	thirdIndex l3;
 	B = complex<DP>(0, kfactor[3])*((DP) 1.0*l3)*(A);

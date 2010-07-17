@@ -54,6 +54,8 @@ MPI_Status status;
 fftw_plan r2c_plan_FOUR, c2r_plan_FOUR;
 fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT, 
 					isintr_plan_SCFT, icostr_plan_SCFT;  // i for inverse
+
+fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;  // for 2D
 					
 Uniform<DP> SPECrand;					// Global variable for random no generation		
 			

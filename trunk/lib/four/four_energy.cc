@@ -82,7 +82,6 @@ DP Get_local_energy_FOUR(string alias_switch, int N[], Array<complx,3> A)
 	if (my_id == master_id)  
 		total += - pow2(abs(A(0,0,0)))/2;  
 	
-	total =   sum(sqr(abs(A))) ;
 		
 	return total;
 }
@@ -112,8 +111,10 @@ DP Get_local_energy_FOUR(string alias_switch, int N[],  Array<complx,3> A, Array
 	DP total = 0.0;
 	
 	// kz >= 0
-	total =   real(sum(A*conj(B)))
-			+ real( sum( A(Range::all(), N[2]/2, Range::all())
+	total =   real(sum(A*conj(B)));
+	
+	if (N[2] > 1)
+		total += real( sum( A(Range::all(), N[2]/2, Range::all())
 						* conj(B(Range::all(), N[2]/2, Range::all()))) );		
 						// for ky = -N[2]/2
 	
@@ -128,8 +129,10 @@ DP Get_local_energy_FOUR(string alias_switch, int N[],  Array<complx,3> A, Array
 	
 	// kz = 0: 	 subtract 1/2(...) 
 	total += - real( sum(A(Range::all(), Range::all(), 0)
-							* conj(B(Range::all(), Range::all(), 0))) )/2
-			 - real( sum(A(Range::all(), N[2]/2, 0)* conj(B(Range::all(), N[2]/2, 0))) )/2;
+						 * conj(B(Range::all(), Range::all(), 0))) )/2;
+	
+	if (N[2] > 1)
+		total += - real( sum(A(Range::all(), N[2]/2, 0)* conj(B(Range::all(), N[2]/2, 0))) )/2;
 			 
 	if (numprocs == 1)						// for kx = -N[1]/2
 		total +=  - real( sum(A(N[1]/2, Range::all(), 0)

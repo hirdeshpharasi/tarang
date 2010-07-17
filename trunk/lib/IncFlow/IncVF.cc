@@ -114,7 +114,13 @@ IncVF::IncVF
 	
 	VF_temp = new Array<complx,3>(local_N1, N[2],N[3]/2+1); 
 	VF_temp2 = new Array<complx,3>(local_N1, N[2],N[3]/2+1);
-	VF_temp_r = new Array<complx,3>(local_N2, N[1],N[3]/2+1);
+	
+	if (N[2] > 1)
+		VF_temp_r = new Array<complx,3>(local_N2, N[1],N[3]/2+1);
+	
+	else if (N[2] == 1)
+		VF_temp_r = new Array<complx,3>(local_N2, N[2],N[1]/2);
+	
 
 	(*VF_temp) = 0.0; 
 	(*VF_temp2) = 0.0;

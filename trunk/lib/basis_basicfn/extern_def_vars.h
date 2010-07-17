@@ -110,6 +110,8 @@ extern fftw_plan r2c_plan_FOUR, c2r_plan_FOUR;
 extern fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT, 
 					isintr_plan_SCFT, icostr_plan_SCFT; 
 
+extern fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;
+
 // random extern vars
 					
 extern Uniform<DP> SPECrand;
