@@ -33,7 +33,7 @@
  *		Fy = -F*cos(k0 x)sin(k0 y) cos(k0 z) <BR>
  *		Fz = 0
  *
- *  @note is_force_field_modes_read is used to read only once.
+ *  @note is_force_field_para_read is used to read only once.
  *
  * @author  M. K. Verma
  * @version 4.0 MPI
@@ -50,14 +50,14 @@
 void IncFluid::Compute_force_Taylor_Green()
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		int k0 = ((int) (*force_field_para)(1));
 		DP force_amp = (*force_field_para)(2);
 		
 		Setup_Taylor_Green_force_field(k0, force_amp);
 		
-		is_force_field_modes_read = 1;  // To read only once.
+		is_force_field_para_read = 1;  // To read only once.
 	}	
 	
 }
@@ -71,13 +71,13 @@ void IncFluid::Compute_force_Taylor_Green()
 void IncFluid::Compute_force_Taylor_Green(IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		*T.Force = 0.0;
 		
 		Compute_force_Taylor_Green();
 	
-		is_force_field_modes_read = 1;
+		is_force_field_para_read = 1;
 	}	
 
 }
@@ -91,7 +91,7 @@ void IncFluid::Compute_force_Taylor_Green(IncSF& T)
 void IncFluid::Compute_force_Taylor_Green(IncVF& W)
 {
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		int k0 = ((int) (*force_field_para)(1));
 		DP force_amp = (*force_field_para)(2);
@@ -100,7 +100,7 @@ void IncFluid::Compute_force_Taylor_Green(IncVF& W)
 		Setup_Taylor_Green_force_field(k0, force_amp);
 		W.Setup_Taylor_Green_force_field(k0, forceW_amp);
 		
-		is_force_field_modes_read = 1;
+		is_force_field_para_read = 1;
 	}
 		
 }
@@ -114,12 +114,12 @@ void IncFluid::Compute_force_Taylor_Green(IncVF& W)
 void IncFluid::Compute_force_Taylor_Green(IncVF& W, IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		*T.Force = 0.0;
 		Compute_force_Taylor_Green(W);
 		
-		is_force_field_modes_read = 1;
+		is_force_field_para_read = 1;
 	}	
 	
 }	

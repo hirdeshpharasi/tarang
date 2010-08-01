@@ -92,7 +92,13 @@ inline DP Get_polar_angle(DP kkperp, DP kkpll)
 	}
 	
 	else		// along pll axis
-		temp = 0.0;
+	{	
+		if (kkpll >= 0)
+			temp = 0.0;
+		
+		else
+			temp = M_PI;
+	}
 		
 	return (temp >= 0) ? temp : temp + M_PI; 
 }

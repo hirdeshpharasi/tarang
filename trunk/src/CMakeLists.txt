@@ -66,14 +66,19 @@ SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3 -pipe")
 ADD_EXECUTABLE(../tarangMPI  main.h main.cc  
 	read_prog_para.cc
 	read_para.cc 
+	read_diag_para.cc
 	IFluid/Ifluid_main.h  
 	IFluid/Ifluid_main.cc 
-	IPassiveScalar/Ipassive_scalar_main.h  
-	IPassiveScalar/Ipassive_scalar_main.cc
+	IFluid/Ifluid_diag_main.cc 
+	IScalar/Iscalar_main.h  
+	IScalar/Iscalar_main.cc
+	IScalar/Iscalar_diag_main.cc
 	IMHD/IMHD_main.h  
 	IMHD/IMHD_main.cc
+	IMHD/IMHD_diag_main.cc
 	RBslip/RB_slip_main.h   
-	RBslip/RB_slip_main.cc   
+	RBslip/RB_slip_main.cc 
+	RBslip/RB_slip_diag_main.cc   
 	RBslip/read_RB_slip_para.cc)
 
 

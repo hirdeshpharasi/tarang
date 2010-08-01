@@ -111,7 +111,7 @@ void IncFluid::Read_waveno_force_field(int k_dim, int F_n, int& num_force_waveno
 void  IncFluid::Compute_force_given_modes_SIMPLE()
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -166,7 +166,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE()
 			cout << "******************************************" << endl;	
 			
 		
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 	
 }
@@ -193,7 +193,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE()
 void IncFluid::Compute_force_given_modes_SIMPLE(IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -253,7 +253,7 @@ void IncFluid::Compute_force_given_modes_SIMPLE(IncSF& T)
 			cout << "******************************************" << endl;	
 		
 		
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 	
 }
@@ -279,7 +279,7 @@ void IncFluid::Compute_force_given_modes_SIMPLE(IncSF& T)
 void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -344,7 +344,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W)
 			cout << "******************************************" << endl;	
 		
 			
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 	
 }
@@ -372,7 +372,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W)
 void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W, IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -444,7 +444,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W, IncSF& T)
 			cout << "******************************************" << endl;
 			
 			
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 	
 }
@@ -468,7 +468,7 @@ void  IncFluid::Compute_force_given_modes_SIMPLE(IncVF& W, IncSF& T)
 void  IncFluid::Compute_force_given_modes_VORTICITY()
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -521,7 +521,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY()
 		if (my_id == master_id) 
 			cout << "******************************************" << endl;
 			
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 
 }
@@ -544,7 +544,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY()
 void  IncFluid::Compute_force_given_modes_VORTICITY(IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -601,7 +601,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY(IncSF& T)
 		if (my_id == master_id) 
 			cout << "******************************************" << endl;
 						
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 
 }
@@ -626,7 +626,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY(IncSF& T)
 void  IncFluid::Compute_force_given_modes_VORTICITY(IncVF& W)
 {
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -691,7 +691,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY(IncVF& W)
 		if (my_id == master_id) 
 			cout << "******************************************" << endl;	
 		
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 
 }
@@ -715,7 +715,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY(IncVF& W)
 void  IncFluid::Compute_force_given_modes_VORTICITY(IncVF& W, IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		Input_force_prefix(force_field_in_file);
 		
@@ -786,7 +786,7 @@ void  IncFluid::Compute_force_given_modes_VORTICITY(IncVF& W, IncSF& T)
 		if (my_id == master_id) 
 			cout << "******************************************" << endl;	
 		
-		is_force_field_modes_read = 1;		// force field modes read now
+		is_force_field_para_read = 1;		// force field modes read now
 	}
 
 }

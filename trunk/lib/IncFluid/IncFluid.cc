@@ -168,7 +168,7 @@ IncFluid:: IncFluid
 	(*force_field_modes_k_array) = 0;
 	(*force_field_modes_F_array) = 0.0;
 	
-	is_force_field_modes_read = 0;
+	is_force_field_para_read = 0;
 	
 	num_force_waveno = 0;
 	

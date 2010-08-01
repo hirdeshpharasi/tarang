@@ -71,6 +71,13 @@ int RB_slipMHD_main(string data_dir_name)
 	
 	Array<int,1>	switches( MAXSIZE_SWITCHES_ARRAY);
 	
+	
+	// solver para
+	Array<int,1>	solver_meta_para(MAXSIZE_SOLVER_META_PARA);
+	Array<int,1>	solver_int_para(MAXSIZE_SOLVER_INT_PARA);
+	Array<DP,1>		solver_double_para(MAXSIZE_SOLVER_DOUBLE_PARA);
+	string			solver_string_para[MAXSIZE_SOLVER_STRING_PARA];
+	
 	// Variables connected to the output functions
 	
 	//! Tinit, Tfinal, Tdt, Tdiagnostic_int in index 1..4
@@ -139,7 +146,9 @@ int RB_slipMHD_main(string data_dir_name)
 	para_file.open(filename.c_str());		// filename = data_dir_name/in/para.d
 	
 	Read_para(para_file, 3, no_of_fields, N, string_switches, switches,
-					diss_coefficients, hyper_diss_coefficients, time_para, time_save, 
+					diss_coefficients, hyper_diss_coefficients, 
+					solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+					time_para, time_save, 
 					misc_output_para, ET_parameters, ET_shell_radii_sector_array,
 					no_output_k_r, out_k_r_array,
 					field_input_meta_para, init_cond_para,

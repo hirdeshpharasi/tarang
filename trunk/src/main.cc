@@ -56,6 +56,10 @@ fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT,
 					isintr_plan_SCFT, icostr_plan_SCFT;  // i for inverse
 
 fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;  // for 2D
+
+int		globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
+int		globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
+
 					
 Uniform<DP> SPECrand;					// Global variable for random no generation		
 			
@@ -91,15 +95,27 @@ int main(int argc, char** argv)
 		
 	if (prog_kind == "INC_FLUID")
 		Ifluid_main(data_dir_name);
-
-	else if (prog_kind == "INC_PASSIVE_SCALAR")
-		Ipassive_scalar_main(data_dir_name);
-		
+	
+	else if (prog_kind == "INC_FLUID_DIAG")
+		Ifluid_diag_main(data_dir_name);
+	
+	else if (prog_kind == "INC_SCALAR")
+		Iscalar_main(data_dir_name);
+	
+	else if (prog_kind == "INC_SCALAR_DIAG")
+		Iscalar_diag_main(data_dir_name);
+	
 	else if (prog_kind == "INC_MHD")
 		IMHD_main(data_dir_name);
-				
+	
+	else if (prog_kind == "INC_MHD_DIAG")
+		IMHD_diag_main(data_dir_name);
+	
 	else if (prog_kind == "RB_SLIP")
 		RB_slip_main(data_dir_name);
+	
+	else if (prog_kind == "RB_SLIP_DIAG")
+		RB_slip_diag_main(data_dir_name);
 		
 	else
 		if (my_id == master_id)

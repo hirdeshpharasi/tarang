@@ -50,9 +50,20 @@ int Get_local_number_modes_in_shell_FOUR(int N[], DP inner_radius, DP outer_radi
 	
 	int l1, l2, l3;
 	
-	int kx_max = (int) ceil(outer_radius/kfactor[1]);
-	int ky_max = (int) ceil(outer_radius/kfactor[2]);
-	int kz_max = (int) ceil(outer_radius/kfactor[3]);
+	int kx_max, ky_max, kz_max;
+	
+	kx_max = (int) ceil(outer_radius/kfactor[1]);
+	
+	if (N[2] > 1)
+		ky_max = (int) ceil(outer_radius/kfactor[2]);
+	else
+		ky_max = 0.0;
+	
+	if (N[3] >=2)
+		kz_max = (int) ceil(outer_radius/kfactor[3]);
+	else
+		kz_max = 0.0;
+	
 	
 	int count = 0;
 	DP kkmag;
@@ -61,7 +72,7 @@ int Get_local_number_modes_in_shell_FOUR(int N[], DP inner_radius, DP outer_radi
 		for (int ky = -ky_max; ky <= ky_max; ky++)  
 			for (int kz = 0; kz <= kz_max; kz++)
 			{
-				l1 = ((kx >= 0) ? kx : (kx + N[1]));
+				l1 = Get_lx_FOUR(kx, N);
 				l2 = Get_ly3D_FOUR(ky, N);
 				l3 = kz;
 				

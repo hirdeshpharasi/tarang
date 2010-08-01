@@ -191,7 +191,7 @@ void IncVF::Add_complex_conj(int kx, int ky, int kz, complx Vx, complx Vy, compl
 			cout << "Complex-conj(V) added for k = (" << -kx << "," << -ky << "," << kz << ")" 
 					<< endl;	
 		}
-																																		
+
 	}	
 		
 	else if ((basis_type == "SCFT") && ((kz == 0) || (kz == N[3]/2)) ) 		
@@ -365,7 +365,6 @@ void IncVF::Add_complex_conj_force(int kx, int ky, int kz, complx Fx, complx Fy,
 			// cout << "Complex-conj(Force) added for k = " << -kx << "," << -ky << "," << kz 
 			//		<< ")" << endl;	
 		}
-																																		
 	}
 			
 	else if ((basis_type == "SCFT") && ((kz == 0) || (kz == N[3]/2)) ) 		

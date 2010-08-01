@@ -55,9 +55,6 @@ using namespace blitz ;
 // DEF vars  
 #ifndef DP
 #define DP double
-// Number of digits for output files
-// NOTE:  for double only.. For float put MY_PRECISION = 6
-const int MY_PRECISION = 8;
 #endif
 
 #ifndef complx
@@ -74,11 +71,18 @@ const complx  I = complx(0,1.0);
 const complx  minusI = complx(0,-1.0);
 
 /// minus2I = -2*sqrt(-1).			
-const complx  minus2I = complx(0,-2.0);			
+const complx  minus2I = complx(0,-2.0);	
+
+// Number of digits for output files
+// NOTE:  for double only.. For float put MY_PRECISION = 6
+const int MY_PRECISION = 8;
 
 
 const DP  MYEPS = 1E-15;
 const DP  MYEPS2 = 1E-5;
+
+const int MY_MAX_INT = 5000;
+// cut off while reading diagnostic_procedure() array from input file and similar ops
 
 /// Infinite radius.. All the modes outside -- for flux and shelltr calc
 const DP INF_RADIUS = 10000; 
@@ -111,6 +115,9 @@ extern fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT,
 					isintr_plan_SCFT, icostr_plan_SCFT; 
 
 extern fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;
+
+extern int	globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
+extern int	globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
 
 // random extern vars
 					

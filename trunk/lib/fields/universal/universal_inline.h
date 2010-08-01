@@ -181,13 +181,13 @@ inline int Max_radius_inside(string basis_type, string alias_switch, int N[], DP
 
 /// Returns the approximate number of modes in a wavenumber K shell of radius "radius". 
 ///		(Choices: WAVENOACTUAL or WAVENOGRID).
-inline DP Approx_number_modes_in_shell(string basis_type, int radius, DP kfactor[])
+inline DP Approx_number_modes_in_shell(string basis_type, int N[], int radius, DP kfactor[])
 {
 	if (basis_type == "FOUR")  
-		return  Approx_number_modes_in_shell_FOUR(radius, kfactor);
+		return  Approx_number_modes_in_shell_FOUR(N, radius, kfactor);
 		
 	else if (basis_type == "SCFT")		
-		return  Approx_number_modes_in_shell_SCFT(radius, kfactor);
+		return  Approx_number_modes_in_shell_SCFT(N, radius, kfactor);
 		
 	else 
 		return 0;			// for -Wall	
@@ -316,6 +316,21 @@ inline int Anis_max_Krho_radius_inside
 }
 
 
+// Max polar angle
+inline DP  Get_max_polar_angle(string basis_type)
+{
+	if (basis_type == "FOUR")  
+		return Get_max_polar_angle_FOUR();
+	
+	else if (basis_type == "SCFT")  
+		return Get_max_polar_angle_SCFT();
+	
+	else 
+		return 0;			// for -Wall	
+}
+
+
+
 /// 3D: Returns the angle K vector makes with the anisotropic for anisotropy calculations.
 inline DP AnisKvect_polar_angle
 (
@@ -337,7 +352,7 @@ inline DP AnisKvect_polar_angle
 
 
 /// 3D: Returns the angle K vector makes with the anisotropic for anisotropy calculations.
-inline DP AnisKvect_polar_angle_2Din3Dgrid
+inline DP AnisKvect_azimuthal_angle_2Din3Dgrid
 (
  string basis_type, 
  int i1, int i2, int i3, 
@@ -346,10 +361,10 @@ inline DP AnisKvect_polar_angle_2Din3Dgrid
 )
 { 
 	if (basis_type == "FOUR")  
-		return AnisKvect_polar_angle_2Din3Dgrid_FOUR(i1, i2, i3, N, kfactor);
+		return AnisKvect_azimuthal_angle_2Din3Dgrid_FOUR(i1, i2, i3, N, kfactor);
 	
 	else if (basis_type == "SCFT")  
-		return AnisKvect_polar_angle_2Din3Dgrid_SCFT(i1, i2, i3, N, kfactor);
+		return AnisKvect_azimuthal_angle_2Din3Dgrid_SCFT(i1, i2, i3, N, kfactor);
 	
 	else 
 		return 0;			// for -Wall	
@@ -370,20 +385,6 @@ inline DP AnisKvect_azimuthal_angle
 		
 	else if (basis_type == "SCFT")  
 		return AnisKvect_azimuthal_angle_SCFT(i1, i2, i3, N, kfactor);
-		
-	else 
-		return 0;			// for -Wall	
-}
-
-
-// Max polar angle
-inline DP  Get_max_polar_angle(string basis_type)
-{
-	if (basis_type == "FOUR")  
-		return Get_max_polar_angle_FOUR();
-		
-	else if (basis_type == "SCFT")  
-		return Get_max_polar_angle_SCFT();
 		
 	else 
 		return 0;			// for -Wall	

@@ -49,18 +49,29 @@ int Get_local_number_modes_in_shell_SCFT(int N[], DP inner_radius, DP outer_radi
 {
 	int l1, l2, l3;
 	
-	int kx_max = (int) ceil(outer_radius/kfactor[1]);
-	int ky_max = (int) ceil(outer_radius/kfactor[2]);
-	int kz_max = (int) ceil(outer_radius/kfactor[3]);
+	int kx_max, ky_max, kz_max;
+	
+	kx_max = (int) ceil(outer_radius/kfactor[1]);
+	
+	if (N[2] > 1)
+		ky_max = (int) ceil(outer_radius/kfactor[2]);
+	else
+		ky_max = 0.0;
+	
+	if (N[3] >=2)
+		kz_max = (int) ceil(outer_radius/kfactor[3]);
+	else
+		kz_max = 0.0;
+	
 	
 	int count = 0;
 	DP kkmag;
 	
-	for (int kx = -kx_max; kx <= kx_max; kx++)
+	for (int kx = 0; kx <= kx_max; kx++)
 		for (int ky = -ky_max; ky <= ky_max; ky++)  
 			for (int kz = 0; kz <= kz_max; kz++)
 			{
-				l1 = kx;
+				l1 = Get_lx_SCFT(kx, N);
 				l2 = Get_ly3D_SCFT(ky, N);
 				l3 = kz;
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
@@ -219,10 +230,11 @@ void Array_mult_ksqr_SCFT(int N[], Array<complx,3> A, DP kfactor[])
 			= A(l1, Range(0,N[2]/2), Range::all())
 				* ( pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) + pow2(l3*kfactor[3]));
   
-		A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
-			= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
-				* ( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2) * kfactor[2]) 
-								+ pow2(l3*kfactor[3]));
+		if (N[2] > 1)
+			A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
+				= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
+					* ( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2) * kfactor[2]) 
+									+ pow2(l3*kfactor[3]));
 	}  
 }
 
@@ -246,9 +258,10 @@ void Array_divide_ksqr_SCFT(int N[], Array<complx,3> A, DP kfactor[])
 			= A(l1, Range(0,N[2]/2), Range::all())
 				/( pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) + pow2(l3*kfactor[3]));
   
-		A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
-			= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
-				/( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) + pow2(l3*kfactor[3]));
+		if (N[2] > 1)
+			A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
+				= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
+					/( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) + pow2(l3*kfactor[3]));
 	}
    
 	// To avoid division by zero
@@ -277,10 +290,11 @@ void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP kfactor[])
 				* exp(factor* ( pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) 
 													+ pow2(l3*kfactor[3])) );
   
-		A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
-			= A(l1, Range(N[2]/2+1,N[2]-1), Range::all()) 
-				* exp(factor* ( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
-													+ pow2(l3*kfactor[3])) );
+		if (N[2] > 1)
+			A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
+				= A(l1, Range(N[2]/2+1,N[2]-1), Range::all()) 
+					* exp(factor* ( pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
+														+ pow2(l3*kfactor[3])) );
 	}
   
 }
@@ -309,12 +323,13 @@ void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP hyper_factor,
 					+  hyper_factor* sqr(pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) 
 															 + pow2(l3*kfactor[3])) );
   
-		A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
-			= A(l1, Range(N[2]/2+1,N[2]-1), Range::all()) 
-				* exp(factor* (pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
-													+ pow2(l3*kfactor[3])) 
-					+ hyper_factor* sqr(pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
-													+ pow2(l3*kfactor[3])) );
+		if (N[2] > 1)
+			A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
+				= A(l1, Range(N[2]/2+1,N[2]-1), Range::all()) 
+					* exp(factor* (pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
+														+ pow2(l3*kfactor[3])) 
+						+ hyper_factor* sqr(pow2(k1*kfactor[1]) + pow2((l2+1-N[2]/2)*kfactor[2]) 
+														+ pow2(l3*kfactor[3])) );
 	}
 
 }
@@ -346,9 +361,11 @@ void Array_mult_V0_khat_sqr_SCFT(int N[], Array<complx,3> A, TinyVector<DP,3> V0
 			= A(l1, Range(0,N[2]/2), Range::all())
 				* sqr( V0x*k1*kfactor[1] + V0y*l2*kfactor[2] + V0z*l3*kfactor[3] );
   
-		A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
-			= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
-				* sqr( V0x*k1*kfactor[1] + V0y*(l2+1-N[2]/2)*kfactor[2] + V0z*l3*kfactor[3] );
+		
+		if (N[2] > 1)
+			A(l1, Range(N[2]/2+1,N[2]-1), Range::all())  
+				= A(l1, Range(N[2]/2+1,N[2]-1), Range::all())
+					* sqr( V0x*k1*kfactor[1] + V0y*(l2+1-N[2]/2)*kfactor[2] + V0z*l3*kfactor[3] );
 	}  
 	
 	Array_divide_ksqr_SCFT(N, A, kfactor);	

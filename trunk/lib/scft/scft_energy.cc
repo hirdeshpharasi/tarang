@@ -168,12 +168,19 @@ DP Get_local_Sn_SCFT(string alias_switch, int N[], Array<complx,3> A, DP n, DP k
 {
 	DP Sn = 0.0;
 	DP kkmag;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Min_radius_outside_SCFT(alias_switch, N, kfactor);
 	
 	for (int l1=0; l1< local_N1; l1++) 
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++)					
+			for (int l3=0; l3<=maxN3; l3++)					
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
@@ -243,14 +250,21 @@ void Compute_local_shell_spectrum_SCFT
 	local_Sk = 0.0;															// initialize Ek
 	
 	DP kkmag;
-	int index;  
+	int index, maxN3;  
 	DP factor;	
 
 	int	kkmax = Min_radius_outside_SCFT(alias_switch, N, kfactor);
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else		// 2D
+		maxN3 = 0;
+	
+	
 	for (int l1=0; l1< local_N1; l1++) 
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++)					
+			for (int l3=0; l3<=maxN3; l3++)					
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				index = (int) ceil(kkmag);	
@@ -308,27 +322,11 @@ void Compute_shell_spectrum_SCFT
 		int kkmax_inside = Max_radius_inside_SCFT(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_SCFT(alias_switch, N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{	
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * Approx_number_modes_in_shell_SCFT(index, kfactor)  
-											/ Sk_count(index); 
-		}
-		
-		else if (N[2] == 1)	// Actual wavenumber used here...
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-			{
-				approx_number_modes_in_shell_2D = (M_PI*index/2)/(kfactor[1]*kfactor[3]);
-				
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * approx_number_modes_in_shell_2D	/ Sk_count(index);
-			}	
-			
-		}	
+	
+		for (int index = kkmax_inside+1; index <= kkmax; index++) 
+			if (Sk_count(index) >= 1) 
+				Sk(index) = Sk(index) * Approx_number_modes_in_shell_SCFT(N, index, kfactor)  
+										/ Sk_count(index); 
 	}
 }
 
@@ -354,14 +352,20 @@ void Compute_local_shell_spectrum_SCFT
 	local_Sk = 0.0;															// initialize Ek
 	
 	DP kkmag;
-	int index;
+	int index, maxN3;
 	DP factor;  	
 
 	int	kkmax = Min_radius_outside_SCFT(alias_switch, N, kfactor);
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else		// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1< local_N1; l1++) 
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++)					
+			for (int l3=0; l3<=maxN3; l3++)					
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				index = (int) ceil(kkmag);	
@@ -421,27 +425,10 @@ void Compute_shell_spectrum_SCFT
 		int kkmax_inside = Max_radius_inside_SCFT(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_SCFT(alias_switch, N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{
-			for (int index =  kkmax_inside+1; index <= kkmax; index++)
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * Approx_number_modes_in_shell_SCFT(index, kfactor) 
-											/ Sk_count(index); 
-		}
-		
-		else if (N[2] == 1)	// Actual wavenumber used here...
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-			{
-				approx_number_modes_in_shell_2D = (M_PI*index/2)/(kfactor[1]*kfactor[3]);
-				
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * approx_number_modes_in_shell_2D	/ Sk_count(index);
-			}	
-			
-		}	
+		for (int index =  kkmax_inside+1; index <= kkmax; index++)
+			if (Sk_count(index) >= 1) 
+				Sk(index) = Sk(index) * Approx_number_modes_in_shell_SCFT(N, index, kfactor) 
+										/ Sk_count(index); 
 	}
 }
 
@@ -451,6 +438,8 @@ void Compute_shell_spectrum_SCFT
 	Compute Helicity1 = K . (Vr x Vi)
 	Helicity2 = K. (Vr x Vi)/K^2
 	Multiplication factor = 1 for kz>0 because of energy spectrum details.
+ 
+	not for 2D
 
 ***********************************************************************************************/
 
@@ -467,6 +456,7 @@ void Compute_local_helicity_SCFT
 {
 	TinyVector<DP,3> Vreal, Vimag, VrcrossVi, kk;
 	DP modal_helicity, kkmag, kksqr;
+	
 	
 	local_helicity1 = local_helicity2 = 0.0;
 	local_dissipation_H1 = 0.0;
@@ -491,7 +481,7 @@ void Compute_local_helicity_SCFT
 					Wavenumber_SCFT(l1, l2, l3, N, kfactor, kk);
 					kksqr = pow2(kkmag);
 					
-					modal_helicity = Multiplicity_factor_SCFT(l1, l2, l3, N) 
+					modal_helicity = 2*Multiplicity_factor_SCFT(l1, l2, l3, N) 
 												* dot(kk, VrcrossVi);
 												
 					local_helicity1 += modal_helicity;
@@ -549,6 +539,7 @@ void Compute_total_helicity_SCFT
 	Helicity1 = K . (Vr x Vi)
 	Helicity2 = K. (Vr x Vi)/K^2
 
+	Not for 2D
 ***********************************************************************************************/
 
 void Compute_local_shell_spectrum_helicity_SCFT
@@ -571,6 +562,7 @@ void Compute_local_shell_spectrum_helicity_SCFT
 	DP factor;
 	
 	int	kkmax = Min_radius_outside_SCFT(alias_switch,N, kfactor);
+
 	
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
@@ -581,7 +573,7 @@ void Compute_local_shell_spectrum_helicity_SCFT
 				
 				if (index <= kkmax) 
 				{
-					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
+					factor = 2*Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
 					Vreal = real((-I)*Ax(l1, l2, l3)), real(Ay(l1, l2, l3)), 
 														real(Az(l1, l2, l3));
@@ -657,43 +649,19 @@ void Compute_shell_spectrum_helicity_SCFT
 		int kkmax_inside = Max_radius_inside_SCFT(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_SCFT(alias_switch,N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{	
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-				if (H1k1_count(index) >= 1) 
-				{
-					H1k1(index) = H1k1(index) * Approx_number_modes_in_shell_SCFT(index, kfactor) 
-											/ H1k1_count(index); 
-											
-					H1k2(index) = H1k2(index) * Approx_number_modes_in_shell_SCFT(index, kfactor) 
-											/ H1k1_count(index); 
-											
-					H1k3(index) = H1k3(index) * Approx_number_modes_in_shell_SCFT(index, kfactor) 
-											/ H1k1_count(index); 
-				}	
-		}
-		
-		else if (N[2] == 1)	// Actual wavenumber used here...
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-			{	
-				approx_number_modes_in_shell_2D = (M_PI*index/2)/(kfactor[1]*kfactor[3]);
-				
-				if (H1k1_count(index) >= 1) 
-				{
-					H1k1(index) = H1k1(index) * approx_number_modes_in_shell_2D 
+
+		for (int index = kkmax_inside+1; index <= kkmax; index++) 
+			if (H1k1_count(index) >= 1) 
+			{
+				H1k1(index) = H1k1(index) * Approx_number_modes_in_shell_SCFT(N, index, kfactor) 
 										/ H1k1_count(index); 
-					
-					H1k2(index) = H1k2(index) * approx_number_modes_in_shell_2D 
+										
+				H1k2(index) = H1k2(index) * Approx_number_modes_in_shell_SCFT(N, index, kfactor) 
 										/ H1k1_count(index); 
-					
-					H1k3(index) = H1k3(index) * approx_number_modes_in_shell_2D 
+										
+				H1k3(index) = H1k3(index) * Approx_number_modes_in_shell_SCFT(N, index, kfactor) 
 										/ H1k1_count(index); 
-				}
 			}	
-		}	
 			
 	}
 }
@@ -716,6 +684,13 @@ DP Get_local_entropy_SCFT
 {
 
 	DP modal_energy, prob, local_entropy;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP total_energy = Get_total_energy_SCFT(alias_switch, N, Ax) 
 						+ Get_total_energy_SCFT(alias_switch, N, Ay) 
@@ -727,7 +702,7 @@ DP Get_local_entropy_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)										// kz>0: factor 1
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				modal_energy = Modal_energy_SCFT(Ax, l1, l2, l3) 
 								+ Modal_energy_SCFT(Ay, l1, l2, l3) 
@@ -775,6 +750,13 @@ DP Get_local_entropy_scalar_SCFT(string alias_switch, int N[], Array<complx,3> A
 {
 
 	DP modal_energy, prob,local_entropy;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP total_energy = Get_total_energy_SCFT(alias_switch, N, A);
 	
@@ -783,7 +765,7 @@ DP Get_local_entropy_scalar_SCFT(string alias_switch, int N[], Array<complx,3> A
 	local_entropy = 0.0;	
 	for (int l1=0; l1<local_N1; l1++)										// kz>0: factor 1
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				modal_energy = Modal_energy_SCFT(A, l1, l2, l3);
 				
@@ -851,12 +833,19 @@ void Compute_local_ring_spectrum_SCFT
 	DP V2sqr;	
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_SCFT(alias_switch, N, kfactor);
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -876,20 +865,24 @@ void Compute_local_ring_spectrum_SCFT
 					if (kkperp < MYEPS)			// k on the anisotropy axis.
 					{
 					
-#ifdef ANISDIRN1
-						anisV1 = Ay(l1, l2, l3);
-						anisV2 = Az(l1, l2, l3);
-#endif
+						if (globalvar_anisotropy_switch == 1)
+						{
+							anisV1 = Ay(l1, l2, l3);
+							anisV2 = Az(l1, l2, l3);
+						}	
 
-#ifdef ANISDIRN2
-						anisV1 = Az(l1, l2, l3);
-						anisV2 = (-I) * Ax(l1, l2, l3);		// -I to convert to Fourier basis
-#endif
+						else if (globalvar_anisotropy_switch == 2)
+						{
+							anisV1 = Az(l1, l2, l3);
+							anisV2 = (-I) * (Ax(l1, l2, l3));		
+							// -I to convert to Fourier basis
+						}	
 
-#ifdef ANISDIRN3
-						anisV1 = (-I) * Ax(l1, l2, l3);		// -I to convert to Fourier basis
-						anisV2 = Ay(l1, l2, l3);
-#endif
+						else if (globalvar_anisotropy_switch == 3)
+						{
+							anisV1 = (-I) * Ax(l1, l2, l3);		// -I to convert to Fourier basis
+							anisV2 = Ay(l1, l2, l3);
+						}	
 
 						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)  
 																	   * pow2(abs(anisV1));
@@ -901,32 +894,40 @@ void Compute_local_ring_spectrum_SCFT
 					else
 					{
 
-						V = (-I) * Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);		
-						// -I to convert to Fourier basis
-					
-						VcrossK = cross(V, kk);
-				
-#ifdef ANISDIRN1
-						anisV1 = VcrossK(0)/kkperp;
-#endif
-
-#ifdef ANISDIRN2
-						anisV1 = VcrossK(1)/kkperp;
-#endif
-
-#ifdef ANISDIRN3
-						anisV1 = VcrossK(2)/kkperp;
-#endif
-
-
-					
-						local_S1k(shell_index, sector_index) += pow(kkmag,n)  
-																* pow2(abs(anisV1));
+						if ((N[2] > 1) && (N[3] > 2))
+						{
+							V = (-I) * Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);		
+							// -I to convert to Fourier basis
 						
-						V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
-										+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
+							VcrossK = cross(V, kk);
+					
+							if (globalvar_anisotropy_switch == 1)
+								anisV1 = VcrossK(0)/kkperp;
+
+							else if (globalvar_anisotropy_switch == 2)
+								anisV1 = VcrossK(1)/kkperp;
+
+							else if (globalvar_anisotropy_switch == 3)
+								anisV1 = VcrossK(2)/kkperp;
+
 						
-						local_S2k(shell_index, sector_index) += pow(kkmag,n)  * V2sqr;
+							local_S1k(shell_index, sector_index) += pow(kkmag,n)  
+																	* pow2(abs(anisV1));
+							
+							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
+											+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
+							
+							local_S2k(shell_index, sector_index) += pow(kkmag,n)  * V2sqr;
+						}
+						else // 2D
+						{
+							local_S1k(shell_index, sector_index) = 0.0;
+							
+							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
+										+  pow2(abs(Az(l1,l2,l3)));
+							
+							local_S2k(shell_index, sector_index) += pow(kkmag,n)  * V2sqr;
+						}
 				
 					}	// of inner else
 				}		// of if
@@ -992,13 +993,20 @@ void Compute_local_ring_spectrum_SCFT
 	DP kkmag, theta, kkh1, kkh2, kkperp;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	
 	int	kkmax = Max_radius_inside_SCFT(alias_switch,N, kfactor);
 					
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1018,80 +1026,103 @@ void Compute_local_ring_spectrum_SCFT
 					if (kkperp < MYEPS)			// k on the anisotropy axis.
 					{
 					
-#ifdef ANISDIRN1
-						anisV1 = Ay(l1, l2, l3);	anisV2 = Az(l1, l2, l3);
-						anisW1 = By(l1, l2, l3);	anisW2 = Bz(l1, l2, l3);
-#endif
+						if (globalvar_anisotropy_switch == 1)
+						{
+							anisV1 = Ay(l1, l2, l3);	
+							anisV2 = Az(l1, l2, l3);
+							anisW1 = By(l1, l2, l3);	
+							anisW2 = Bz(l1, l2, l3);
+						}	
 
-#ifdef ANISDIRN2
-						anisV1 = Az(l1, l2, l3);	anisV2 = (-I) * Ax(l1, l2, l3);
-						anisW1 = Bz(l1, l2, l3);	anisW2 = (-I) * Bx(l1, l2, l3);
-#endif
+						else if (globalvar_anisotropy_switch == 2)
+						{
+							anisV1 = Az(l1, l2, l3);
+							anisV2 = (-I) * (Ax(l1, l2, l3));
+							anisW1 = Bz(l1, l2, l3);
+							anisW2 = (-I) * (Bx(l1, l2, l3));
+						}	
 
-#ifdef ANISDIRN3
-						anisV1 = (-I) * Ax(l1, l2, l3);	anisV2 = Ay(l1, l2, l3);
-						anisW1 = (-I) * Bx(l1, l2, l3);	anisW2 = By(l1, l2, l3);
-#endif
+						else if (globalvar_anisotropy_switch == 3)
+						{
+							anisV1 = (-I) * Ax(l1, l2, l3);	
+							anisV2 = Ay(l1, l2, l3);
+							anisW1 = (-I) * Bx(l1, l2, l3);	
+							anisW2 = By(l1, l2, l3);
+						}	
 
 						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
 															* real( anisV1*conj(anisW1) );
 															
 						local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
-															* real( anisV2*conj(anisW2) );					
+															* real( anisV2*conj(anisW2) );		
 					}
 				
 				
 					else
 					{
 
-						V = (-I) * Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
-					
-						VcrossK = cross(V, kk);
+						if ((N[2] > 1) && (N[3] > 2))
+						{
+							V = (-I) * Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
 						
-						W = (-I) * Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
-					
-						WcrossK = cross(W, kk);
+							VcrossK = cross(V, kk);
+							
+							W = (-I) * Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
 						
-						kkh1 = AnisKh1_SCFT(l1, l2, l3, N, kfactor);
-						kkh2 = AnisKh2_SCFT(l1, l2, l3, N, kfactor);
-					
-#ifdef ANISDIRN1
-						anisV1 = VcrossK(0)/kkperp;
-						anisW1 = WcrossK(0)/kkperp;
+							WcrossK = cross(W, kk);
+							
+							kkh1 = AnisKh1_SCFT(l1, l2, l3, N, kfactor);
+							kkh2 = AnisKh2_SCFT(l1, l2, l3, N, kfactor);
 						
-						e1K = 0.0, kkh2/kkperp, -kkh1/kkperp;
-						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-					
-#endif
+							if (globalvar_anisotropy_switch == 1)
+							{
+								anisV1 = VcrossK(0)/kkperp;
+								anisW1 = WcrossK(0)/kkperp;
+								
+								e1K = 0.0, kkh2/kkperp, -kkh1/kkperp;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}
 
-#ifdef ANISDIRN2
-						anisV1 = VcrossK(1)/kkperp;
-						anisW1 = WcrossK(1)/kkperp;
-						
-						e1K = -kkh1/kkperp, 0.0, kkh2/kkperp;
-						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-#endif
+							else if (globalvar_anisotropy_switch == 2)
+							{
+								anisV1 = VcrossK(1)/kkperp;
+								anisW1 = WcrossK(1)/kkperp;
+								
+								e1K = -kkh1/kkperp, 0.0, kkh2/kkperp;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}
 
-#ifdef ANISDIRN3
-						anisV1 = VcrossK(2)/kkperp;
-						anisW1 = WcrossK(2)/kkperp;
-						
-						e1K = kkh2/kkperp, -kkh1/kkperp, 0.0;
-						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-#endif
+							else if (globalvar_anisotropy_switch == 3)
+							{
+								anisV1 = VcrossK(2)/kkperp;
+								anisW1 = WcrossK(2)/kkperp;
+								
+								e1K = kkh2/kkperp, -kkh1/kkperp, 0.0;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}
 
-					
-						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
-																* real( anisV1*conj(anisW1) );
 						
-						local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
-																* real( anisV2*conj(anisW2) );
+							local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
+																	* real( anisV1*conj(anisW1) );
+							
+							local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+																	* real( anisV2*conj(anisW2) );
+						}
+						else  // 2D
+						{
+							local_S1k(shell_index, sector_index)  = 0.0;
+							
+							local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+											* real( Ax(l1,l2,l3) * conj(Bx(l1,l2,l3))
+												   +Ay(l1,l2,l3) * conj(By(l1,l2,l3)) 
+												   +Az(l1,l2,l3) * conj(Bz(l1,l2,l3)) );
+						}
 				
 					}	// of inner else
 				}		// of if (shell_index <= kkmax)
@@ -1151,12 +1182,19 @@ void Compute_local_ring_spectrum_SCFT
 	DP kkmag,  theta;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_SCFT(alias_switch,N, kfactor);
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1225,12 +1263,19 @@ void Compute_local_ring_spectrum_SCFT
 	DP kkmag,  theta;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_SCFT(alias_switch,N, kfactor);
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1282,6 +1327,7 @@ void Compute_ring_spectrum_SCFT
 //*********************************************************************************************
 //
 // helicity spectrum
+// Not for 2D
 //
 
 void Compute_local_ring_spectrum_helicity_SCFT
@@ -1302,6 +1348,7 @@ void Compute_local_ring_spectrum_helicity_SCFT
 	DP modal_helicity;
 	DP factor;
 	int shell_index, sector_index;
+	
 
 	int	kkmax = Max_radius_inside_SCFT(alias_switch,N, kfactor);
 	
@@ -1326,7 +1373,7 @@ void Compute_local_ring_spectrum_helicity_SCFT
 					VrcrossVi = cross(Vreal, Vimag);
 					Wavenumber_SCFT(l1, l2, l3, N, kfactor, kk);
 					
-					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
+					factor = 2*Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
 					modal_helicity = factor * dot(kk, VrcrossVi);				
 					local_H1k(shell_index, sector_index) +=  modal_helicity;
@@ -1367,6 +1414,7 @@ void Compute_ring_spectrum_helicity_SCFT
 /**********************************************************************************************
 	
 								CYLINDERICAL RING SPECTRUM
+										Not for 2D
 				
 ***********************************************************************************************/
 
@@ -1414,17 +1462,14 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 				
 			
-#ifdef ANISDIRN1
-					anisV1 = (-I)*Ax(l1, l2, l3);
-#endif
+					if (globalvar_anisotropy_switch == 1)
+						anisV1 = (-I)*Ax(l1, l2, l3);
 
-#ifdef ANISDIRN2
-					anisV1 = Ay(l1, l2, l3);
-#endif
+					else if (globalvar_anisotropy_switch == 2)
+						anisV1 = Ay(l1, l2, l3);
 
-#ifdef ANISDIRN3
-					anisV1 = Az(l1, l2, l3);
-#endif
+					else if (globalvar_anisotropy_switch == 3)
+						anisV1 = Az(l1, l2, l3);
 
 					
 					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n)  
@@ -1518,37 +1563,40 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 					V = (-I)*Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
 					W = (-I)*Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
 			
-#ifdef ANISDIRN1
-					anisV1 = Ax(l1, l2, l3);
-					anisW1 = Bx(l1, l2, l3);
-					
-					e1K = 1.0, 0.0, 0.0;
-					
-					Vrho = complx(0.0,0.0), Ay(l1, l2, l3), Az(l1, l2, l3);
-					Wrho_conj = complx(0.0,0.0), conj(By(l1, l2, l3)), conj(Bz(l1, l2, l3));					
-#endif
+					if (globalvar_anisotropy_switch == 1)
+					{
+						anisV1 = Ax(l1, l2, l3);
+						anisW1 = Bx(l1, l2, l3);
+						
+						e1K = 1.0, 0.0, 0.0;
+						
+						Vrho = complx(0.0,0.0), Ay(l1, l2, l3), Az(l1, l2, l3);
+						Wrho_conj = complx(0.0,0.0), conj(By(l1, l2, l3)), conj(Bz(l1, l2, l3));
+					}	
 
-#ifdef ANISDIRN2
-					anisV1 = Ay(l1, l2, l3);
-					anisW1 = By(l1, l2, l3);
-					
-					e1K = 0.0, 1.0, 0.0;
-					
-					Vrho = (-I)*Ax(l1, l2, l3), complx(0.0,0.0), Az(l1, l2, l3);
-					Wrho_conj = conj((-I)*Bx(l1, l2, l3)), complx(0.0,0.0), 
-															conj(Bz(l1, l2, l3));
-#endif
+					else if (globalvar_anisotropy_switch == 2)
+					{
+						anisV1 = Ay(l1, l2, l3);
+						anisW1 = By(l1, l2, l3);
+						
+						e1K = 0.0, 1.0, 0.0;
+						
+						Vrho = (-I)*Ax(l1, l2, l3), complx(0.0,0.0), Az(l1, l2, l3);
+						Wrho_conj = conj((-I)*Bx(l1, l2, l3)), complx(0.0,0.0), 
+																conj(Bz(l1, l2, l3));
+					}	
 
-#ifdef ANISDIRN3
-					anisV1 = Az(l1, l2, l3);
-					anisW1 = Bz(l1, l2, l3);
-					
-					e1K = 0.0, 0.0, 1.0;
-					
-					Vrho = (-I)*Ax(l1, l2, l3), Ay(l1, l2, l3), complx(0.0,0.0);
-					Wrho_conj = conj((-I)*Bx(l1, l2, l3)), conj(By(l1, l2, l3)), 
-															complx(0.0,0.0);
-#endif
+					else if (globalvar_anisotropy_switch == 3)
+					{
+						anisV1 = Az(l1, l2, l3);
+						anisW1 = Bz(l1, l2, l3);
+						
+						e1K = 0.0, 0.0, 1.0;
+						
+						Vrho = (-I)*Ax(l1, l2, l3), Ay(l1, l2, l3), complx(0.0,0.0);
+						Wrho_conj = conj((-I)*Bx(l1, l2, l3)), conj(By(l1, l2, l3)), 
+																complx(0.0,0.0);
+					}	
 					
 					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n)  
 														   * real(anisV1*conj(anisW1));
@@ -1793,7 +1841,7 @@ void Compute_local_cylinder_ring_spectrum_helicity_SCFT
 					VrcrossVi = cross(Vreal, Vimag);
 					Wavenumber_SCFT(l1, l2, l3, N, kfactor, kk);
 					
-					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
+					factor = 2*Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
 					modal_helicity = factor * dot(kk, VrcrossVi);				
 					local_H1k(shell_index, slab_index) +=  modal_helicity;
@@ -1849,7 +1897,13 @@ void Compute_local_imag_shell_spectrum_B0_SCFT
 	DP kkmag;
 	int shell_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_Sk = 0.0;
 	
@@ -1857,7 +1911,7 @@ void Compute_local_imag_shell_spectrum_B0_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
@@ -1927,6 +1981,13 @@ void Compute_local_imag_ring_spectrum_B0_SCFT
 	DP kkmag, theta;
 	int shell_index, sector_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_Sk = 0.0;
 	
@@ -1934,7 +1995,7 @@ void Compute_local_imag_ring_spectrum_B0_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				shell_index = (int) ceil(kkmag);

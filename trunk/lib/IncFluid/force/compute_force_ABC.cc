@@ -34,7 +34,7 @@
  *		 \f$ F_y = amp (A \sin(k_0 x) + C \cos(k_0 z)) \f$
  *		 \f$ F_z = amp (A \cos(k_0 x) + C \cos(k_0 y)) \f$
  *
- *  @note is_force_field_modes_read is used to read only once.
+ *  @note is_force_field_para_read is used to read only once.
  *
  * @author  M. K. Verma
  * @version 4.0
@@ -52,7 +52,7 @@
 void IncFluid::Compute_force_ABC()
 {
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		if (basis_type == "FOUR")
 		{
@@ -64,7 +64,7 @@ void IncFluid::Compute_force_ABC()
 			
 			Setup_ABC_force_field(k0, force_amp, A, B, C);
 		
-			is_force_field_modes_read = 1;
+			is_force_field_para_read = 1;
 		}
 		
 		else if (basis_type == "SCFT")
@@ -85,7 +85,7 @@ void IncFluid::Compute_force_ABC()
 void IncFluid::Compute_force_ABC(IncSF& T)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		if (basis_type == "FOUR")
 		{
@@ -93,7 +93,7 @@ void IncFluid::Compute_force_ABC(IncSF& T)
 			
 			Compute_force_ABC();
 			
-			is_force_field_modes_read = 1;
+			is_force_field_para_read = 1;
 		}
 		
 		else if (basis_type == "SCFT")
@@ -115,7 +115,7 @@ void IncFluid::Compute_force_ABC(IncSF& T)
 void IncFluid::Compute_force_ABC(IncVF& W)
 {	
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		if (basis_type == "FOUR")
 		{
@@ -129,7 +129,7 @@ void IncFluid::Compute_force_ABC(IncVF& W)
 			Setup_ABC_force_field(k0, force_amp, A, B, C);
 			W.Setup_ABC_force_field(k0, forceW_amp, A, B, C);
 			
-			is_force_field_modes_read = 1;
+			is_force_field_para_read = 1;
 		}
 		
 		else if (basis_type == "SCFT")
@@ -150,14 +150,14 @@ void IncFluid::Compute_force_ABC(IncVF& W)
 void IncFluid::Compute_force_ABC(IncVF& W, IncSF& T)
 {	
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		if (basis_type == "FOUR")
 		{
 			*T.Force = 0.0;
 			Compute_force_ABC(W);
 			
-			is_force_field_modes_read = 1;
+			is_force_field_para_read = 1;
 		}
 		
 		else if (basis_type == "SCFT")

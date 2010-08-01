@@ -64,16 +64,21 @@ void  IncFluid::Init_cond_energy_spectrum()
 
 	DP kkmag, ek;
 	DP amp, phase1, phase2, phase3;
-	int index;
+	int index, maxN3;
 
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	
-//	cout << "Init energy spectrum U: " << *CV_shell_ek << endl;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -82,7 +87,7 @@ void  IncFluid::Init_cond_energy_spectrum()
 					index = (int) ceil(kkmag);
 					
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 							
 					amp = sqrt(2*ek);
 					
@@ -90,7 +95,7 @@ void  IncFluid::Init_cond_energy_spectrum()
 					phase2 = 2*M_PI * SPECrand.random();
 					phase3 = 2*M_PI * SPECrand.random();
 	
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 				}
 				
 			}
@@ -101,6 +106,18 @@ void  IncFluid::Init_cond_energy_spectrum()
 	Satisfy_reality_condition_field();
 
 	if (alias_switch == "DEALIAS")		Dealias();
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 }
 
 
@@ -122,14 +139,20 @@ void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 	DP kkmag, ek, ekT;
 	DP amp, phase1, phase2, phase3;
 	DP ampT, phaseT;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(2));
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -138,10 +161,10 @@ void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 					index = (int) ceil(kkmag);
 					
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 						
 					ekT= (*T.CS_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					
 					amp = sqrt(2*ek);
 					ampT = sqrt(2*ekT);
@@ -152,8 +175,8 @@ void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 					
 					phaseT = 2*M_PI * SPECrand.random();
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
-					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, ampT, phaseT);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
+					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, N, ampT, phaseT);
 				}	
 			}	
 		
@@ -164,6 +187,20 @@ void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 		
 
 	if (alias_switch == "DEALIAS")		Dealias(T);
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*T.F)(Range::all(), Range::all(), 1) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 }
 
 
@@ -185,14 +222,20 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 	DP kkmag, ek, ekW;
 	DP amp, phase1, phase2, phase3;
 	DP ampW, phase1W, phase2W, phase3W;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -201,10 +244,10 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 					index = (int) ceil(kkmag);
 					
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 							
 					ekW= (*W.CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					
 					amp = sqrt(2*ek);
 					ampW = sqrt(2*ekW);
@@ -218,9 +261,9 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 					phase3W = 2*M_PI * SPECrand.random();
 					
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 					
-					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, ampW, 
+					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, N, ampW, 
 													  phase1W, phase2W, phase3W);
 				}	
 			}
@@ -235,6 +278,24 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 				
 
 	if (alias_switch == "DEALIAS")		Dealias(W);
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*W.V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+		
+		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 	
 }
 
@@ -259,15 +320,21 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 	DP amp, phase1, phase2, phase3;
 	DP ampW, phase1W, phase2W, phase3W;
 	DP ampT, phaseT;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(2));
 	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(3));
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -276,13 +343,13 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 					index = (int) ceil(kkmag);
 					
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 							
 					ekW= (*W.CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 							
 					ekT= (*T.CS_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					
 					amp = sqrt(2*ek);
 					ampW = sqrt(2*ekW);
@@ -299,12 +366,12 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 					phaseT = 2*M_PI * SPECrand.random();
 					
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 					
-					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, ampW, 
+					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, N, ampW, 
 													  phase1W, phase2W, phase3W);
 													  
-					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, ampT, phaseT);								  
+					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, N, ampT, phaseT);								  
 				}	
 			}	
 	
@@ -319,6 +386,24 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 	
 
 	if (alias_switch == "DEALIAS")		Dealias(W, T);
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*W.V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+		
+		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 }
 
 
@@ -339,14 +424,21 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	DP kkmag, ek, amp, phase1, phase2, phase3;
 
 	complx uperp1, uperp2;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	DP sk = (*init_cond_para)(2);
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -355,14 +447,14 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 					index = (int) ceil(kkmag);
 				
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					amp = sqrt(2*ek);
 					
 					phase1 = 2*M_PI * SPECrand.random();
 					phase2 = phase1 + M_PI/2.0;
 					phase3 = asin(sk)/2.0;			// zeta
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 				} // of if(kkmag > MYEPS)			
 			}	
 	
@@ -372,6 +464,18 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	IncFluid::Satisfy_reality_condition_field();	
 
 	if (alias_switch == "DEALIAS")		Dealias();
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 
 }
 
@@ -392,16 +496,22 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
 	DP kkmag, ek, amp, phase1, phase2, phase3;
 	DP ekT, ampT, phaseT;
 	complx uperp1, uperp2;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	DP sk = (*init_cond_para)(2);
 	
 	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(3));
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 				
@@ -410,25 +520,25 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
 					index = (int) ceil(kkmag);
 				
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					amp = sqrt(2*ek);
 					
 					phase1 = 2*M_PI * SPECrand.random();
 					phase2 = phase1 + M_PI/2.0;
 					phase3 = asin(sk)/2.0;			// zeta
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 		
 					
 					// scalar
 					
 					ekT = (*T.CS_shell_ek)(index) 
-								/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+								/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 								
 					ampT = sqrt(2*ekT);
 					phaseT = 2*M_PI * SPECrand.random();
 					
-					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, ampT, phaseT);
+					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, N, ampT, phaseT);
 				}	
 			}	
 	
@@ -441,6 +551,20 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
 	IncFluid::Satisfy_reality_condition_field(T);	
 	
 	if (alias_switch == "DEALIAS")		Dealias(T);
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*T.F)(Range::all(), Range::all(), 1) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 	
 }
 
@@ -464,7 +588,7 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 	DP temp;
 
 	complx uperp1, uperp2, wperp1, wperp2;
-	int index;
+	int index, maxN3;
 	
 	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
 	DP sk = (*init_cond_para)(2);
@@ -474,9 +598,15 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 	DP skW = (*init_cond_para)(4);			// = HM(k) * k / EW(k)
 	h = (*init_cond_para)(5);			// = 2*Hc/(amp*ampW)
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude(basis_type, l1, l2, l3, N, kfactor);
 			
@@ -485,20 +615,20 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 					index = (int) ceil(kkmag);
 				
 					ek = (*CV_shell_ek)(index) 
-							/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+							/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					amp = sqrt(2*ek);
 					
 					phase1 = 2*M_PI * SPECrand.random();
 					phase2 = phase1 + M_PI/2.0;
 					phase3 = asin(sk)/2.0;			// zeta
 					
-					Put_vector_amp_phase_comp_conj(l1, l2, l3, amp, phase1, phase2, phase3);
+					Put_vector_amp_phase_comp_conj(l1, l2, l3, N, amp, phase1, phase2, phase3);
 					
 							
 					// W field
 					
 					ekW = (*W.CV_shell_ek)(index) 
-								/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+								/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 					ampW = sqrt(2*ekW);
 
 					
@@ -509,7 +639,7 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 					phase1W = phase1 - acos(temp);
 					phase2W = phase1W + M_PI/2.0;
 					
-					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, ampW, 
+					W.Put_vector_amp_phase_comp_conj(l1, l2, l3, N, ampW, 
 													 phase1W, phase2W, phase3W);
 				}  // of if (kkmax > MYEPS)			
 			}	
@@ -523,6 +653,23 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 	Satisfy_reality_condition_field(W);	
 
 	if (alias_switch == "DEALIAS")		Dealias(W);
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*W.V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 }
 
 
@@ -543,15 +690,21 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 
 	DP ekT, ampT, phaseT;
 	DP kkmag;
-	int index;
+	int index, maxN3;
 	
 	Init_cond_energy_helicity_spectrum(W);
 	
 	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(6));
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				if (!((l1 == 0) && (l2 == 0) && (l3 == 0)))
 				{
@@ -560,12 +713,12 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 					index = (int) ceil(kkmag);
 					
 					ekT = (*T.CS_shell_ek)(index) 
-								/ Approx_number_modes_in_shell(basis_type, index, kfactor);
+								/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
 								
 					ampT = sqrt(2*ekT);
 					phaseT = 2*M_PI * SPECrand.random();
 					
-					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, ampT, phaseT);	
+					T.Put_scalar_amp_phase_comp_conj(l1, l2, l3, N, ampT, phaseT);	
 				}		
 			}	
 			
@@ -578,7 +731,26 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 	
 	Satisfy_reality_condition_field(W, T);	
 	
-	if (alias_switch == "DEALIAS")		Dealias(W, T);				
+	if (alias_switch == "DEALIAS")		Dealias(W, T);	
+	
+	if (N[3] == 2)
+	{
+		(*V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*W.V1)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V2)(Range::all(), Range::all(), 1) = 0.0;
+		(*W.V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+		
+		(*T.F)(Range::all(), Range::all(), 1) = 0.0;
+	}
+	
+	if (N[2] == 1)
+	{
+		(*V2)(Range::all(), 0, Range::all()) = 0.0;
+		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
+	}
 					
 }
 

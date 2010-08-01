@@ -44,11 +44,9 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	file_operations.cc
 	force/compute_force_ABC.cc
 	force/compute_force_const_ek_hk.cc
-	force/compute_force_const_ek_hk_2Din3Dgrid.cc
 	force/compute_force_decay.cc
 	force/compute_force_dynamo_6mode.cc
 	force/compute_force_ek_hk_supply.cc
-	force/compute_force_ek_hk_supply_2Din3Dgrid.cc
 	force/compute_force_LM.cc
 	force/compute_force_main.cc
 	force/compute_force_modes.cc
@@ -56,7 +54,6 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	force/compute_force_TG.cc
 	input/init_cond_ABC.cc
 	input/init_cond_dynamo_6mode.cc
-	input/init_cond_energy_2Din3Dgrid.cc
 	input/init_cond_energy.cc
 	input/init_cond_field.cc
 	input/init_cond_main.cc

@@ -61,11 +61,18 @@ DP Local_shell_mult_single_SCFT
 {
 
 	DP kkmag;
-	DP result = 0.0;	
+	DP result = 0.0;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	for (int l1=0; l1< local_N1; l1++) 
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++)					
+			for (int l3=0; l3<=maxN3; l3++)					
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
@@ -126,6 +133,13 @@ void Local_shell_mult_all_SCFT
 {
 	DP kkmag;
 	int shell_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 	
@@ -133,7 +147,7 @@ void Local_shell_mult_all_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				
@@ -189,6 +203,13 @@ void Local_shell_mult_all_SCFT
 {
 	DP kkmag;
 	int shell_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 	
@@ -196,7 +217,7 @@ void Local_shell_mult_all_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				
@@ -262,6 +283,13 @@ void Local_ring_mult_all_SCFT
 {
 	DP kkmag, theta;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 	
@@ -269,7 +297,7 @@ void Local_ring_mult_all_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				
@@ -333,6 +361,13 @@ void Local_ring_mult_all_SCFT
 {
 	DP kkmag, theta;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 	
@@ -340,7 +375,7 @@ void Local_ring_mult_all_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N,  kfactor);
 				
@@ -561,6 +596,13 @@ void Local_shell_mult_all_imagVW_B0_SCFT
 	DP kkmag;
 	int shell_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 	
@@ -568,7 +610,7 @@ void Local_shell_mult_all_imagVW_B0_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
@@ -632,6 +674,13 @@ void Local_ring_mult_all_imagVW_B0_SCFT
 	DP kkmag, theta;
 	int shell_index, sector_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_result = 0.0;
 		
@@ -639,7 +688,7 @@ void Local_ring_mult_all_imagVW_B0_SCFT
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
@@ -769,9 +818,12 @@ void Cyl_ring_mult_all_imagVW_B0_SCFT
 }
 
 
-	//*********************************************************************************************
+//**************************************************************************************************
 
 
+//
+//   sum(A.curl(B)) for a given shell
+//
 DP Local_shell_mult_vorticity_SCFT
 (
  string alias_switch, 
@@ -785,13 +837,20 @@ DP Local_shell_mult_vorticity_SCFT
 	
 	TinyVector<complx,3> vorticity;
 	complx vort_y;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP kkmag;
 	DP result = 0.0;
 	
 	for (int i1=0; i1<local_N1; i1++)				
 		for (int i2=0; i2<N[2]; i2++) 
-			for (int i3=0; i3<=N[3]/2; i3++) 
+			for (int i3=0; i3<=maxN3; i3++) 
 			{
 				kkmag = Kmagnitude_SCFT(i1, i2, i3, N, kfactor);
 				
@@ -856,9 +915,10 @@ DP Shell_mult_vorticity_SCFT
 		return 0;	
 }	
 
-	//
-	//
 
+//
+//   sum(A.curl(B)/k^2) for a given shell
+//
 DP Local_shell_mult_vector_potential_SCFT
 (
  string alias_switch, 
@@ -871,6 +931,13 @@ DP Local_shell_mult_vector_potential_SCFT
 {
 	TinyVector<complx,3> vorticity;
 	complx vort_y;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP kkmag;
 	DP result = 0.0;
@@ -878,7 +945,7 @@ DP Local_shell_mult_vector_potential_SCFT
 	
 	for (int i1=0; i1<local_N1; i1++)				
 		for (int i2=0; i2<N[2]; i2++) 
-			for (int i3=0; i3<=N[3]/2; i3++) 
+			for (int i3=0; i3<=maxN3; i3++) 
 			{
 				kkmag = Kmagnitude_SCFT(i1, i2, i3, N, kfactor);
 				
@@ -915,6 +982,7 @@ DP Local_shell_mult_vector_potential_SCFT
 }
 
 
+
 	//
 	//
 DP Shell_mult_vector_potential_SCFT
@@ -942,7 +1010,9 @@ DP Shell_mult_vector_potential_SCFT
 }	
 
 
+
 	//
+	//   sum(A.curl(B)) for all shells
 	//
 void Local_shell_mult_vorticity_all_SCFT
 (
@@ -957,6 +1027,13 @@ void Local_shell_mult_vorticity_all_SCFT
 	
 	TinyVector<complx,3> vorticity;
 	complx vort_y;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP kkmag;
 	int shell_index;
@@ -967,7 +1044,7 @@ void Local_shell_mult_vorticity_all_SCFT
 	
 	for (int i1=0; i1<local_N1; i1++)				
 		for (int i2=0; i2<N[2]; i2++) 
-			for (int i3=0; i3<=N[3]/2; i3++) 
+			for (int i3=0; i3<=maxN3; i3++) 
 			{
 				kkmag = Kmagnitude_SCFT(i1, i2, i3, N, kfactor);
 				
@@ -1030,6 +1107,7 @@ void Shell_mult_vorticity_all_SCFT
 
 
 	//
+	//   sum(A.curl(B)/k^2) for all shells
 	//
 void Local_shell_mult_vector_potential_all_SCFT
 (
@@ -1043,6 +1121,13 @@ void Local_shell_mult_vector_potential_all_SCFT
 {
 	TinyVector<complx,3> vorticity;
 	complx vort_y;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	DP kkmag;
 	int shell_index;
@@ -1053,7 +1138,7 @@ void Local_shell_mult_vector_potential_all_SCFT
 	
 	for (int i1=0; i1<local_N1; i1++)				
 		for (int i2=0; i2<N[2]; i2++) 
-			for (int i3=0; i3<=N[3]/2; i3++) 
+			for (int i3=0; i3<=maxN3; i3++) 
 			{
 				kkmag = Kmagnitude_SCFT(i1, i2, i3, N, kfactor);
 				

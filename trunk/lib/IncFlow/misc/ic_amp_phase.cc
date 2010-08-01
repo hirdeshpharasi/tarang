@@ -54,23 +54,53 @@ extern Uniform<DP> SPECrand;
 void IncVF::Put_vector_amp_phase_comp_conj
 (
 	int lx, int ly, int lz, 
+	int N[],
 	DP amp, 
 	DP phase1, DP phase2, DP phase3
 )
 {
 
+	complx uperp1, uperp2;
 	complx vpll, vh1, vh2;
-			
-	complx uperp1 = amp * exp(I * phase1) * cos(phase3);
-	complx uperp2 = amp * exp(I * phase2) * sin(phase3);
+	DP theta = 0;
+	DP phi = 0;
+	DP kkmag, kkperp;
 	
-	DP  theta = AnisKvect_polar_angle(basis_type, lx, ly, lz, N, kfactor);
-	DP  phi	  = AnisKvect_azimuthal_angle(basis_type, lx, ly, lz, N, kfactor);
+
+	if ((N[2] >1) && (N[3] > 2))		// 3D
+	{		
+		uperp1 = amp * exp(I * phase1) * cos(phase3);
+		uperp2 = amp * exp(I * phase2) * sin(phase3);
+		
+		theta = AnisKvect_polar_angle(basis_type, lx, ly, lz, N, kfactor);
+		phi	  = AnisKvect_azimuthal_angle(basis_type, lx, ly, lz, N, kfactor);
+	}
+	else if (N[2] == 1)  // 2D: i2=0
+	{
+		uperp1 = 0.0;
+		uperp2 = amp * exp(I * phase2);
+		
+		theta = AnisKvect_polar_angle(basis_type, lx, ly, lz, N, kfactor);
+		phi	  = (lx >=0) ? 0 : M_PI;  
+			// phi = 0 or pi depending i1>0 or i1 < 0.
+	}
+	else if (N[3] <= 2)		// 2D:, lz = 0,1  from the sender program
+	{
+		
+		uperp1 = amp * exp(I * phase1);
+		uperp2 = 0.0;
+		
+		theta = M_PI/2;
+		phi	  = AnisKvect_azimuthal_angle_2Din3Dgrid(basis_type, lx, ly, lz, N, kfactor); 
+	}
 	
-	DP kkmag  = Kmagnitude(basis_type, lx, ly, lz, N, kfactor);
-	DP kkperp = AnisKperp(basis_type, lx, ly, lz, N, kfactor);
+	
+	
+	kkmag  = Kmagnitude(basis_type, lx, ly, lz, N, kfactor);
+	kkperp = AnisKperp(basis_type, lx, ly, lz, N, kfactor);
 	
 	if (kkmag > MYEPS)
+	{
 		if ( kkperp > MYEPS)
 		{	
 			vpll = -uperp2 * sin(theta);
@@ -84,27 +114,37 @@ void IncVF::Put_vector_amp_phase_comp_conj
 			vh1 = uperp1;
 			vh2 = uperp2;
 		}
+	}
+	else if (my_id == master_id)  // origin lies in the master node
+	{
+		(*V1)(lx, ly, lz) = 0;
+		(*V2)(lx, ly, lz) = 0;
+		(*V3)(lx, ly, lz) = 0;
+		return;
+	}
+	
 	
 	
 	if ( (lx >= 0) && (lx < local_N1) ) 
 	{
-#ifdef ANISDIRN1
-		(*V1)(lx, ly, lz) = vpll;
-		(*V2)(lx, ly, lz) = vh1;
-		(*V3)(lx, ly, lz) = vh2;
-#endif
-
-#ifdef ANISDIRN2
-		(*V2)(lx, ly, lz) = vpll;
-		(*V3)(lx, ly, lz) = vh1;
-		(*V1)(lx, ly, lz) = vh2;
-#endif
-
-#ifdef ANISDIRN3
-		(*V3)(lx, ly, lz) = vpll;
-		(*V1)(lx, ly, lz) = vh1;
-		(*V2)(lx, ly, lz) = vh2;
-#endif
+		if (globalvar_anisotropy_switch == 1)
+		{	
+			(*V1)(lx, ly, lz) = vpll;
+			(*V2)(lx, ly, lz) = vh1;
+			(*V3)(lx, ly, lz) = vh2;
+		}
+		else if (globalvar_anisotropy_switch == 2)
+		{	
+			(*V2)(lx, ly, lz) = vpll;
+			(*V3)(lx, ly, lz) = vh1;
+			(*V1)(lx, ly, lz) = vh2;
+		}
+		else if (globalvar_anisotropy_switch == 3)
+		{	
+			(*V3)(lx, ly, lz) = vpll;
+			(*V1)(lx, ly, lz) = vh1;
+			(*V2)(lx, ly, lz) = vh2;
+		}
 	}	
 	
 				
@@ -130,7 +170,7 @@ void IncVF::Put_vector_amp_phase_comp_conj
  *	@param amp  Amplitude of the vector.
  *
  */
-void IncSF::Put_scalar_amp_phase_comp_conj(int lx, int ly, int lz, DP amp, DP phase)
+void IncSF::Put_scalar_amp_phase_comp_conj(int lx, int ly, int lz, int N[], DP amp, DP phase)
 {
 	
 	if ( (lx >= 0) && (lx < local_N1) ) 
@@ -159,6 +199,7 @@ void IncSF::Put_scalar_amp_phase_comp_conj(int lx, int ly, int lz, DP amp, DP ph
  *
  *  @note  phi is the angle V vector makes with y axis.
  */
+/*
 void IncVF::Put_vector_amp_phase_comp_conj_2Din3Dgrid(int lx, int ly, DP amp, DP phase)
 {
 	
@@ -201,7 +242,7 @@ void IncVF::Put_vector_amp_phase_comp_conj_2Din3Dgrid(int lx, int ly, DP amp, DP
 	// For 2Din3D grid, kz=1 is also worked on, but it does not matter since they are all 0s.
 	
 }
-
+*/
 
 
 //********************************** ic_random.cc *********************************************

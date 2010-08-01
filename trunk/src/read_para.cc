@@ -159,6 +159,10 @@ void Read_para
 	Array<int,1> switches,
 	double diss_coefficient[], 
 	double hyper_diss_coefficient[],
+	Array<int,1> solver_meta_para,
+	Array<int,1> solver_int_para,
+	Array<DP,1> solver_double_para,
+	string solver_string_para[],
 	Array<DP,1> time_para, 
 	Array<DP,1> time_save, 
 	Array<int,1> misc_output_para,
@@ -207,6 +211,73 @@ void Read_para
 		cout << endl << endl;	
 	getline(para_file, s); getline(para_file, s); getline(para_file, s); 
 	
+	//
+	//	Solver-para
+	//
+	if (my_id == master_id)
+		cout  << "*********** Reading of solver parameter starts ***********" << endl << endl;
+	
+	para_file >> s >> solver_meta_para(1) >> solver_meta_para(2) >> solver_meta_para(3);
+	
+	if (my_id == master_id)
+	{
+		cout << "Solver meta para (intgers): " << solver_meta_para(1) << endl;
+		cout << "Solver meta para (double): "  << solver_meta_para(2) << endl;
+		cout << "Solver meta para (string): "  << solver_meta_para(3) << endl << endl;
+	}
+	
+	
+	solver_int_para = 0;
+	solver_double_para = 0.0;
+	
+	if (my_id == master_id)
+		cout << "Solver integer parameters: ";
+	
+	para_file >>s;	
+	for (i = 1; i <= solver_meta_para(1); i++) 
+	{
+		para_file >> solver_int_para(i); 
+		
+		if (my_id == master_id)
+			cout << solver_int_para(i) << "    ";		
+	}		
+	if (my_id == master_id)		cout << endl << endl;
+	
+	
+	
+	if (my_id == master_id)		cout << "Solver double parameters: ";
+	
+	para_file >>s;	
+	for (i = 1; i <= solver_meta_para(2); i++) 
+	{
+		para_file >> solver_double_para(i); 
+		
+		if (my_id == master_id)
+			cout << solver_double_para(i) << "    ";		
+	}		
+	if (my_id == master_id)		cout << endl << endl;
+	getline(para_file, s); 
+	
+	
+	
+	if (my_id == master_id)		cout << "Solver string parameters: ";
+	
+	para_file >> s;
+	for (i=1; i<=solver_meta_para(3); i++)
+	{
+		para_file >> solver_string_para[i];
+		
+		if (my_id == master_id)
+			cout <<  solver_string_para[i] << endl; 
+	}	
+	
+	
+	getline(para_file, s); getline(para_file, s); getline(para_file, s); 
+	
+	if (my_id == master_id)
+		cout  << "*********** Reading of solver-para over **************" << endl << endl;
+	
+
 	
 	//
 	// String_switches
@@ -233,7 +304,7 @@ void Read_para
 	//
 	// Switches
 	//
-	for (i=1; i<=10; i++)
+	for (i=1; i<=14; i++)
 	{
 		para_file >> s;  
 		para_file >> switches(i);
@@ -251,6 +322,10 @@ void Read_para
 		cout << "skpq_switch: "						<< switches(8) << endl;
 		cout << "output_real_space_switch: "		<< switches(9) << endl;
 		cout << "sincos_horizontal_2D_switch: "		<< switches(10) << endl;
+		cout << "free-slio-3d_switch: "				<< switches(11) << endl;
+		cout << "helicity-flux-shells: "			<< switches(12) << endl;
+		cout << "anisotropic-switch(1,2,3): "		<< switches(13) << endl;
+		cout << "waveno-switch: actual(0) or grid(1) -- "		<< switches(14) << endl;
 		cout << endl << endl;
 	}	
 	
@@ -397,7 +472,6 @@ void Read_para
 	getline(para_file, s); getline(para_file, s); getline(para_file, s); 
 	
 	
-	
 	//
 	// read coordinates of wavenumber and positions at which the field are to be printed.
 	//
@@ -417,6 +491,7 @@ void Read_para
 	
 	// read \vec{k}
 	//
+	
 	
 	int kx, ky, kz;			// wavenumbers		
 	out_k_r_array = 0;    // initialize to zero.

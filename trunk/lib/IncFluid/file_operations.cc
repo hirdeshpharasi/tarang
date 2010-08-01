@@ -114,6 +114,9 @@ void IncFluid::Output_prefix(ofstream& X, string prefix_str)
 		X << "%% Basis, Integration scheme:  " << basis_type << " " << integ_scheme << endl;
 		X << "%% Tinit, Tfinal, Tdt_fixed:  " << Tinit << "    " << Tfinal 
 			<< "    " << Tdt_fixed << endl << endl;
+		
+		X << "%% globalvar_anisotropy_switch: " << globalvar_anisotropy_switch << endl;
+		X << "%% globalvar_waveno_switch: " << globalvar_waveno_switch << endl;
 	}		
 }
 
@@ -228,6 +231,11 @@ void IncFluid::Open_output_files(string prefix_str)
 		
 		cout.setf(ios::fixed, ios::floatfield);
 		cout.precision(MY_PRECISION); 
+		
+		
+		filename = "/out/readme"; 
+		filename = data_dir_name+ filename;   readme_file.open(filename.c_str());
+		Output_prefix(readme_file, prefix_str);
 	
 		// output size and other information to the file
 		
@@ -235,6 +243,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		//	Output_prefix(field_out_file, prefix_str);	
 		// prefix_str removed to make reading of the file easier.
 		
+		/*
 		Output_prefix(global_file, prefix_str);	
 		Output_prefix(field_out_reduced_file, prefix_str);
 		Output_prefix(realfield_out_file, prefix_str);	
@@ -243,7 +252,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		Output_prefix(spectrum_file, prefix_str);	
 		Output_prefix(pressure_file, prefix_str);
 		Output_prefix(flux_file, prefix_str);	
-		
+		*/
 
 		// shell-to-shell 
 		Output_prefix(shell_to_shell_file, prefix_str);		
@@ -255,7 +264,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		
 		if (CV_anisotropic_ring_switch == 1)
 		{
-			Output_prefix(ring_spectrum_file, prefix_str);
+		// Output_prefix(ring_spectrum_file, prefix_str);
 			ring_spectrum_file << "%% Sectors = " << (*sector_angle_array_spectrum) << endl;
 		}	
 		
@@ -263,7 +272,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		
 		if (ET_anisotropic_ring_switch == 1)
 		{
-			Output_prefix(ring_to_ring_file, prefix_str);	
+		//	Output_prefix(ring_to_ring_file, prefix_str);	
 			ring_to_ring_file << "%% Ring radius = " 
 					<< (*ring_shell_radius)(Range(1, no_ring_shells-1)) << endl;
 					
@@ -273,7 +282,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		
 		if (CV_anisotropic_cylinder_switch == 1)
 		{
-			Output_prefix(cylinder_ring_spectrum_file, prefix_str);
+		//  Output_prefix(cylinder_ring_spectrum_file, prefix_str);
 			cylinder_ring_spectrum_file << "%% Slabs = " 
 					<< (*cylinder_kpll_array_spectrum) << endl;
 		}	
@@ -282,7 +291,7 @@ void IncFluid::Open_output_files(string prefix_str)
 		
 		if (ET_anisotropic_cylinder_switch == 1)
 		{
-			Output_prefix(cylinder_ring_to_ring_file, prefix_str);	
+		//  Output_prefix(cylinder_ring_to_ring_file, prefix_str);	
 			cylinder_ring_to_ring_file << "%% Ring radius = " 
 					<< (*cylinder_shell_radius)(Range(1, no_cylinder_shells-1)) << endl;
 					
@@ -290,10 +299,12 @@ void IncFluid::Open_output_files(string prefix_str)
 		}
 		//
 		
+		/*
 		Output_prefix(structure_fn_file, prefix_str);	
 		Output_prefix(planar_structure_fn_file, prefix_str);
 		Output_prefix(moment_file, prefix_str);	
-		Output_prefix(Skpq_file, prefix_str);	
+		Output_prefix(Skpq_file, prefix_str);
+		 */
 	}
 }
 

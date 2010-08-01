@@ -180,13 +180,21 @@ DP Get_total_energy_FOUR(string alias_switch, int N[],  Array<complx,3> A, Array
 DP Get_local_Sn_FOUR(string alias_switch, int N[], Array<complx,3> A, DP n, DP kfactor[])
 {
 	DP Sn = 0.0;
-	DP kkmag;												// kkmag = sqrt(Kx^2+Ky^2+Kz^2)
+	DP kkmag;	// kkmag = sqrt(Kx^2+Ky^2+Kz^2)
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+		
 	
 	int	kkmax = Min_radius_outside_FOUR(alias_switch, N, kfactor);
 	  
 	for (int l1=0; l1<local_N1; l1++)			
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				
@@ -248,14 +256,21 @@ void Compute_local_shell_spectrum_FOUR
 	local_Sk = 0.0;												
 
 	DP kkmag;													
-	int index;
+	int index, maxN3;
 	DP factor;
+	
 	
 	int	kkmax = Min_radius_outside_FOUR(alias_switch, N, kfactor);
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				index = (int) ceil(kkmag);
@@ -311,29 +326,13 @@ void Compute_shell_spectrum_FOUR
 		int kkmax_inside = Max_radius_inside_FOUR(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_FOUR(alias_switch, N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * Approx_number_modes_in_shell_FOUR(index, kfactor) 
-											/ Sk_count(index); 
-					// Approx_modes in shell of radius s is 2*pi*s^2/f1*f2*f3 for WAVENOACTUAL 
-					//	(unit volume = f1*f2*f3).
-					// For WAVENOGRID, the value is pi*s. 
-		}
-		
-		else if (N[2] == 1)
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-			{
-				approx_number_modes_in_shell_2D = (M_PI*index)/(kfactor[1]*kfactor[3]);
-				
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) * approx_number_modes_in_shell_2D	/ Sk_count(index); 
-			}	
-		}	
+		for (int index = kkmax_inside+1; index <= kkmax; index++) 
+			if (Sk_count(index) >= 1) 
+				Sk(index) = Sk(index) * Approx_number_modes_in_shell_FOUR(N, index, kfactor) 
+										/ Sk_count(index); 
+				// Approx_modes in shell of radius s is 2*pi*s^2/f1*f2*f3 for WAVENOACTUAL 
+				//	(unit volume = f1*f2*f3).
+				// For WAVENOGRID, the value is pi*s. 
 	}
 	
 }
@@ -360,14 +359,20 @@ void Compute_local_shell_spectrum_FOUR
 	local_Sk = 0.0;															
 	
 	DP kkmag;																
-	int index;
+	int index, maxN3;
 	DP factor;
 
 	int	kkmax = Min_radius_outside_FOUR(alias_switch, N, kfactor);
 	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				index = (int) ceil(kkmag);
@@ -424,27 +429,10 @@ void Compute_shell_spectrum_FOUR
 		int kkmax_inside = Max_radius_inside_FOUR(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_FOUR(alias_switch, N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{	
-			for (int index =  kkmax_inside+1; index <= kkmax; index++) 
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) *Approx_number_modes_in_shell_FOUR(index, kfactor) 
-											/ Sk_count(index); 
-		}
-		
-		else if (N[2] == 1)
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index =  kkmax_inside+1; index <= kkmax; index++) 
-			{	
-				approx_number_modes_in_shell_2D = (M_PI*index)/(kfactor[1]*kfactor[3]);
-				
-				if (Sk_count(index) >= 1) 
-					Sk(index) = Sk(index) *approx_number_modes_in_shell_2D 	/ Sk_count(index); 
-			}	
-		}	
-			
+		for (int index =  kkmax_inside+1; index <= kkmax; index++) 
+			if (Sk_count(index) >= 1) 
+				Sk(index) = Sk(index) *Approx_number_modes_in_shell_FOUR(N, index, kfactor) 
+										/ Sk_count(index); 
 	}
 }
 
@@ -455,6 +443,8 @@ void Compute_shell_spectrum_FOUR
 	Compute Helicity1 = K . (Vr x Vi)
 	Helicity2 = K. (Vr x Vi)/K^2
 	Multiplication factor = 1 for kz>0 because of energy spectrum details.
+ 
+	not for 2D
 
 ***********************************************************************************************/
 
@@ -473,6 +463,7 @@ void Compute_local_helicity_FOUR
 	TinyVector<DP,3> Vreal, Vimag, VrcrossVi;
 	TinyVector<DP,3> kk;
 	DP modal_helicity, kkmag, kksqr, factor;
+	
 	
 	local_helicity1 = local_helicity2 = 0.0;
 	local_dissipation_H1 =  0.0;
@@ -550,6 +541,8 @@ void Compute_total_helicity_FOUR
 	Compute helicity spectrum
 	Helicity1 = K . (Vr x Vi)
 	Helicity2 = K. (Vr x Vi)/K^2
+ 
+	Not for 2D
 
 ***********************************************************************************************/
 
@@ -577,6 +570,7 @@ void Compute_local_shell_spectrum_helicity_FOUR
 	
 	int	kkmax = Min_radius_outside_FOUR(alias_switch,N, kfactor);
 	
+		
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
 			for (int l3=0; l3<=N[3]/2; l3++) 
@@ -661,43 +655,18 @@ void Compute_shell_spectrum_helicity_FOUR
 		int kkmax_inside = Max_radius_inside_FOUR(alias_switch, N, kfactor); 	
 		int	kkmax = Min_radius_outside_FOUR(alias_switch,N, kfactor);
 
-		if (N[2] > 1)   // N[2]=1 is a 2D case
-		{
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-				if (H1k1_count(index) >= 1) 
-				{
-					H1k1(index) = H1k1(index) * Approx_number_modes_in_shell_FOUR(index, kfactor) 
-											/ H1k1_count(index); 
-											
-					H1k2(index) = H1k2(index) * Approx_number_modes_in_shell_FOUR(index, kfactor) 
-											/ H1k1_count(index); 
-											
-					H1k3(index) = H1k3(index) * Approx_number_modes_in_shell_FOUR(index, kfactor) 
-											/ H1k1_count(index); 
-				}
-		}
-		
-		else if (N[2] == 1)
-		{
-			DP approx_number_modes_in_shell_2D;
-			
-			for (int index = kkmax_inside+1; index <= kkmax; index++) 
-			{	
-				approx_number_modes_in_shell_2D = (M_PI*index)/(kfactor[1]*kfactor[3]);
-				
-				if (H1k1_count(index) >= 1) 
-				{
-					H1k1(index) = H1k1(index) * approx_number_modes_in_shell_2D 
-									/ H1k1_count(index);
-					
-					H1k2(index) = H1k2(index) * approx_number_modes_in_shell_2D 
-									/ H1k1_count(index); 
-					
-					H1k3(index) = H1k3(index) * approx_number_modes_in_shell_2D 
-									/ H1k1_count(index); 
-				}
-			}	
-		}	
+		for (int index = kkmax_inside+1; index <= kkmax; index++) 
+			if (H1k1_count(index) >= 1) 
+			{
+				H1k1(index) = H1k1(index) * Approx_number_modes_in_shell_FOUR(N, index, kfactor) 
+										/ H1k1_count(index); 
+										
+				H1k2(index) = H1k2(index) * Approx_number_modes_in_shell_FOUR(N, index, kfactor) 
+										/ H1k1_count(index); 
+										
+				H1k3(index) = H1k3(index) * Approx_number_modes_in_shell_FOUR(N, index, kfactor) 
+										/ H1k1_count(index); 
+			}
 			
 	}
 	
@@ -725,6 +694,14 @@ DP Get_local_entropy_FOUR
 	
 	DP modal_energy, prob, local_entropy;
 	
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	DP total_energy = Get_total_energy_FOUR(alias_switch, N, Ax) 
 						+ Get_total_energy_FOUR(alias_switch, N, Ay) 
 						+ Get_total_energy_FOUR(alias_switch, N, Az);
@@ -735,7 +712,7 @@ DP Get_local_entropy_FOUR
 			
 	for (int l1=0; l1<local_N1; l1++)									
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				modal_energy = Modal_energy_FOUR(Ax, l1, l2, l3) 
 								+ Modal_energy_FOUR(Ay, l1, l2, l3) 
@@ -747,9 +724,7 @@ DP Get_local_entropy_FOUR
 					local_entropy += 2 * Multiplicity_factor_FOUR(l1, l2, l3, N) 
 										* (-prob * log(prob)/log(2.0));
 					// 2*Multiplicity_factor_FOUR for the complex conjugate mode
-					// factor 2 is bit convoluted.  
-					// This is because of the definition of Multiplicity_factor_FOUR.
-					// Also skips origin because modal_energy(k=0) = 0.
+					// factor 2 to cancel factor 1/2 of energy.
 			}
 			
 	return local_entropy;		
@@ -787,6 +762,14 @@ DP Get_local_entropy_scalar_FOUR(string alias_switch, int N[], Array<complx,3> A
 {
 
 	DP modal_energy, prob;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	DP local_entropy = 0.0;
 	
 	DP total_energy = Get_total_energy_FOUR(alias_switch, N, A);
@@ -795,7 +778,7 @@ DP Get_local_entropy_scalar_FOUR(string alias_switch, int N[], Array<complx,3> A
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=10; l3<=N[3]/2; l3++) 
+			for (int l3=10; l3<=maxN3; l3++) 
 			{
 				modal_energy = Modal_energy_FOUR(A, l1, l2, l3);
 				
@@ -805,9 +788,7 @@ DP Get_local_entropy_scalar_FOUR(string alias_switch, int N[], Array<complx,3> A
 					local_entropy += 2 * Multiplicity_factor_FOUR(l1, l2, l3, N) 
 								 * (-prob * log(prob)/log(2.0));
 					// 2*Multiplicity_factor_FOUR for the complex conjugate mode
-					// factor 2 is bit convoluted.  
-					// This is because of the definition of Multiplicity_factor_FOUR
-					// Also skips origin because modal_energy(k=0) = 0.
+					// factor 2 to cancel factor 1/2 of energy.
 			}
 			
 	return local_entropy;		
@@ -867,12 +848,20 @@ void Compute_local_ring_spectrum_FOUR
 	DP V2sqr;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
+	
 	
 	int	kkmax = Max_radius_inside_FOUR(alias_switch, N, kfactor);
 									
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -892,20 +881,23 @@ void Compute_local_ring_spectrum_FOUR
 					if (kkperp < MYEPS)			// k on the anisotropy axis.
 					{
 					
-#ifdef ANISDIRN1
-						anisV1 = Ay(l1, l2, l3);
-						anisV2 = Az(l1, l2, l3);
-#endif
+						if (globalvar_anisotropy_switch == 1)
+						{
+							anisV1 = Ay(l1, l2, l3);
+							anisV2 = Az(l1, l2, l3);
+						}
 
-#ifdef ANISDIRN2
-						anisV1 = Az(l1, l2, l3);
-						anisV2 = Ax(l1, l2, l3);
-#endif
-
-#ifdef ANISDIRN3
-						anisV1 = Ax(l1, l2, l3);
-						anisV2 = Ay(l1, l2, l3);
-#endif
+						else if (globalvar_anisotropy_switch == 2)
+						{
+							anisV1 = Az(l1, l2, l3);
+							anisV2 = Ay(l1, l2, l3);
+						}	
+						
+						else if (globalvar_anisotropy_switch == 2)
+						{
+							anisV1 = Ax(l1, l2, l3);
+							anisV2 = Ay(l1, l2, l3);
+						}
 
 						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)
 																* pow2(abs(anisV1));
@@ -918,33 +910,40 @@ void Compute_local_ring_spectrum_FOUR
 				
 					else
 					{
-
-						V = Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
+						if ((N[2] > 1) && (N[3] > 2))
+						{
+							V = Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
+						
+							VcrossK = cross(V, kk);
 					
-						VcrossK = cross(V, kk);
-				
-#ifdef ANISDIRN1
-						anisV1 = VcrossK(0)/kkperp;
-#endif
+							if (globalvar_anisotropy_switch == 1)
+								anisV1 = VcrossK(0)/kkperp;
 
-#ifdef ANISDIRN2
-						anisV1 = VcrossK(1)/kkperp;
-#endif
+							else if (globalvar_anisotropy_switch == 2)
+								anisV1 = VcrossK(1)/kkperp;
 
-#ifdef ANISDIRN3
-						anisV1 = VcrossK(2)/kkperp;
-#endif
+							else if (globalvar_anisotropy_switch == 3)
+								anisV1 = VcrossK(2)/kkperp;
 
 
+							local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)
+																	* pow2(abs(anisV1));
+							
+							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
+									+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
+							
+							local_S2k(shell_index, sector_index) +=  factor * pow(kkmag,n) * V2sqr;
+						}
+						else
+						{
+							local_S1k(shell_index, sector_index) = 0.0;
+							
+							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
+										+  pow2(abs(Az(l1,l2,l3)));
+							
+							local_S2k(shell_index, sector_index) +=  factor * pow(kkmag,n) * V2sqr;
+						}
 						
-						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)
-																* pow2(abs(anisV1));
-						
-						V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
-								+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
-						
-						local_S2k(shell_index, sector_index) +=  factor * pow(kkmag,n) * V2sqr;
-				
 					}	// of inner else
 				}		// of if
 			}			// of for loop
@@ -1016,12 +1015,19 @@ void Compute_local_ring_spectrum_FOUR
 	DP kkmag, theta, kkh1, kkh2, kkperp;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_FOUR(alias_switch,N, kfactor);
 	
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1041,20 +1047,29 @@ void Compute_local_ring_spectrum_FOUR
 					if (kkperp < MYEPS)			// k on the anisotropy axis.
 					{
 					
-#ifdef ANISDIRN1
-						anisV1 = Ay(l1, l2, l3);	anisV2 = Az(l1, l2, l3);
-						anisW1 = By(l1, l2, l3);	anisW2 = Bz(l1, l2, l3);
-#endif
+						if (globalvar_anisotropy_switch == 1)
+						{
+							anisV1 = Ay(l1, l2, l3);	
+							anisV2 = Az(l1, l2, l3);
+							anisW1 = By(l1, l2, l3);	
+							anisW2 = Bz(l1, l2, l3);
+						}
 
-#ifdef ANISDIRN2
-						anisV1 = Az(l1, l2, l3);	anisV2 = Ax(l1, l2, l3);
-						anisW1 = Bz(l1, l2, l3);	anisW2 = Bx(l1, l2, l3);
-#endif
-
-#ifdef ANISDIRN3
-						anisV1 = Ax(l1, l2, l3);	anisV2 = Ay(l1, l2, l3);
-						anisW1 = Bx(l1, l2, l3);	anisW2 = By(l1, l2, l3);
-#endif
+						else if (globalvar_anisotropy_switch == 2)
+						{
+							anisV1 = Az(l1, l2, l3);	
+							anisV2 = Ax(l1, l2, l3);
+							anisW1 = Bz(l1, l2, l3);	
+							anisW2 = Bx(l1, l2, l3);
+						}
+						
+						else if (globalvar_anisotropy_switch == 3)
+						{
+							anisV1 = Ax(l1, l2, l3);	
+							anisV2 = Ay(l1, l2, l3);
+							anisW1 = Bx(l1, l2, l3);	
+							anisW2 = By(l1, l2, l3);
+						}	
 
 						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)
 																* real( anisV1*conj(anisW1) );
@@ -1063,59 +1078,70 @@ void Compute_local_ring_spectrum_FOUR
 																* real( anisV2*conj(anisW2) );					
 					}
 				
-				
-				
 					else
 					{
-
-						V = Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
-					
-						VcrossK = cross(V, kk);
 						
-						W = Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
-					
-						WcrossK = cross(W, kk);
+						if ((N[2] > 1) && (N[3] > 2))
+						{
+							V = Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
 						
-						kkh1 = AnisKh1_FOUR(l1, l2, l3, N, kfactor);
-						kkh2 = AnisKh2_FOUR(l1, l2, l3, N, kfactor);
-					
-#ifdef ANISDIRN1
-						anisV1 = VcrossK(0)/kkperp;
-						anisW1 = WcrossK(0)/kkperp;
+							VcrossK = cross(V, kk);
+							
+							W = Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
 						
-						e1K = 0.0, kkh2/kkperp, -kkh1/kkperp;
+							WcrossK = cross(W, kk);
+							
+							kkh1 = AnisKh1_FOUR(l1, l2, l3, N, kfactor);
+							kkh2 = AnisKh2_FOUR(l1, l2, l3, N, kfactor);
 						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-					
-#endif
-
-#ifdef ANISDIRN2
-						anisV1 = VcrossK(1)/kkperp;
-						anisW1 = WcrossK(1)/kkperp;
+							if (globalvar_anisotropy_switch == 1)
+							{
+								anisV1 = VcrossK(0)/kkperp;
+								anisW1 = WcrossK(0)/kkperp;
+								
+								e1K = 0.0, kkh2/kkperp, -kkh1/kkperp;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}	
 						
-						e1K = -kkh1/kkperp, 0.0, kkh2/kkperp;
+							else if (globalvar_anisotropy_switch == 2)
+							{
+								anisV1 = VcrossK(1)/kkperp;
+								anisW1 = WcrossK(1)/kkperp;
+								
+								e1K = -kkh1/kkperp, 0.0, kkh2/kkperp;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}	
+							
+							else if (globalvar_anisotropy_switch == 3)
+							{
+								anisV1 = VcrossK(2)/kkperp;
+								anisW1 = WcrossK(2)/kkperp;
+								
+								e1K = kkh2/kkperp, -kkh1/kkperp, 0.0;
+								
+								anisV2 = dot(VcrossK, e1K);
+								anisW2 = dot(WcrossK, e1K);
+							}	
 						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-#endif
-
-#ifdef ANISDIRN3
-						anisV1 = VcrossK(2)/kkperp;
-						anisW1 = WcrossK(2)/kkperp;
+							local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
+																	* real( anisV1*conj(anisW1) );
 						
-						e1K = kkh2/kkperp, -kkh1/kkperp, 0.0;
-						
-						anisV2 = dot(VcrossK, e1K);
-						anisW2 = dot(WcrossK, e1K);
-#endif
-
-					
-						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
-																* real( anisV1*conj(anisW1) );
-					
-						local_S2k(shell_index, sector_index) += factor * pow(kkmag,n)  
-																* real( anisV2*conj(anisW2) );
+							local_S2k(shell_index, sector_index) += factor * pow(kkmag,n)  
+																	* real( anisV2*conj(anisW2) );
+						}
+						else // 2D
+						{
+							local_S1k(shell_index, sector_index) = 0.0;
+							
+							local_S1k(shell_index, sector_index) = factor * pow(kkmag,n) 
+							* real( Ax(l1,l2,l3) * conj(Bx(l1,l2,l3))
+								   +Ay(l1,l2,l3) * conj(By(l1,l2,l3)) 
+								   +Az(l1,l2,l3) * conj(Bz(l1,l2,l3)) );
+						}
 				
 					}	// of inner else
 				}		// of if (shell_index <= kkmax)
@@ -1179,12 +1205,19 @@ void Compute_local_ring_spectrum_FOUR
 	DP kkmag, theta;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_FOUR(alias_switch,N, kfactor);
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1255,12 +1288,19 @@ void Compute_local_ring_spectrum_FOUR
 	DP kkmag, theta;
 	DP factor;
 	int shell_index, sector_index;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	int	kkmax = Max_radius_inside_FOUR(alias_switch,N, kfactor);
 			
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N,  kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -1313,6 +1353,7 @@ void Compute_ring_spectrum_FOUR
 
 //*********************************************************************************************
 
+// Not for 2D
 void Compute_local_ring_spectrum_helicity_FOUR
 (
 	string alias_switch,
@@ -1331,6 +1372,7 @@ void Compute_local_ring_spectrum_helicity_FOUR
 	DP modal_helicity;
 	DP factor;
 	int shell_index, sector_index;
+	
 
 	int	kkmax = Max_radius_inside_FOUR(alias_switch,N, kfactor);
 		
@@ -1399,6 +1441,8 @@ void Compute_ring_spectrum_helicity_FOUR
 /**********************************************************************************************
 	
 								CYLINDERICAL RING SPECTRUM
+ 
+									Not for 2D
 				
 ***********************************************************************************************/
 
@@ -1446,18 +1490,15 @@ void Compute_local_cylinder_ring_spectrum_FOUR
 					factor = Multiplicity_factor_FOUR(l1, l2, l3, N);
 				
 			
-#ifdef ANISDIRN1
-					anisV1 = Ax(l1, l2, l3);
-#endif
+					if (globalvar_anisotropy_switch == 1)
+						anisV1 = Ax(l1, l2, l3);
+					
+					else if (globalvar_anisotropy_switch == 2)
+						anisV1 = Ay(l1, l2, l3);
 
-#ifdef ANISDIRN2
-					anisV1 = Ay(l1, l2, l3);
-#endif
-
-#ifdef ANISDIRN3
-					anisV1 = Az(l1, l2, l3);
-#endif
-
+					else if (globalvar_anisotropy_switch == 2)
+						anisV1 = Az(l1, l2, l3);
+					
 					
 					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n) 
 															     * pow2(abs(anisV1));
@@ -1550,35 +1591,39 @@ void Compute_local_cylinder_ring_spectrum_FOUR
 					V = Ax(l1, l2, l3), Ay(l1, l2, l3), Az(l1, l2, l3);
 					W = Bx(l1, l2, l3), By(l1, l2, l3), Bz(l1, l2, l3);
 			
-#ifdef ANISDIRN1
-					anisV1 = Ax(l1, l2, l3);
-					anisW1 = Bx(l1, l2, l3);
-					
-					e1K = 1.0, 0.0, 0.0;
-					
-					Vrho = complx(0.0,0.0), Ay(l1, l2, l3), Az(l1, l2, l3);
-					Wrho_conj = complx(0.0,0.0), conj(By(l1, l2, l3)), conj(Bz(l1, l2, l3));					
-#endif
 
-#ifdef ANISDIRN2
-					anisV1 = Ay(l1, l2, l3);
-					anisW1 = By(l1, l2, l3);
-					
-					e1K = 0.0, 1.0, 0.0;
-					
-					Vrho = Ax(l1, l2, l3), complx(0.0,0.0), Az(l1, l2, l3);
-					Wrho_conj = conj(Bx(l1, l2, l3)), complx(0.0,0.0), conj(Bz(l1, l2, l3));
-#endif
+					if (globalvar_anisotropy_switch == 1)
+					{
+						anisV1 = Ax(l1, l2, l3);
+						anisW1 = Bx(l1, l2, l3);
+						
+						e1K = 1.0, 0.0, 0.0;
+						
+						Vrho = complx(0.0,0.0), Ay(l1, l2, l3), Az(l1, l2, l3);
+						Wrho_conj = complx(0.0,0.0), conj(By(l1, l2, l3)), conj(Bz(l1, l2, l3));
+					}
+										
+					else if (globalvar_anisotropy_switch == 2)
+					{
+						anisV1 = Ay(l1, l2, l3);
+						anisW1 = By(l1, l2, l3);
+						
+						e1K = 0.0, 1.0, 0.0;
+						
+						Vrho = Ax(l1, l2, l3), complx(0.0,0.0), Az(l1, l2, l3);
+						Wrho_conj = conj(Bx(l1, l2, l3)), complx(0.0,0.0), conj(Bz(l1, l2, l3));
+					}	
 
-#ifdef ANISDIRN3
-					anisV1 = Az(l1, l2, l3);
-					anisW1 = Bz(l1, l2, l3);
-					
-					e1K = 0.0, 0.0, 1.0;
-					
-					Vrho = Ax(l1, l2, l3), Ay(l1, l2, l3), complx(0.0,0.0);
-					Wrho_conj = conj(Bx(l1, l2, l3)), conj(By(l1, l2, l3)), complx(0.0,0.0);
-#endif
+					else if (globalvar_anisotropy_switch == 3)
+					{
+						anisV1 = Az(l1, l2, l3);
+						anisW1 = Bz(l1, l2, l3);
+						
+						e1K = 0.0, 0.0, 1.0;
+						
+						Vrho = Ax(l1, l2, l3), Ay(l1, l2, l3), complx(0.0,0.0);
+						Wrho_conj = conj(Bx(l1, l2, l3)), conj(By(l1, l2, l3)), complx(0.0,0.0);
+					}	
 					
 					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n) 
 														   * real(anisV1*conj(anisW1));
@@ -1799,6 +1844,7 @@ void Compute_local_cylinder_ring_spectrum_helicity_FOUR
 	
 	int	kkperp_max = Anis_max_Krho_radius_inside_FOUR(alias_switch, N, kfactor);
 	
+	
 	for (int l1=0; l1<local_N1; l1++)										
 		for (int l2=0; l2<N[2]; l2++) 
 			for (int l3=0; l3<=N[3]/2; l3++) 
@@ -1879,6 +1925,13 @@ void Compute_local_imag_shell_spectrum_B0_FOUR
 	DP kkmag;
 	int shell_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	
 	local_Sk = 0.0;
@@ -1887,7 +1940,7 @@ void Compute_local_imag_shell_spectrum_B0_FOUR
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				
@@ -1957,6 +2010,13 @@ void Compute_local_imag_ring_spectrum_B0_FOUR
 	DP kkmag, theta;
 	int shell_index, sector_index;
 	TinyVector<DP,3> kk;
+	int maxN3;
+	
+	if (N[3] > 2)
+		maxN3 = N[3]/2;
+	
+	else	// 2D
+		maxN3 = 0;
 	
 	local_Sk = 0.0;
 	
@@ -1964,7 +2024,7 @@ void Compute_local_imag_ring_spectrum_B0_FOUR
 	
 	for (int l1=0; l1<local_N1; l1++)				
 		for (int l2=0; l2<N[2]; l2++) 
-			for (int l3=0; l3<=N[3]/2; l3++) 
+			for (int l3=0; l3<=maxN3; l3++) 
 			{
 				kkmag = Kmagnitude_FOUR(l1, l2, l3, N, kfactor);
 				shell_index = (int) ceil(kkmag);
@@ -2022,6 +2082,7 @@ void Compute_imag_ring_spectrum_B0_FOUR
 
 //******************************** for cylinder rings *****************************************
 
+// Not for 2D
 void Compute_local_imag_cylinder_ring_spectrum_B0_FOUR
 (
 	string alias_switch,
@@ -2038,7 +2099,7 @@ void Compute_local_imag_cylinder_ring_spectrum_B0_FOUR
 	DP kkpll, kkperp;
 	int shell_index, slab_index;
 	TinyVector<DP,3> kk;
-	
+
 	
 	local_Sk = 0.0;
 	

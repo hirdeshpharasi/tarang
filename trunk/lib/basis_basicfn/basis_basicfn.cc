@@ -377,6 +377,21 @@ int Get_slab_index(DP kkpll, DP kkperp, Array<DP,1> cylinder_kpll_array)
 	kkpll = abs(kkpll);			// if kkpll < 0, include it in the positive slab.
 	
 	// kz = 0 included in the first slab
+	if (kkpll < MYEPS )
+		return 1;
+	
+	else
+	{
+		for (index=1; index <= (cylinder_kpll_array.length())(0); index++)
+			if (kkpll <= cylinder_kpll_array(index))
+				break;
+		
+		return index;
+	}
+
+	
+	/*
+		// kz = 0 included in the first slab
 	if ( (kkpll >= cylinder_kpll_array(0)) && (kkpll <= cylinder_kpll_array(1)) )
 		return 1;
 		
@@ -387,7 +402,8 @@ int Get_slab_index(DP kkpll, DP kkperp, Array<DP,1> cylinder_kpll_array)
 				break;
 		
 		return index;
-	}	
+	}
+	 */
 	
 }
 
@@ -417,6 +433,21 @@ void Compute_cylinder_ring_index
 	
 	kkpll = abs(kkpll);			// if kkpll < 0, include it in the positive slab.
 	
+	
+	// kz = 0 included in the first slab
+	if (kkpll < MYEPS )
+		slab_index = 1;
+	
+	else
+	{
+		for (ind2=1; ind2 <= (cylinder_kpll_array.length())(0); ind2++)
+			if (kkpll <= cylinder_kpll_array(ind2))
+				break;
+		
+		slab_index = ind2;
+	}
+	
+	/*
 	// kz = 0 included in the first slab
 	if ( (kkpll >= cylinder_kpll_array(0)) && (kkpll <= cylinder_kpll_array(1)) )
 		slab_index = 1;
@@ -429,6 +460,7 @@ void Compute_cylinder_ring_index
 		
 		slab_index = ind2;
 	}	
+	 */
 }
 
 

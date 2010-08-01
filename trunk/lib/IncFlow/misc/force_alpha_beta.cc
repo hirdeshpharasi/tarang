@@ -66,12 +66,17 @@ void IncVF::Force_alpha_beta(int kx, int ky, int kz, DP alpha, DP beta)
 	int ly = Get_ly3D(basis_type, ky, N); 
 	int lz = kz;
 	
-	CV_Modal_vorticity(lx, ly, lz, vorticity);
+	
 	
 	if (basis_type == "FOUR")	
 	{
 		if ( (lx >= 0) && (lx < local_N1) ) 
 		{
+			vorticity = 0.0;
+			
+			if (beta > MYEPS)
+				CV_Modal_vorticity(lx, ly, lz, vorticity);
+			
 			(*Force1)(lx, ly, lz) = alpha * (*V1)(lx, ly, lz) 
 										+ beta * vorticity(0);
 										
@@ -87,6 +92,11 @@ void IncVF::Force_alpha_beta(int kx, int ky, int kz, DP alpha, DP beta)
 	{
 		if ( (lx >= 0) && (lx < local_N1) ) 
 		{
+			vorticity = 0.0;
+			
+			if (beta > MYEPS)
+				CV_Modal_vorticity(lx, ly, lz, vorticity);
+				
 			// in FOUR basis
 			(*Force1)(lx, ly, lz) = alpha * (-I) * (*V1)(lx, ly, lz) 
 										+ beta * vorticity(0);

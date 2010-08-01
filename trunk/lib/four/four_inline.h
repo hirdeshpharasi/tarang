@@ -140,25 +140,45 @@ inline int Get_ly3D_FOUR(int ky, int N[]) { return  (ky >= 0) ? ky : (ky + N[2])
 
 /**********************************************************************************************
 
-		  If wavenos computed using actual wavenumber:  Ki = Kfactor[i]*grid[i]
+				 If wavenos computed using actual wavenumber:  
+						globalvar_waveno_switch = 0;  
+						Ki = Kfactor[i]*grid[i]
+				 
+				 If wavenos computed using grid wavenumber:  Ki = grid[i]
+						globalvar_waveno_switch = 1;  
+						Ki = grid[i]
 
 ***********************************************************************************************/
 
-#ifdef WAVENOACTUAL
 
 ///  WAVENOACTUAL: \f$ K = \sqrt{K_x^2 + K_y^2 + K_z^2} \f$
 inline DP Kmagnitude_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
 {
-	return sqrt(  pow2(Get_kx_FOUR(l1,N) * kfactor[1]) 
-				+ pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) + pow2(l3* kfactor[3]) ); 
+	if	(globalvar_waveno_switch == 0)
+		return sqrt(  pow2(Get_kx_FOUR(l1,N) * kfactor[1]) 
+				+ pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) + pow2(l3* kfactor[3]) );
+	
+	else if (globalvar_waveno_switch == 1)
+		return sqrt(  pow2(Get_kx_FOUR(l1,N)) + pow2(Get_ky3D_FOUR(l2,N)) + pow2(l3) ); 
+	
+	else
+		return 0;		// for -Wall
 }
 
 /// WAVENOACTUAL -- Radius of the smallest sphere that contains the wavenumber K box Ni's. <BR>
 /// The range of ki = [-Ni/2+1 : Ni/2].
 inline int Min_radius_outside_aliased_FOUR(int N[], DP kfactor[]) 
 {
-	return (int) ceil(sqrt(  pow2((N[1]/2)*kfactor[1]) 
+	if	(globalvar_waveno_switch == 0)
+		return (int) ceil(sqrt(  pow2((N[1]/2)*kfactor[1]) 
 				+ pow2(N[2]/2 * kfactor[2]) + pow2(N[3]/2* kfactor[3]) ));
+	
+	else if (globalvar_waveno_switch == 1)
+		return (int) ceil(sqrt(  pow2(N[1]/2) + pow2(N[2]/2) + pow2(N[3]/2) ));
+	
+	else
+		return 0;		// for -Wall
+		
 }
 
 
@@ -166,12 +186,28 @@ inline int Min_radius_outside_aliased_FOUR(int N[], DP kfactor[])
 /// The range of ki = [-Ni/2+1 : Ni/2].
 inline int Max_radius_inside_aliased_FOUR(int N[], DP kfactor[]) 
 {
-	DP kmag = min( (N[1]/2)*kfactor[1], (N[2]/2)*kfactor[2] );  
+	int ans = 1;
 	
-	if (N[3] > 2)
-		kmag = min(kmag, (N[3]/2)*kfactor[3]);
+	if	(globalvar_waveno_switch == 0)
+	{
+		DP kmag = min( (N[1]/2)*kfactor[1], (N[2]/2)*kfactor[2] );  
 		
-	return ((int) kmag);	
+		if (N[3] > 2)
+			kmag = min(kmag, (N[3]/2)*kfactor[3]);
+			
+		ans = ((int) kmag);	
+	}
+	
+	else if (globalvar_waveno_switch == 1)
+	{
+		ans = min(N[1]/2, N[2]/2);
+		
+		if (N[3] > 2)
+			ans = min(ans, (N[3]/2));
+	}
+	
+	return ans;
+	
 }
 
 
@@ -180,8 +216,15 @@ inline int Max_radius_inside_aliased_FOUR(int N[], DP kfactor[])
 /// The range of dealiased ki =  [-Ni/3+1 : Ni/3].
 inline int Min_radius_outside_dealiased_FOUR(int N[], DP kfactor[]) 
 {
-	return (int) ceil(sqrt(  pow2((N[1]/3)*kfactor[1]) 
+	if	(globalvar_waveno_switch == 0)
+		return (int) ceil(sqrt(  pow2((N[1]/3)*kfactor[1]) 
 				+ pow2(N[2]/3 * kfactor[2]) + pow2(N[3]/3* kfactor[3]) ));
+	
+	else if (globalvar_waveno_switch == 1)
+		return (int) ceil(sqrt(  pow2(N[1]/3) + pow2(N[2]/3) + pow2(N[3]/3) ));
+	
+	else
+		return 0;		// for -Wall
 }
 
 /// WAVENOACTUAL -- Radius of the largest sphere that fits inside the dealised wavenumber  
@@ -189,13 +232,30 @@ inline int Min_radius_outside_dealiased_FOUR(int N[], DP kfactor[])
 /// The range of dealiased ki =  [-Ni/3+1 : Ni/3].
 inline int Max_radius_inside_dealiased_FOUR(int N[], DP kfactor[]) 
 {
-	DP kmag = min( (N[1]/3)*kfactor[1], (N[2]/3)*kfactor[2] );  
+	int ans = 1;
 	
-	if (N[3] > 2)
-		kmag = min(kmag, (N[3]/3)*kfactor[3]);
+	if	(globalvar_waveno_switch == 0)
+	{
+		DP kmag = min( (N[1]/3)*kfactor[1], (N[2]/3)*kfactor[2] );  
 		
-	return ((int) kmag);		
+		if (N[3] > 2)
+			kmag = min(kmag, (N[3]/3)*kfactor[3]);
+			
+		return ((int) kmag);	
+	}
+	
+	else if (globalvar_waveno_switch == 1)
+	{
+		ans = min(N[1]/3, N[2]/3);
+		
+		if (N[3] > 2)
+			ans = min(ans, (N[3]/3));
+	}
+	
+	return  ans;
+		
 }
+	
 
 
 /*! \brief WAVENOACTUAL -- Returns the approximate number of modes in a wavenumber K semishell 
@@ -213,86 +273,37 @@ inline int Max_radius_inside_dealiased_FOUR(int N[], DP kfactor[])
  * \return The number of modes in a hemispheric shell of radius. 
  *			In 3D, it is hemisphere sphere with (kz>=0).
  */
-inline DP Approx_number_modes_in_shell_FOUR(int radius, DP kfactor[])
+inline DP Approx_number_modes_in_shell_FOUR(int N[], int radius, DP kfactor[])
 {
-	return (2*M_PI*radius*radius)/(kfactor[1]*kfactor[2]*kfactor[3]);		
-}
-
-#endif
-
-/**********************************************************************************************
-
-		  If wavenos computed using grid wavenumber:  Ki = grid[i]
-
-***********************************************************************************************/
-
-#ifdef WAVENOGRID
-
-/// WAVENOGRID ---  \f$ K = \sqrt{k_x^2 + k_y^2 + k_z^2} \f$
-inline DP Kmagnitude_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-{
-	return sqrt(  pow2(Get_kx_FOUR(l1,N)) + pow2(Get_ky3D_FOUR(l2,N)) + pow2(l3) ); 
-}
-
-/// WAVENOGRID -- Radius of the smallest sphere that contains the grid box Ni's. <BR>
-/// The range of ki = [-Ni/2+1 : Ni/2].
-inline int Min_radius_outside_aliased_FOUR(int N[], DP kfactor[]) 
-{
-	return (int) ceil(sqrt(  pow2(N[1]/2) + pow2(N[2]/2) + pow2(N[3]/2) ));
-}
-
-
-/// WAVENOGRID -- Radius of the largest sphere that fits inside the grid box Ni's. <BR>
-/// The range of ki = [-Ni/2+1 : Ni/2].
-inline int Max_radius_inside_aliased_FOUR(int N[], DP kfactor[]) 
-{
-	int temp = min(N[1]/2, N[2]/2);
+	DP ans = 0.0;
 	
-	if (N[3] > 2)
-		temp = min(temp, (N[3]/2));
-		
-	return temp;	
-}
-
-
-/// WAVENOGRID -- Radius of the smallest sphere that contains the dealiased grid box Ni's. <BR>
-/// The range of dealiased ki =  [-Ni/3+1 : Ni/3].
-inline int Min_radius_outside_dealiased_FOUR(int N[], DP kfactor[]) 
-{
-	return (int) ceil(sqrt(  pow2(N[1]/3) + pow2(N[2]/3) + pow2(N[3]/3) ));
-}
-
-
-/// WAVENOGRID -- Radius of the largest sphere that fits inside the dealised grid box Ni's. <BR>
-/// The range of dealiased ki =  [-Ni/3+1 : Ni/3].
-inline int Max_radius_inside_dealiased_FOUR(int N[], DP kfactor[]) 
-{
-	int temp = min(N[1]/3, N[2]/3);
+	if ((N[2] > 1) && (N[3] > 2))
+	{
+		if	(globalvar_waveno_switch == 0)
+			ans = (2*M_PI*radius*radius)/(kfactor[1]*kfactor[2]*kfactor[3]);	
 	
-	if (N[3] > 2)
-		temp = min(temp, (N[3]/3));
+		else if (globalvar_waveno_switch == 1)
+			ans = (2*M_PI*radius*radius);
+	}
+	else if (N[2] == 1)
+	{
+		if	(globalvar_waveno_switch == 0)
+			ans = (M_PI*radius)/(kfactor[1]*kfactor[3]);
 		
-	return temp;
+		else if	(globalvar_waveno_switch == 1)
+			ans = (M_PI*radius);
+	}
+	else if (N[3] <= 2)
+	{
+		if	(globalvar_waveno_switch == 0)
+			ans = (M_PI*radius)/(kfactor[1]*kfactor[2]);
+		
+		else if	(globalvar_waveno_switch == 1)
+			ans = (M_PI*radius);
+	}
+	
+	return ans;
 }
-
-
-
-/*! \brief WAVENOGRID -- Returns the approximate number of modes in a grid semi-shell 
- *							(upper hemisphere) of radius "radius".
- * 
- * \param  radius
- * \return The number of modes in a shell of radius. In 2D, it is semi circle ( ky>= 0). In 3D, 
- *			it is hemisphere sphere with (kz>=0).
- */
-inline DP Approx_number_modes_in_shell_FOUR(int radius, DP kfactor[])
-{
-	return (2*M_PI*radius*radius);		
-}
-
-#endif
-
-// endif of WAVENOGRID
-
 
 //*********************************************************************************************
 
@@ -365,61 +376,171 @@ inline DP Modal_energy_FOUR(Array<complx,3> A, int l1, int l2, int l3)
 
 //*********************************************************************************************	
 
-		
-
-#ifdef ANISDIRN1
 			
 /// Anisotropic axis along x1: for anisotropic energy spectrum and energy 
 ///		transfer calculations,  \f$ K_{||} = K_1 \f$			
 inline DP AnisKpll_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_kx_FOUR(l1,N) * kfactor[1]);  }
+{	
+	if (globalvar_anisotropy_switch == 1)
+		return (Get_kx_FOUR(l1,N) * kfactor[1]); 
+	
+	else if (globalvar_anisotropy_switch == 2)
+		return (Get_ky3D_FOUR(l2,N) * kfactor[2]);
+		
+	else if (globalvar_anisotropy_switch == 3)
+		return (l3 * kfactor[3]);
+	
+	else
+		return 0;		// for -Wall
+		
+}
 
 /// Anisotropic axis along x1: for anisotropic energy spectrum and energy 
 ///		transfer calculations,  \f$ K_\perp =\sqrt{K_2^2 + K_3^2} \f$			
 inline DP AnisKperp_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{return sqrt( pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) + pow2(l3* kfactor[3]) ); }
+{
+	if (globalvar_anisotropy_switch == 1)
+		return sqrt( pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) + pow2(l3* kfactor[3]) ); 
+	
+	else if (globalvar_anisotropy_switch == 2)
+		return sqrt( pow2(Get_kx_FOUR(l1,N) * kfactor[1]) + pow2(l3* kfactor[3]) );
+		
+	else if (globalvar_anisotropy_switch == 3)
+		return sqrt( pow2(Get_kx_FOUR(l1,N) * kfactor[1]) 
+						+ pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) );
+	else
+		return 0;		// for -Wall
+}
 
 /// Anisotropic axis along x1: for anisotropic energy spectrum and energy 
 ///		transfer calculations,  horizontal direction 1, \f$ K_{h1} = K_2 \f$										
 inline DP AnisKh1_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_ky3D_FOUR(l2,N) * kfactor[2]);  }
+{	
+	if (globalvar_anisotropy_switch == 1)
+		return (Get_ky3D_FOUR(l2,N) * kfactor[2]);  
+	
+	else if (globalvar_anisotropy_switch == 2)
+		return (l3 * kfactor[3]);
+		
+	else if (globalvar_anisotropy_switch == 3)
+		return (Get_kx_FOUR(l1,N) * kfactor[1]);
+	
+	else
+		return 0;		// for -Wall
+}
 
 /// Anisotropic axis along x1: for anisotropic energy spectrum and energy 
 ///		transfer calculations,  horizontal direction 2, \f$ K_{h2} = K_3 \f$				
 inline DP AnisKh2_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (l3 * kfactor[3]);  }
+{	
+	if (globalvar_anisotropy_switch == 1)
+		return (l3 * kfactor[3]);  
+	
+	else if (globalvar_anisotropy_switch == 2)
+		return (Get_kx_FOUR(l1,N)  * kfactor[1]);
+		
+	else if (globalvar_anisotropy_switch == 3)
+		return (Get_ky3D_FOUR(l2,N) * kfactor[2]); 
+	
+	else
+		return 0;		// for -Wall
+}
 			
 			
 /// Cylindrical: Anis_min_Kpll
 inline DP Anis_min_Kpll_FOUR(string alias_switch, int N[], DP kfactor[]) 
 { 
+	/*
 	if (alias_switch == "ALIAS")
-		return ((-N[1]/2+1) * kfactor[1]); 
+	{
+		if (globalvar_anisotropy_switch == 1)
+			return ((-N[1]/2+1) * kfactor[1]);
+		
+		else if (globalvar_anisotropy_switch == 2)
+			return ((-N[2]/2+1) * kfactor[2]);
+			
+		else if (globalvar_anisotropy_switch == 3)
+			return 0.0;
+	}
+		 
 		
 	else
-		return ((-N[1]/3+1) * kfactor[1]);	
+	{
+		if (globalvar_anisotropy_switch == 1)
+			return ((-N[1]/3+1) * kfactor[1]);
+		
+		else if (globalvar_anisotropy_switch == 2)
+			return ((-N[2]/3+1) * kfactor[2]);
+			
+		else if (globalvar_anisotropy_switch == 3)
+			return 0.0;
+	}
+	 */
+		
+	return 0.0;
 }
 				
 /// Cylindrical: Anis_max_Kpll
 inline DP Anis_max_Kpll_FOUR(string alias_switch, int N[], DP kfactor[]) 
 { 
+	DP maxkpll = 0;
+	
 	if (alias_switch == "ALIAS")
-		return ((N[1]/2) * kfactor[1]); 
+	{	
+		if (globalvar_anisotropy_switch == 1)
+			maxkpll = ((N[1]/2) * kfactor[1]); 
+		
+		else if (globalvar_anisotropy_switch == 2)
+			maxkpll = ((N[2]/2) * kfactor[2]); 
+			
+		else if (globalvar_anisotropy_switch == 3)
+			maxkpll = ((N[3]/2) * kfactor[3]);
+	}
 		
 	else
-		return ((N[1]/3) * kfactor[1]);	
+	{
+		if (globalvar_anisotropy_switch == 1)
+			maxkpll = ((N[1]/3) * kfactor[1]);	
+		
+		else if (globalvar_anisotropy_switch == 2)
+			maxkpll = ((N[2]/3) * kfactor[2]);	 
+			
+		else if (globalvar_anisotropy_switch == 3)
+			maxkpll = ((N[3]/3) * kfactor[3]);
+		
+	}
+	
+	return maxkpll;
 }
 
 /// 3D Cylindrical: Anis_max_Krho_radius_inside the wavenumber box
 inline int Anis_max_Krho_radius_inside_FOUR(string alias_switch, int N[], DP kfactor[]) 	
 {
-	DP kmag;
+	DP kmag = 0.0;
 	
 	if (alias_switch == "ALIAS")
-		kmag = min( (N[2]/2)*kfactor[2], (N[3]/2)*kfactor[3] );  
+	{
+		if (globalvar_anisotropy_switch == 1)
+			kmag = min( (N[2]/2)*kfactor[2], (N[3]/2)*kfactor[3] );
+		
+		else if (globalvar_anisotropy_switch == 2)
+			kmag = min( (N[1]/2)*kfactor[1], (N[3]/2)*kfactor[3] );  
+		
+		else if (globalvar_anisotropy_switch == 3)
+			kmag = min( (N[1]/2)*kfactor[1], (N[2]/2)*kfactor[2] ); 
+	}
 	
 	else
-		kmag = min( (N[2]/3)*kfactor[2], (N[3]/3)*kfactor[3] );  
+	{
+		if (globalvar_anisotropy_switch == 1)
+			kmag = min( (N[2]/3)*kfactor[2], (N[3]/3)*kfactor[3] ); 
+		
+		else if (globalvar_anisotropy_switch == 2)
+			kmag = min( (N[1]/3)*kfactor[1], (N[3]/3)*kfactor[3] ); 
+			
+		else if (globalvar_anisotropy_switch == 3)
+			kmag = min( (N[1]/3)*kfactor[1], (N[2]/3)*kfactor[2] );	
+	}
 	
 		return ((int) kmag);
 }
@@ -427,139 +548,10 @@ inline int Anis_max_Krho_radius_inside_FOUR(string alias_switch, int N[], DP kfa
 // Max polar angle
 inline DP Get_max_polar_angle_FOUR() 
 { 
+	
 	return M_PI/2;
+	
 }			
-	
-#endif	
-
-//*********************************************************************************************	
-#ifdef ANISDIRN2
-			
-/// Anisotropic axis along x2: for anisotropic energy spectrum and energy 
-///		transfer calculations,  \f$ K_{||} = K_2 \f$
-inline DP AnisKpll_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_ky3D_FOUR(l2,N) * kfactor[2]);  }
-						
-/// Anisotropic axis along x2: for anisotropic energy spectrum and energy 
-///		transfer calculations,  \f$ K_\perp =\sqrt{K_1^2 + K_3^2} \f$			
-inline DP AnisKperp_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{return sqrt( pow2(Get_kx_FOUR(l1,N) * kfactor[1]) + pow2(l3* kfactor[3]) ); }
-
-/// Anisotropic axis along x2: for anisotropic energy spectrum and energy 
-///		transfer calculations,  horizontal direction 1, \f$ K_{h1} = K_3 \f$											
-inline DP AnisKh1_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (l3 * kfactor[3]);  }
-
-/// Anisotropic axis along x2: for anisotropic energy spectrum and energy 
-///		transfer calculations,  horizontal direction 2, \f$ K_{h2} = K_1 \f$			
-inline DP AnisKh2_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_kx_FOUR(l1,N)  * kfactor[1]);  }
-			
-/// Cylindrical: Anis_min_Kpll
-inline DP Anis_min_Kpll_FOUR(string alias_switch, int N[], DP kfactor[]) 
-{ 
-	if (alias_switch == "ALIAS")
-		return ((-N[2]/2+1) * kfactor[2]); 
-		
-	else
-		return ((-N[2]/3+1) * kfactor[2]);	
-}
-				
-/// Cylindrical: Anis_max_Kpll
-inline DP Anis_max_Kpll_FOUR(string alias_switch, int N[], DP kfactor[]) 
-{ 
-	if (alias_switch == "ALIAS")
-		return ((N[2]/2) * kfactor[2]); 
-		
-	else
-		return ((N[2]/3) * kfactor[2]);	
-}
-
-/// 3D Cylindrical: Anis_max_Krho_radius_inside the wavenumber box.
-inline int Anis_max_Krho_radius_inside_FOUR(string alias_switch, int N[], DP kfactor[]) 			
-{
-	DP kmag;
-
-	if (alias_switch == "ALIAS")
-		kmag = min( (N[1]/2)*kfactor[1], (N[3]/2)*kfactor[3] );  
-	
-	else
-		kmag = min( (N[1]/3)*kfactor[1], (N[3]/3)*kfactor[3] );  
-	
-		return ((int) kmag);			
-}
-
-
-// Max polar angle
-inline DP Get_max_polar_angle_FOUR() 
-{ 
-	return M_PI/2;
-}
-			
-#endif	
-
-//*********************************************************************************************	
-
-#ifdef ANISDIRN3
-
-/// Anisotropic axis along x3: for anisotropic energy spectrum and energy 
-///			transfer calculations,  \f$ K_{||} = K_3 \f$
-inline DP AnisKpll_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (l3 * kfactor[3]);  }
-
-/// Anisotropic axis along x3: for anisotropic energy spectrum and energy 
-///			transfer calculations,  \f$ K_\perp =\sqrt{K_1^2 + K_2^2} \f$			
-inline DP AnisKperp_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{return sqrt( pow2(Get_kx_FOUR(l1,N) * kfactor[1]) 
-						+ pow2(Get_ky3D_FOUR(l2,N) * kfactor[2]) ); }
-
-/// Anisotropic axis along x3: for anisotropic energy spectrum and energy 
-///			transfer calculations,  horizontal direction 1, \f$ K_{h1} = K_1 \f$											
-inline DP AnisKh1_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_kx_FOUR(l1,N) * kfactor[1]);  }
-
-/// Anisotropic axis along x3: for anisotropic energy spectrum and energy 
-///			transfer calculations,  horizontal direction 2, \f$ K_{h2} = K_2 \f$			
-inline DP AnisKh2_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
-			{	return (Get_ky3D_FOUR(l2,N) * kfactor[2]);  }
-			
-/// Cylindrical: Anis_min_Kpll
-inline DP Anis_min_Kpll_FOUR(string alias_switch, int N[], DP kfactor[]) 
-			{ return 0.0; }
-				
-/// Cylindrical: Anis_max_Kpll
-inline DP Anis_max_Kpll_FOUR(string alias_switch, int N[], DP kfactor[])
-{ 
-	if (alias_switch == "ALIAS")
-		return ((N[3]/2) * kfactor[3]); 
-		
-	else
-		return ((N[3]/3) * kfactor[3]);	
-}	
-
-/// 3D Cylindrical: Anis_max_Krho_radius_inside the wavenumber box.
-inline int Anis_max_Krho_radius_inside_FOUR(string alias_switch, int N[], DP kfactor[]) 			
-{
-	DP kmag;
-	
-	if (alias_switch == "ALIAS")
-		kmag = min( (N[1]/2)*kfactor[1], (N[2]/2)*kfactor[2] );  
-		
-	else
-		kmag = min( (N[1]/3)*kfactor[1], (N[2]/3)*kfactor[2] );	
-	
-	return ((int) kmag);	
-}
-
-
-// Max polar angle
-inline DP Get_max_polar_angle_FOUR() 
-{ 
-	return M_PI/2;
-}
-
-			
-#endif
 
 //*********************************************************************************************	
 
@@ -574,7 +566,7 @@ inline DP Get_max_polar_angle_FOUR()
  */	
 inline DP AnisKvect_polar_angle_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
 {
-	double kkpll, kkperp;
+	DP kkpll, kkperp;
 	
 	kkpll = AnisKpll_FOUR(l1, l2, l3, N, kfactor);
 	kkperp = AnisKperp_FOUR(l1, l2, l3, N, kfactor);
@@ -583,28 +575,34 @@ inline DP AnisKvect_polar_angle_FOUR(int l1, int l2, int l3, int N[], DP kfactor
 }
 
 
-inline DP AnisKvect_polar_angle_2Din3Dgrid_FOUR(int l1, int l2, int l3, int N[], DP kfactor[])
+inline DP AnisKvect_azimuthal_angle_2Din3Dgrid_FOUR
+(
+ int l1, int l2, int l3, 
+ int N[], 
+ DP kfactor[]
+)
 {
-	double kkpll, kkperp;
+	// l3 = 0
+	DP kkh1 = 1;
+	DP kkh2 = 1;
 	
-	kkpll = AnisKpll_FOUR(l1, l2, l3, N, kfactor);
+	if (N[3]  <= 2)
+	{
+		if (globalvar_anisotropy_switch == 1)
+		{ 
+			kkh1 = Get_kx_FOUR(l1,N) * kfactor[1];
+			kkh2 = Get_ky3D_FOUR(l2,N) * kfactor[2];
+		}
+		
+		else if (globalvar_anisotropy_switch == 2)	
+		{	
+			kkh1 = Get_ky3D_FOUR(l2,N) * kfactor[2];
+			kkh2 = Get_kx_FOUR(l1,N) * kfactor[1];
+		}
+	}
 	
-#ifdef ANISDIRN1	
-	kkperp = Get_ky3D_FOUR(l2,N) * kfactor[2];
-#endif
-	
-#ifdef ANISDIRN2
-	kkperp = Get_kx_FOUR(l1,N) * kfactor[1];
-#endif	
-
-#ifdef ANISDIRN3
-	kkperp = 0.0;  // Only for compiler warning message
-#endif	
-	
-	
-	return Get_azimuthal_angle(kkperp, kkpll);
+	return Get_azimuthal_angle(kkh1, kkh2);
 }
-
 
 
 /*! \brief 3D: Returns the azimutal angle.

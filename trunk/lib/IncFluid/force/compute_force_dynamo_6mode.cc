@@ -28,7 +28,7 @@
  * 
  * @brief  Set up force for 6 mode dynamo model of Verma et al.
  *
- *  @note is_force_field_modes_read is used to read only once.
+ *  @note is_force_field_para_read is used to read only once.
  *
  * @author  M. K. Verma
  * @version 4.0 MPI
@@ -45,7 +45,7 @@
 void IncFluid::Compute_force_DYNAMO_SIX_MODE(IncVF& W)
 {
 
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
 		int k0 = ((int) (*force_field_para)(1));
 		DP amp101 = (*force_field_para)(2);
@@ -74,7 +74,7 @@ void IncFluid::Compute_force_DYNAMO_SIX_MODE(IncVF& W)
 					<< (*Force3)(1,1,2) << endl;
 		}			
 		
-		is_force_field_modes_read = 1;
+		is_force_field_para_read = 1;
 	}
 			
 }

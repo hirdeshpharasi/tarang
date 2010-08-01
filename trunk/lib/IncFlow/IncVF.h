@@ -472,12 +472,13 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	void Put_vector_amp_phase_comp_conj
 	(
-		int lx, int ly, int lz, 
+		int lx, int ly, int lz,
+		int N[],
 		DP amp, 
 		DP phase1, DP phase2, DP phase3
 	);
 	
-	void Put_vector_amp_phase_comp_conj_2Din3Dgrid(int lx, int ly, DP amp, DP phase);
+		//	void Put_vector_amp_phase_comp_conj_2Din3Dgrid(int lx, int ly, DP amp, DP phase);
 
 	void Force_alpha(int kx, int ky, DP alpha);
 	void Force_alpha_beta(int kx, int ky, int kz, DP alpha, DP beta);

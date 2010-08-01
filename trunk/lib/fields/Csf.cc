@@ -85,7 +85,7 @@ CSF::CSF
 	{
 		// Angles of the sectors
 		
-		DP max_theta = Get_max_polar_angle(CS_basis_type);
+		DP max_theta = Get_max_polar_angle(CS_basis_type);		// M_PI/2
 		
 		CS_sector_angle_array_spectrum = new Array<DP,1>(CS_no_sectors_spectrum+1);
 		
@@ -182,17 +182,16 @@ CSF::CSF
 	
 	if (CS_planar_structure_fn_switch == 1)
 	{
-#ifdef ANISDIRN1
-		CS_structure_fn_rpll_max = Ncs[1];
-#endif
 
-#ifdef ANISDIRN2
-		CS_structure_fn_rpll_max = Ncs[2];
-#endif
+		if (globalvar_anisotropy_switch == 1)
+			CS_structure_fn_rpll_max = Ncs[1];
 
-#ifdef ANISDIRN3
-		CS_structure_fn_rpll_max = Ncs[3];
-#endif	
+		else if (globalvar_anisotropy_switch == 2)
+			CS_structure_fn_rpll_max = Ncs[2];
+
+		else if (globalvar_anisotropy_switch == 3)
+			CS_structure_fn_rpll_max = Ncs[3];
+	
 	
 		int q_range = CS_structurefn_q_max - CS_structurefn_q_min;
 		

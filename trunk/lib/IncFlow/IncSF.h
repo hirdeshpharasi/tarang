@@ -136,7 +136,7 @@ class IncSF: public CSF, public RSF
 	
 	DP Get_Tk(int kx, int ky, int kz);
 	
-	void Put_scalar_amp_phase_comp_conj(int i1, int i2, int i3, DP amp, DP phase);
+	void Put_scalar_amp_phase_comp_conj(int i1, int i2, int i3, int N[], DP amp, DP phase);
 	
 	void Force_scalar_alpha(int kx, int ky, int kz, DP alpha);
 };

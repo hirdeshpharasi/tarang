@@ -140,6 +140,8 @@ public:
 	ofstream		moment_file;
 	ofstream		Skpq_file;
 	
+	ofstream		readme_file;
+	
 	// Output
 	int				N_out_reduced[4];
 	
@@ -154,7 +156,7 @@ public:
 	Array<int,2>	*output_position_array;					 
 	
 			
-																																																					
+
 	// Initial condition parameters
 	
 	int				field_input_proc;
@@ -169,7 +171,7 @@ public:
 	
 	int				num_field_waveno;				// No of vector field wavenumber read
 													// as input of V.
-																																																												
+
 	
 	// Force parameters
 	int				force_field_proc;				//!< forcing procedure, eg, 0 for decaying		
@@ -182,12 +184,12 @@ public:
 	Array<complx,2> *force_field_modes_F_array;
 
 	int				num_force_waveno;				// No of force_field wavenumbers
-	int				is_force_field_modes_read;		// 1 if read already; 0 otherwise.
+	int				is_force_field_para_read;		// 1 if read already; 0 otherwise.
 											
 
 
 //*********************************************************************************************		
-																															
+
 public:
 			
 	IncFluid(int N[], string string_switches[], Array<int,1> switches, 
@@ -218,20 +220,10 @@ public:
 	void Compute_force_const_energy_helicity_supply(IncVF& W);
 	void Compute_force_const_energy_helicity_supply(IncVF& W, IncSF& T);
 	
-	void Compute_force_const_energy_helicity_supply_2Din3Dgrid();
-	void Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncSF& T);
-	void Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncVF& W);
-	void Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncVF& W, IncSF& T);
-	
 	void Compute_force_const_energy_helicity();			
 	void Compute_force_const_energy_helicity(IncSF& T);
 	void Compute_force_const_energy_helicity(IncVF& W);						
 	void Compute_force_const_energy_helicity(IncVF& W, IncSF& T);
-	
-	void Compute_force_const_energy_helicity_2Din3Dgrid();			
-	void Compute_force_const_energy_helicity_2Din3Dgrid(IncSF& T);
-	void Compute_force_const_energy_helicity_2Din3Dgrid(IncVF& W);						
-	void Compute_force_const_energy_helicity_2Din3Dgrid(IncVF& W, IncSF& T);
 	
 	
 	void Compute_force_Taylor_Green();
@@ -364,21 +356,11 @@ public:
 	void Init_cond_energy_spectrum(IncVF& W);
 	void Init_cond_energy_spectrum(IncVF& W, IncSF& T);
 	
-	void Init_cond_energy_spectrum_2Din3Dgrid();
-	void Init_cond_energy_spectrum_2Din3Dgrid(IncSF& T);
-	void Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W);
-	void Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W, IncSF& T);
-	void Init_cond_energy_spectrum_2Din3Dgrid(string Pr_switch, IncSF& T);
-	void Init_cond_energy_spectrum_2Din3Dgrid(string Pr_switch, IncVF& W, IncSF& T);
-	
 	
 	void Init_cond_energy_helicity_spectrum();
 	void Init_cond_energy_helicity_spectrum(IncSF& T);
 	void Init_cond_energy_helicity_spectrum(IncVF& W);
 	void Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T);
-	
-	void Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W);
-	void Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W, IncSF& T);
 	
 	
 	void Init_cond_Taylor_Green();

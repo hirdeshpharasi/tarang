@@ -50,62 +50,58 @@
 void IncFluid::Compute_force_const_energy_helicity()
 {
 
-	static DP inner_radius = (*force_field_para)(1);
-	static DP outer_radius = (*force_field_para)(2);
-	static DP energy_level = (*force_field_para)(3);
-	static DP h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
+	static DP inner_radius;
+	static DP outer_radius;
+	static DP energy_level;
+	static DP h_by_k_E;				// Hk/(k*e)
 	
 	
 	static int nf; 
 	static DP energy_per_mode;
 	
-	static int kx_max, ky_max, kz_max;
+	static int kx_max, ky_max, kz_max, kx_min;
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
+		inner_radius = (*force_field_para)(1);
+		outer_radius = (*force_field_para)(2);
+		energy_level = (*force_field_para)(3);
+		h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
+		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
 		energy_per_mode = energy_level / nf;	
 		
-		if (N[1] > 1)
-			kx_max = (int) ceil(outer_radius/kfactor[1]);
-		else 
-			kx_max = 0;
 		
+		kx_max = (int) ceil(outer_radius/kfactor[1]);
 		
 		if (N[2] > 1)
 			ky_max = (int) ceil(outer_radius/kfactor[2]);
 		else
 			ky_max = 0;
 		
-		
 		if (N[3] > 2)
 			kz_max = (int) ceil(outer_radius/kfactor[3]);
 		else	
 			kz_max = 0;
 		
-		is_force_field_modes_read = 1;	
+		if (basis_type == "FOUR")
+			kx_min = -kx_max;
+		
+		else if (basis_type == "SCFT")
+			kx_min = 0;
+		
+		is_force_field_para_read = 1;	
 		
 	}
 	
-	
-	int lx, ly, lz;
-	DP kkmag, alpha_k, beta_k, sk, temp1, temp2, temp3;
-	
-
 	*Force1 = 0.0; 
 	*Force2 = 0.0; 
 	*Force3 = 0.0;
 	
-	int kx_min;
-	if (basis_type == "FOUR")
-		kx_min = -kx_max;
-		
-	else if (basis_type == "SCFT")
-		kx_min = 0;
+	int lx, ly, lz;
+	DP kkmag, alpha_k, beta_k, sk, temp1, temp2, temp3;
 	
-	else
-		kx_min = 0;		// for -Wall		
 		
 	for (int kx = kx_min; kx <= kx_max; kx++)
 		for (int ky = -ky_max; ky <= ky_max; ky++)  
@@ -168,43 +164,52 @@ void IncFluid::Compute_force_const_energy_helicity()
 void IncFluid::Compute_force_const_energy_helicity(IncSF& T)
 {
 
-	static DP inner_radius = (*force_field_para)(1);
-	static DP outer_radius = (*force_field_para)(2);
-	static DP energy_level = (*force_field_para)(3);
-	static DP h_by_k_E	= (*force_field_para)(4);				// Hk/(k*e)
-	static DP energy_scalar_level = (*force_field_para)(5);
+	static DP inner_radius;
+	static DP outer_radius;
+	static DP energy_level;
+	static DP h_by_k_E;				// Hk/(k*e)
+	static DP energy_scalar_level;
 	
 	static int nf; 
 	static DP energy_per_mode;
 	static DP energy_scalar_per_mode;
 	
-	static int kx_max, ky_max, kz_max;
+	static int kx_max, ky_max, kz_max, kx_min;
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
+		inner_radius = (*force_field_para)(1);
+		outer_radius = (*force_field_para)(2);
+		energy_level = (*force_field_para)(3);
+		h_by_k_E	 = (*force_field_para)(4);				// Hk/(k*e)
+		energy_scalar_level = (*force_field_para)(5);
+		
+		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
 		energy_per_mode = energy_level / nf;	
 		energy_scalar_per_mode = energy_scalar_level / nf;
 		
-		if (N[1] > 1)
-			kx_max = (int) ceil(outer_radius/kfactor[1]);
-		else 
-			kx_max = 0;
-		
+
+		kx_max = (int) ceil(outer_radius/kfactor[1]);
 		
 		if (N[2] > 1)
 			ky_max = (int) ceil(outer_radius/kfactor[2]);
 		else
 			ky_max = 0;
-		
-		
+			
 		if (N[3] > 2)
 			kz_max = (int) ceil(outer_radius/kfactor[3]);
 		else	
 			kz_max = 0;
 		
-		is_force_field_modes_read = 1;	
+		if (basis_type == "FOUR")
+			kx_min = -kx_max;
+		
+		else if (basis_type == "SCFT")
+			kx_min = 0;
+		
+		is_force_field_para_read = 1;	
 		
 	}
 		
@@ -216,16 +221,6 @@ void IncFluid::Compute_force_const_energy_helicity(IncSF& T)
 	*Force2 = 0.0; 
 	*Force3 = 0.0;
 	*T.Force = 0.0;
-	
-	int kx_min;
-	if (basis_type == "FOUR")
-		kx_min = -kx_max;
-		
-	else if (basis_type == "SCFT")
-		kx_min = 0;
-	
-	else
-		kx_min = 0;		// for -Wall
 		
 				
 	for (int kx = kx_min; kx <= kx_max; kx++)
@@ -298,45 +293,55 @@ void IncFluid::Compute_force_const_energy_helicity(IncSF& T)
 void IncFluid::Compute_force_const_energy_helicity(IncVF& W)
 {
 
-	static DP inner_radius = (*force_field_para)(1);
-	static DP outer_radius = (*force_field_para)(2);
-	static DP energy_level = (*force_field_para)(3);
-	static DP h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
-	static DP energyW_level = (*force_field_para)(5);
-	static DP h_by_k_E_W = (*force_field_para)(6);	
+	static DP inner_radius;
+	static DP outer_radius;
+	static DP energy_level;
+	static DP h_by_k_E;				// Hk/(k*e)
+	static DP energyW_level;
+	static DP h_by_k_E_W;	
 	
 	
 	static int nf; 
 	static DP energy_per_mode;
 	static DP energyW_per_mode;
 	
-	static int kx_max, ky_max, kz_max;
+	static int kx_max, ky_max, kz_max, kx_min;
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
+		inner_radius = (*force_field_para)(1);
+		outer_radius = (*force_field_para)(2);
+		energy_level = (*force_field_para)(3);
+		h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
+		energyW_level = (*force_field_para)(5);
+		h_by_k_E_W = (*force_field_para)(6);	
+	
+		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
 		energy_per_mode = energy_level / nf;	
 		energyW_per_mode = energyW_level / nf;
 		
-		if (N[1] > 1)
-			kx_max = (int) ceil(outer_radius/kfactor[1]);
-		else 
-			kx_max = 0;
 		
-		
+		kx_max = (int) ceil(outer_radius/kfactor[1]);
+				
 		if (N[2] > 1)
 			ky_max = (int) ceil(outer_radius/kfactor[2]);
 		else
-			ky_max = 0;
-		
+			ky_max = 0;		
 		
 		if (N[3] > 2)
 			kz_max = (int) ceil(outer_radius/kfactor[3]);
 		else	
 			kz_max = 0;
 		
-		is_force_field_modes_read = 1;	
+		if (basis_type == "FOUR")
+			kx_min = -kx_max;
+		
+		else if (basis_type == "SCFT")
+			kx_min = 0;
+		
+		is_force_field_para_read = 1;	
 		
 	}
 		
@@ -349,17 +354,6 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W)
 
 	*Force1 = 0.0; *Force2 = 0.0; *Force3 = 0.0;
 	*W.Force1 = 0.0; *W.Force2 = 0.0; *W.Force3 = 0.0;
-	
-	int kx_min;
-	
-	if (basis_type == "FOUR")
-		kx_min = -kx_max;
-		
-	else if (basis_type == "SCFT")
-		kx_min = 0;
-		
-	else
-		kx_min = 0;		// for -Wall
 			
 		
 	for (int kx = kx_min; kx <= kx_max; kx++)
@@ -452,13 +446,13 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W)
 void IncFluid::Compute_force_const_energy_helicity(IncVF& W, IncSF& T)
 {
 
-	static DP inner_radius = (*force_field_para)(1);
-	static DP outer_radius = (*force_field_para)(2);
-	static DP energy_level = (*force_field_para)(3);
-	static DP h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
-	static DP energyW_level = (*force_field_para)(5);
-	static DP h_by_k_E_W = (*force_field_para)(6);	
-	static DP energy_scalar_level = (*force_field_para)(7);
+	static DP inner_radius;
+	static DP outer_radius;
+	static DP energy_level;
+	static DP h_by_k_E;				// Hk/(k*e)
+	static DP energyW_level;
+	static DP h_by_k_E_W;	
+	static DP energy_scalar_level;
 	
 	
 	static int nf; 
@@ -466,10 +460,19 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W, IncSF& T)
 	static DP energyW_per_mode;
 	static DP energy_scalar_per_mode;
 	
-	static int kx_max, ky_max, kz_max;
+	static int kx_max, ky_max, kz_max, kx_min;
 	
-	if (is_force_field_modes_read == 0)
+	if (is_force_field_para_read == 0)
 	{
+		inner_radius = (*force_field_para)(1);
+		outer_radius = (*force_field_para)(2);
+		energy_level = (*force_field_para)(3);
+		h_by_k_E = (*force_field_para)(4);				// Hk/(k*e)
+		energyW_level = (*force_field_para)(5);
+		h_by_k_E_W = (*force_field_para)(6);	
+		energy_scalar_level = (*force_field_para)(7);
+		
+		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
 		energy_per_mode = energy_level / nf;	
@@ -493,7 +496,13 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W, IncSF& T)
 		else	
 			kz_max = 0;
 		
-		is_force_field_modes_read = 1;	
+		if (basis_type == "FOUR")
+			kx_min = -kx_max;
+		
+		else if (basis_type == "SCFT")
+			kx_min = 0;
+		
+		is_force_field_para_read = 1;	
 		
 	}
 		
@@ -508,18 +517,7 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W, IncSF& T)
 	*Force1 = 0.0; *Force2 = 0.0; *Force3 = 0.0;
 	*W.Force1 = 0.0; *W.Force2 = 0.0; *W.Force3 = 0.0;
 	*T.Force = 0.0; 
-	
-	int kx_min;
-	if (basis_type == "FOUR")
-		kx_min = -kx_max;
 		
-	else if (basis_type == "SCFT")
-		kx_min = 0;
-		
-	else
-		kx_min = 0;		// for -Wall
-		
-				
 		
 	for (int kx = kx_min; kx <= kx_max; kx++)
 		for (int ky = -ky_max; ky <= ky_max; ky++)  

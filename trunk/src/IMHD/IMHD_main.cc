@@ -71,6 +71,12 @@ int IMHD_main(string data_dir_name)
 	
 	Array<int,1>	switches( MAXSIZE_SWITCHES_ARRAY);
 	
+	// solver para
+	Array<int,1>	solver_meta_para(MAXSIZE_SOLVER_META_PARA);
+	Array<int,1>	solver_int_para(MAXSIZE_SOLVER_INT_PARA);
+	Array<DP,1>		solver_double_para(MAXSIZE_SOLVER_DOUBLE_PARA);
+	string			solver_string_para[MAXSIZE_SOLVER_STRING_PARA];
+	
 	
 	// Variables connected to the output functions
 	
@@ -124,7 +130,9 @@ int IMHD_main(string data_dir_name)
 	para_file.open(filename.c_str());		// filename = data_dir_name/in/para.d
 		
 	Read_para(para_file, 3, no_of_fields, N, string_switches, switches,
-					diss_coefficients, hyper_diss_coefficients, time_para, time_save, 
+					diss_coefficients, hyper_diss_coefficients, 
+					solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+					time_para, time_save, 
 					misc_output_para, ET_parameters, ET_shell_radii_sector_array,
 					no_output_k_r, out_k_r_array,
 					field_input_meta_para, init_cond_para,
@@ -150,7 +158,14 @@ int IMHD_main(string data_dir_name)
 	// kfactor computations	
 	DP	kfactor[4];
 	
-	kfactor [1] = kfactor[2] = kfactor[3] = 1.0; 
+	kfactor[1] = solver_double_para(1);
+	kfactor[2] = solver_double_para(2);
+	kfactor[3] = solver_double_para(3);
+	
+	cout << "kfactor: " << kfactor[1] << " "  << kfactor[2] << " "  << kfactor[3] 
+			<< endl << endl;
+	
+	
 	
 	string basis_type  = string_switches[1];
 			

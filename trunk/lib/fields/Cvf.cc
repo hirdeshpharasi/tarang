@@ -86,7 +86,7 @@ CVF::CVF
 	{
 		// Angles of the sectors (for 2D & 3D)
 
-		DP max_theta = Get_max_polar_angle(CV_basis_type);
+		DP max_theta = Get_max_polar_angle(CV_basis_type);		// M_PI/2
 		
 		CV_sector_angle_array_spectrum = new Array<DP,1>(CV_no_sectors_spectrum+1);
 		
@@ -221,17 +221,15 @@ CVF::CVF
 	
 	if (CV_planar_structure_fn_switch == 1)
 	{
-#ifdef ANISDIRN1
-		CV_structure_fn_rpll_max = Ncv[1];
-#endif
+		if (globalvar_anisotropy_switch == 1)
+			CV_structure_fn_rpll_max = Ncv[1];
 
-#ifdef ANISDIRN2
-		CV_structure_fn_rpll_max = Ncv[2];
-#endif
+		else if (globalvar_anisotropy_switch == 2)
+			CV_structure_fn_rpll_max = Ncv[2];
 
-#ifdef ANISDIRN3
-		CV_structure_fn_rpll_max = Ncv[3];
-#endif	
+		else if (globalvar_anisotropy_switch == 3)
+			CV_structure_fn_rpll_max = Ncv[3];
+		
 
 		int q_range = CV_structurefn_q_max - CV_structurefn_q_min;
 		

@@ -61,6 +61,10 @@ void Read_para
 	Array<int,1> switches,
 	double diss_coefficient[], 
 	double hyper_diss_coefficient[],
+	Array<int,1> solver_meta_para,
+	Array<int,1> solver_int_para,
+	Array<DP,1> solver_double_para,
+	string solver_string_para[],
 	Array<DP,1> time_para, 
 	Array<DP,1> time_save, 
 	Array<int,1> misc_output_para,
@@ -73,14 +77,52 @@ void Read_para
 	Array<int,1> force_field_meta_para, 
 	Array<DP,1> force_field_para
 );
+
+
+void Read_diag_para
+(
+ ifstream& para_file, 
+ int dim, 
+ int number_of_fields,  
+ int N[], 
+ string string_switches[], 
+ Array<int,1> switches,
+ double diss_coefficient[], 
+ double hyper_diss_coefficient[],
+ Array<int,1> solver_meta_para,
+ Array<int,1> solver_int_para,
+ Array<DP,1> solver_double_para,
+ string solver_string_para[],
+ Array<int,1>  diagnostic_procedure,
+ Array<DP,1> time_para, 
+ Array<int,1> misc_output_para,
+ Array<int,1> ET_parameters, 
+ Array<DP,1> ET_shell_radii_sector_array,
+ Array<int,1> no_output_k_r, 
+ Array<int,2> out_k_r_array,
+ Array<int,1> field_input_meta_para, 
+ Array<DP,1> init_cond_para,
+ Array<int,1> force_field_meta_para, 
+ Array<DP,1> force_field_para
+);
+
+
 														
 int Ifluid_main(string data_dir_name);
 
-int Ipassive_scalar_main(string data_dir_name);
+int Ifluid_diag_main(string data_dir_name);
+
+int Iscalar_main(string data_dir_name);
+
+int Iscalar_diag_main(string data_dir_name);
 
 int IMHD_main(string data_dir_name);
 
+int IMHD_diag_main(string data_dir_name);
+
 int RB_slip_main(string data_dir_name);
+
+int RB_slip_diag_main(string data_dir_name);
 
 int RB_slipMHD_main(string data_dir_name);
 

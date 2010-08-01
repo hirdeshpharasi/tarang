@@ -75,9 +75,7 @@ void IncFluid::Read_init_cond()
 		case (7) : Init_cond_Taylor_Green(); break;
 		
 		case (8) : Init_cond_ABC(); break;
-		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid();  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
+	
 	}
 }
 
@@ -113,8 +111,6 @@ void IncFluid::Read_init_cond(IncSF& T)
 		case (8) : Init_cond_ABC(T); break;			
 		// initialize only V field
 		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid(T);  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
 	}
 
 }
@@ -150,9 +146,6 @@ void IncFluid::Read_init_cond(IncVF& W)
 		
 		case (8) : Init_cond_ABC(W); break;			
 		// initialize V,W  field
-		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid(W);  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
 		
 		case (11) : Init_cond_DYNAMO_SIX_MODE(W); break;
 	}
@@ -191,9 +184,7 @@ void IncFluid::Read_init_cond(IncVF& W, IncSF& T)
 		
 		case (8) : Init_cond_ABC(W, T); break;			
 		// initialize V, W field
-		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid(W, T);  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
+	
 	}
 
 }
@@ -234,8 +225,6 @@ void  IncFluid::Read_init_cond_RB(string Pr_switch, IncSF& T)
 		case (8) : Init_cond_ABC(Pr_switch, T); break;			
 		// initialize only V field
 		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid(Pr_switch, T);  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
 	}
 }
 
@@ -270,9 +259,7 @@ void IncFluid::Read_init_cond_RB(string Pr_switch, IncVF& W, IncSF& T)
 		
 		case (8) : Init_cond_ABC(Pr_switch, W, T); break;			
 		// initialize V, W field
-		
-		case (9) : Init_cond_energy_spectrum_2Din3Dgrid(Pr_switch, W, T);  break;
-		// Random initial condition with given energy spectrum for 2D but on 3D grid.
+	
 	}
 
 }
