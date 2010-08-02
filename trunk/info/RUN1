@@ -1,0 +1,10 @@
+
+#The program can perform Spectral simulation of FLUID, PASSIVE_SCALAR,
+#INC_FLUID INC_PASSIVE_SCALAR INC_MHD, RB_SLIP RB_SLIP_MHD
+#Choose on of the above by writing the choice below\
+#
+mpiexec -n 1 ./tarangMPI 
+
+
+
+

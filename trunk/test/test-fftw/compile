@@ -1,0 +1,1 @@
+mpicxx main_mpi-2d.cc -lfftw3_mpi -lfftw3 -lmpi  -lm  

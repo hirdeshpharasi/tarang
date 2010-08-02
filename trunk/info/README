@@ -1,0 +1,31 @@
+
+CHANGES
+--------
+4.0.1
+29/09/2009
+
+Precision included in the revision.
+
+Changes in 
+* extern_def_vars.h: 
+const int MY_PRECISION = 8;
+
+* basis_basicfn_inline.h
+#include <iomanip>
+
+* file_operaions.cc
+global_file.setf(ios::fixed, ios::floatfield);
+global_file.precision(MY_PRECISION); // sets number of decimal places.
+
+***********************************************
+
+29/06/2010
+
+Bug fixes for random init conditions
+
+(1) In init_cond_energy.cc
+Replace index = ((int) kkmag);
+with index = (int) ceil(kkmag);
+
+
+

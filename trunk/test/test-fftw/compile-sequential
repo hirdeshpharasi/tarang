@@ -1,0 +1,1 @@
+mpicxx main_1d.cc  -lfftw3   -lm  

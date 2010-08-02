@@ -1,0 +1,1 @@
+mpicxx main_mpi3.cc -lfftw3_mpi -lfftw3 -lmpich  -lm -L/Users/mkv/local/lib -I/Users/mkv/local/include  

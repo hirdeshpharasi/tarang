@@ -1,0 +1,31 @@
+
+
+kill realimagswitch for fluxes-- DONE on 17/7/2010
+
+Rotation
+
+Buffer for parallel speedup
+
+Diagnostics -- Done 19/7/2010
+
+Anisotropy dirn with if statements.
+
+test anisotropy..
+
+structure function
+
+2d in 3dgrid- Need to get SCFT transforms right
+
+free-slip boundary condition
+
+feed radii for fluxes
+
+optimized FT
+Try transpose order
+
+Double-float switch-- in fftplan
+M_PI float or double
+
+Check factor for entropy
+
+
