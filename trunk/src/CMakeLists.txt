@@ -26,11 +26,11 @@
  #
 #PROJECT(tarangMPI)
 
-SET(CMAKE_CXX_COMPILER mpicxx)
+#SET(CMAKE_CXX_COMPILER mpicxx)
 
 #ADD_DEFINITIONS(-DMPICH_IGNORE_CXX_SEEK -Wall)
 
-ADD_DEFINITIONS(-Wall)
+#ADD_DEFINITIONS(-Wall)
 
 #Choose compiler
 #CC=gcc-3.3 CXX=g++-3.3 cmake
@@ -57,9 +57,9 @@ ${CMAKE_SOURCE_DIR}/lib/IncFlow
 ${CMAKE_SOURCE_DIR}/lib/IncFluid
 )
 
-SET(CMAKE_BUILD_TYPE distribution)
-SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
-SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3 -pipe")
+#SET(CMAKE_BUILD_TYPE distribution)
+#SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
+#SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3 -pipe")
 
 # Add executable called "helloDemo" that is built from the source files
 # "demo.cxx" and "demo_b.cxx".  The extensions are automatically found.

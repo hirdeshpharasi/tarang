@@ -52,12 +52,12 @@
 #ifndef _FOUR_INLINE_H
 #define _FOUR_INLINE_H
 
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "../basis_basicfn/basis_basicfn_inline.h"
 #include "../basis_basicfn/basis_basicfn.h"

@@ -47,12 +47,12 @@
 #ifndef _BASIC_BASISFN_H
 #define _BASIC_BASISFN_H
   
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "../basis_basicfn/basis_basicfn_inline.h"
 

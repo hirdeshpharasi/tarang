@@ -39,14 +39,14 @@
 #ifndef _BASIC_BASIC_FN_INLINE_H
 #define _BASIC_BASIC_FN_INLINE_H
   
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <iostream> 
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
 #include <iomanip>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 // external mpi and fftw vars like local_N1, r2c_plan_FOUR, c2r_plan_FOUR etc.
 #include "extern_def_vars.h"

@@ -38,6 +38,8 @@
 #ifndef _PLANAR_STRUCT_FN_H
 #define _PLANAR_STRUCT_FN_H
 
+#include "array_basic.h"
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
@@ -48,8 +50,6 @@
 #else
 #include <fstream.h>
 #endif
-
-#include "array_basic.h"
 
 
 

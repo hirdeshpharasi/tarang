@@ -44,6 +44,9 @@
 #ifndef _UNIVERAL_INLINE_H
 #define _UNIVERAL_INLINE_H
 
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
@@ -54,9 +57,6 @@
 #else
 #include <fstream.h>
 #endif
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "../../four/four_inline.h"
 #include "../../scft/scft_inline.h"

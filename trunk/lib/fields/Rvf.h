@@ -39,17 +39,17 @@
 #ifndef _RVF
 #define _RVF
 
-#include "array_fn/array_basic_inline.h"
-#include "array_fn/array_basic.h"
-#include "array_fn/struct_fn.h"
-#include "array_fn/planar_struct_fn.h"
-
 #include "universal/universal_inline.h" 
 #include "universal/universal_basic.h" 
 #include "universal/universal_tr.h" 
 #include "universal/universal_energy.h" 
 #include "universal/universal_ET.h" 
 #include "universal/universal_misc.h" 
+
+#include "array_fn/array_basic_inline.h"
+#include "array_fn/array_basic.h"
+#include "array_fn/struct_fn.h"
+#include "array_fn/planar_struct_fn.h"
 
 /*
 

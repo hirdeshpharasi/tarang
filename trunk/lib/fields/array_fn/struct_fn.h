@@ -38,6 +38,8 @@
 #ifndef _STRUCT_FN_H
 #define _STRUCT_FN_H
 
+#include "array_basic.h"
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
@@ -48,8 +50,6 @@
 #else
 #include <fstream.h>
 #endif
-
-#include "array_basic.h"
 
 
 using namespace blitz;

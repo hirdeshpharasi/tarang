@@ -38,12 +38,12 @@
 #ifndef _FIELD_BASIC
 #define _FIELD_BASIC
 
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #ifdef BZ_HAVE_STD
 #include <fstream>

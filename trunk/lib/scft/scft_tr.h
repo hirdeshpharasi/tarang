@@ -98,12 +98,12 @@
 #ifndef _SCFT_TR_H
 #define _SCFT_TR_H
   
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "scft_basic.h"
 

@@ -62,12 +62,12 @@
 #ifndef _FOUR_TR_H
 #define _FOUR_TR_H
   
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "four_basic.h"
 

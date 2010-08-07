@@ -24,7 +24,6 @@
  # along with Tarang-4.0; if not, write to the Free Software
  # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, U
  #
-SET(CMAKE_CXX_COMPILER mpicxx)
 
 # ADD_DEFINITIONS(-DMPICH_IGNORE_CXX_SEEK)
 
@@ -40,8 +39,8 @@ ADD_LIBRARY(basis_basic
 
 # TARGET_LINK_LIBRARIES(basis_basic fftw3_mpi fftw3  mpi m)
 
+#SET(CMAKE_BUILD_TYPE distribution)
+#SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
+#SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3")
+#SET(CMAKE_CXX_FLAGS "-Wall -Werror")
 
-SET(CMAKE_BUILD_TYPE distribution)
-SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
-SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3")
-#SET(CMAKE_CXX_FLAGS "-Wall")

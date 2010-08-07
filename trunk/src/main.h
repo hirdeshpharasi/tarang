@@ -35,6 +35,10 @@
  */
 
 //********************************************************************************************* 
+#include "IncFluid.h"   
+// Contains IncFlow declarations (which contains fields +fourier+sincosfour defs)
+
+// declarations of global const variables
 
 #include <iostream>
 #include <fstream>
@@ -43,10 +47,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "IncFluid.h"   
-// Contains IncFlow declarations (which contains fields +fourier+sincosfour defs)
-
-// declarations of global const variables
 
 void Read_prog_para(ifstream& prog_para_file, string& prog_kind, 
 						string& data_dir_name);

@@ -40,6 +40,9 @@
 #ifndef _UNIVERAL_ENERGY_H
 #define _UNIVERAL_ENERGY_H
 
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
@@ -50,9 +53,6 @@
 #else
 #include <fstream.h>
 #endif
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "universal_inline.h"
 

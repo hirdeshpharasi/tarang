@@ -46,12 +46,12 @@
 #ifndef _SCFT_BASIC_H
 #define _SCFT_BASIC_H
 
+#include <mpi.h>
+#include <fftw3-mpi.h>
+
 #include <blitz/array.h>
 #include <complex>
 #include <cmath>
-
-#include <mpi.h>
-#include <fftw3-mpi.h>
 
 #include "scft_inline.h"
 

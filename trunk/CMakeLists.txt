@@ -30,8 +30,18 @@ cmake_minimum_required(VERSION 2.6)
 
 #ADD_DEFINITIONS(-DTRANSPOSE)
 
+#INCLUDE_DIRECTORIES(
+#/home/external/iitk/mahendrav/local/include
+#/home/external/iitk/mahendrav/local/include/blitz
+#/opt/intel/mpi/include64
+#)
+
+#LINK_DIRECTORIES(
+#/home/external/iitk/mahendrav/local/lib
+#/opt/intel/mpi/lib64
+#)
 
 SUBDIRS(lib src)
 
 #find_package(HDF5 REQUIRED)
-SET(CMAKE_CXX_FLAGS "-Wall")
+SET(CMAKE_CXX_FLAGS "-O3")

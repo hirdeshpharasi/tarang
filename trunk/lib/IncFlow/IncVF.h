@@ -40,16 +40,16 @@
 #ifndef _IncVF
 #define _IncVF
 
-#include <iostream>
-#include <string>
-#include <fstream>
-
-
 #include "../fields/fields.h"			// blitz, fft etc. declared
 #include "../plainfields/plainfields.h"
 #include "Nlin.h"
 #include "IncSF.h"
 #include "EnergyTr.h"
+
+#include <iostream>
+#include <string>
+#include <fstream>
+
 
 
 //! @brief Incompressible vector field IncVF 
