@@ -1,7 +1,7 @@
 #diagnostic_para.d
 #Only change the numerical fields -- Don't delete or add any line
 # N[i]	
-8	1	8
+8	8	8
 
 
 (1)solver-meta-para(int,float,string)		1	3	1
@@ -37,10 +37,10 @@ Diagnostic-procedure	0	10000
  
 
 #diss_coeff + diffusion_coefficient (If RB -- ignore it..)
-0.0
+0.1	0.2
 
 #Hyper_dissipation_switch + hyper dissipation coefficient
-0
+0	0
 
 
 U.Tinit 	0
@@ -78,16 +78,16 @@ ET:(1)real-imag-switch	0
 1	0	1
 	
 
+(1)input-meta-para(int,float,string)		4	3	1
+(2)input-para-int:field_input_proc,N_in_reduceced	3	64 	64	2
+(3)input-para-float		1.0	1.0	1.0
+(4)input-para-string		TEST
 
-(1)field-input-procedure	3
-(2)No-init-cond-parameters	2
-(3)N-in-reduced			64	64	2
-(4)Init-cond-para		5  6
 
-
-(1)force-field-procdure		0
-(2)No-force-parameters		2
-force-field-para		5  6
+(1)force-meta-para(int,float,string)		1	2	1
+(2)force-para-int:field_input_para,N_in_reduceced	0
+(3)force-para-float		5.0	5.0
+(4)force-para-string		TEST
 
 
 

@@ -1,0 +1,48 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf320
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \
+CHANGES\
+--------\
+4.0.1\
+29/09/2009\
+\
+Precision included in the revision.\
+\
+Changes in \
+* extern_def_vars.h: \
+const int MY_PRECISION = 8;\
+\
+* basis_basicfn_inline.h\
+#include <iomanip>\
+\
+* file_operaions.cc\
+global_file.setf(ios::fixed, ios::floatfield);\
+global_file.precision(MY_PRECISION); // sets number of decimal places.\
+\
+***********************************************\
+\
+29/06/2010\
+\
+Bug fixes for random init conditions\
+\
+(1) In init_cond_energy.cc\
+Replace index = ((int) kkmag);\
+with index = (int) ceil(kkmag);\
+\
+*********************************************\
+\
+4 Dec 2010\
+\
+Major changes..\
+RB parameters read as input.  Structure same as scalar.\
+RB is one of the force type\'85\
+input file para.d and field_in.d same as scalar\
+\
+Also included \
+* stratified flow : change sign of u3 of T eqn\
+* Rayleigh Taylor: same as RB but initial condition is tanh(z-\'bd)\
+* Pr = nifty included}

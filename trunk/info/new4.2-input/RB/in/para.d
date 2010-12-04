@@ -1,16 +1,16 @@
 #para.d
 #Only change the numerical fields -- Don't delete or add any line
 # N[i]	
-8	1	8
+8	8	8
 
 
-(1)solver-meta-para(int,float,string)		1	3	1
-(2)Solver-para-int		0
-(3)Solver-para-float		1.0	1.0	1.0
-(4)Solver-para-string		TEST
+(1)solver-meta-para(int,float,string)		2	6	2
+(2)Solver-para-int		0	1
+(3)Solver-para-float(kfactor,r,pr,u3_factor)	1.0	1.0	1.0	1.5 6.8	1
+(4)Solver-para-string		PRLARGE	USMALL
 
 
-(1)basis_type		FOUR
+(1)basis_type		SCFT
 (2)alias_switch		DEALIAS
 (3)Integration_scheme	RK4
 (4)Input_number_mode	ASCII
@@ -34,14 +34,14 @@
  
 
 #diss_coeff + diffusion_coefficient (If RB -- ignore it..)
-0.0
+0.0	0.0
 
 #Hyper_dissipation_switch + hyper dissipation coefficient
-0
+0	1
 
 
 U.Tinit 	0
-U.Tfinal 	0.01
+U.Tfinal 	0.1
 U.Tdt		0.001	
 U.Tdiag_init	0.0
 U.Tstructure_fn_start	10.0
@@ -98,16 +98,18 @@ ET:(1)real-imag-switch	0
 1	0	1
 	
 
+(1)input-meta-para(int,float,string)		4	3	1
+(2)input-para-int:field_input_proc,N_in_reduceced	3	64 	64	2
+(3)input-para-float		1.0	1.0	1.0
+(4)input-para-string		TEST
 
-(1)field-input-procedure	3
-(2)No-init-cond-parameters	2
-(3)N-in-reduced			64	64	2
-(4)Init-cond-para		5  6
+
+(1)force-meta-para(int,float,string)		1	2	1
+(2)force-para-int:field_input_para,N_in_reduceced	51
+(3)force-para-float		5.0	5.0
+(4)force-para-string		TEST
 
 
-(1)force-field-procdure		0
-(2)No-force-parameters		2
-force-field-para		5  6
 
 
 
