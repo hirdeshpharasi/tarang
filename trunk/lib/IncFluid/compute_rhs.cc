@@ -73,7 +73,19 @@ void IncFluid::Compute_rhs()
  * @return (rhs) = nlin[i] =  -Dj T[Vr[j]*Vr[i]] + f[i] - Di [p(k)] (-grad(pressure)) 
  *			(T.nlin) = T.nlin = -T.nlin	
  */
-void IncFluid::Compute_rhs(IncSF& T)       
+
+void IncFluid::Compute_rhs(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_rhs_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_rhs_RB(T);
+	
+}
+
+
+void IncFluid::Compute_rhs_scalar(IncSF& T)       
 {
 
 	Compute_rhs();				// Fluid:  U.nlin[i] = -U.nlin[i] -FT[grad(p)]
@@ -81,6 +93,15 @@ void IncFluid::Compute_rhs(IncSF& T)
 	*T.nlin = -*T.nlin;			// For scalar: rhs = -T.nlin  
 }
 
+
+void IncFluid::Compute_rhs_RB(IncSF& T)       
+{
+	
+	Compute_rhs();
+	
+	if (globalvar_Pr_switch != "PRZERO")  	
+		*T.nlin = -*T.nlin;	
+}
 
 //*********************************************************************************************
 
@@ -124,46 +145,6 @@ void IncFluid::Compute_rhs(IncVF& W, IncSF& T)
 	Compute_rhs(W);
 	
 	*T.nlin = -*T.nlin;			// For scalar: rhs = -T.nlin     
-}
-
-//*********************************************************************************************
-
-/** @brief Compute rhs for RB convection
- * 
- * @note Status before entering the fn
- *		nlin[i] contains Dj T[Vr[j]*Vr[i]] - f[i];
- *		F.p contains pressure;
- *
- * @return (If Pr != 0, compute rhs for T, otherwise not.	
- */
-void IncFluid::Compute_rhs(IncSF& T, string Pr_switch)       
-{
-
-	Compute_rhs();
-	
-	if (Pr_switch != "PRZERO")  	
-		*T.nlin = -*T.nlin;		
-
-}
-
-
-
-//*********************************************************************************************
-
-/** @brief Compute rhs for RB magnetoconvection
- * 
- * @note Status before entering the fn
- *		nlin[i] contains Dj T[Vr[j]*Vr[i]] - f[i];
- *		F.p contains pressure;
- *
- * @return (If Pr != 0, compute rhs for W & T, otherwise with W only.	
- */
-void IncFluid::Compute_rhs(IncVF& W, IncSF& T, string Pr_switch)       
-{
-	Compute_rhs(W);
-	
-	if (Pr_switch != "PRZERO")  	
-		*T.nlin = -*T.nlin;	
 }
 
 

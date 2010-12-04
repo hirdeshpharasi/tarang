@@ -112,8 +112,8 @@ class IncSF: public CSF, public RSF
 		Array<int,1> misc_output_para
 	);
 	
-	void Mult_field_exp_ksqr_dt(DP dt);
-	void Mult_nlin_exp_ksqr_dt(DP dt);
+	void Mult_field_exp_ksqr_dt(DP dt, DP a);
+	void Mult_nlin_exp_ksqr_dt(DP dt, DP a);
 	
 	void Copy_field_to(CSF& T);
 	void Copy_field_to(PlainCSF& T);

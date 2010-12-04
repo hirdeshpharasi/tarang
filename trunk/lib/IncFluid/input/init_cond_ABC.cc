@@ -54,11 +54,11 @@ void IncFluid::Init_cond_ABC()
 
 	if (basis_type == "FOUR")
 	{
-		int k0 = ((int) (*init_cond_para)(1));
-		DP A = (*init_cond_para)(2);
-		DP B = (*init_cond_para)(3);
-		DP C = (*init_cond_para)(4);
-		DP amp = (*init_cond_para)(5);
+		int k0 = ((int) (*init_cond_int_para)(1));
+		DP A = (*init_cond_int_para)(2);
+		DP B = (*init_cond_int_para)(3);
+		DP C = (*init_cond_int_para)(4);
+		DP amp = (*init_cond_int_para)(5);
 		
 		Setup_ABC_field(k0, amp, A, B, C);
 	}	
@@ -103,12 +103,12 @@ void IncFluid::Init_cond_ABC(IncVF& W)
 
 	if (basis_type == "FOUR")
 	{
-		int k0 = ((int) (*init_cond_para)(1));
-		DP A = (*init_cond_para)(2);
-		DP B = (*init_cond_para)(3);
-		DP C = (*init_cond_para)(4);
-		DP amp = (*init_cond_para)(5);
-		DP ampW = (*init_cond_para)(6);
+		int k0 = ((int) (*init_cond_int_para)(1));
+		DP A = (*init_cond_int_para)(2);
+		DP B = (*init_cond_int_para)(3);
+		DP C = (*init_cond_int_para)(4);
+		DP amp = (*init_cond_int_para)(5);
+		DP ampW = (*init_cond_int_para)(6);
 		
 		Setup_ABC_field(k0, amp, A, B, C);
 		W.Setup_ABC_field(k0, ampW, A, B, C);
@@ -145,43 +145,6 @@ void IncFluid::Init_cond_ABC(IncVF& W, IncSF& T)
 
 }
 
-//*********************************************************************************************
-
-void  IncFluid::Init_cond_ABC(string Pr_switch, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_ABC();				
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_ABC(T);
-		
-	Zero_modes_RB_slip(T);		
-		
-}			
-	
-//*********************************************************************************************	
-
-void  IncFluid::Init_cond_ABC(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_ABC(W);				
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_ABC(W, T);
-		
-	Zero_modes_RB_slip(W, T);		
-		
-}	
 
 
 //******************************** End of Init_cond_ABC.cc ************************************

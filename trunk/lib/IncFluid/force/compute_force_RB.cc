@@ -48,29 +48,34 @@
 
 //*********************************************************************************************
 
-void IncFluid::Compute_force_RB(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling)
+void IncFluid::Compute_force_RB(IncSF& T)
 {
 
 // For the velocity field
-	if (Pr_switch == "PRLARGE") 
+	if (globalvar_Pr_switch == "PRLARGE") 
 	{
-	
-		if (RB_Uscaling == "USMALL") 		
-			*Force1 =  (Ra*Pr)*(*T.F);			// (u.grad)u-Ra*Pr*theta	
-			
-		else if (RB_Uscaling  == "ULARGE") 		
-			 *Force1 =  (*T.F);					// (u.grad)u-theta			
+		
+		if (globalvar_RB_Uscaling == "USMALL") 		
+			*Force1 =  (globalvar_Ra*globalvar_Pr)*(*T.F);			// (u.grad)u-Ra*Pr*theta	
+		
+		else if (globalvar_RB_Uscaling  == "ULARGE") 		
+			*Force1 =  (*T.F);					// (u.grad)u-theta			
 	}
 	
-	else if ((Pr_switch == "PRSMALL") || (Pr_switch == "PRZERO")) 
+	else if ((globalvar_Pr_switch == "PRSMALL") || (globalvar_Pr_switch == "PRZERO")) 
 	{
+		
+		if (globalvar_RB_Uscaling == "USMALL") 
+			*Force1 = (globalvar_Ra)*(*T.F);				// (u.grad)u-theta
+		
+		else if (globalvar_RB_Uscaling == "ULARGE") 		
+			*Force1 = (globalvar_Pr)*(*T.F);				// (u.grad)u-theta
+	}
 	
-		if (RB_Uscaling == "USMALL") 
-			*Force1 = (Ra)*(*T.F);				// (u.grad)u-theta
-			
-		else if (RB_Uscaling == "ULARGE") 		
-			*Force1 = (Pr)*(*T.F);				// (u.grad)u-theta
-	}	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		*Force1 = (globalvar_Ra)*(*T.F);
+	}
 
 
 	*Force2 = 0.0; 
@@ -79,15 +84,23 @@ void IncFluid::Compute_force_RB(IncSF& T, DP Ra, DP Pr, string Pr_switch, string
 	
 // For the temperature field
 
-	if (Pr_switch == "PRZERO") 
+	if (globalvar_Pr_switch == "PRZERO") 
 		*T.Force = 0.0;  
-		// Do nothing; Nonlinear term (u.grad)T does not exist- see single-time step
+	// Do nothing; Nonlinear term (u.grad)T does not exist- see single-time step
 	
-	else if (Pr_switch == "PRLARGE")	
-		*T.Force =   *V1;										// F(T) = ux(k)	
+	else if (globalvar_Pr_switch == "PRLARGE")	
+		*T.Force =   globalvar_temperature_grad*(*V1);										
+	// F(T) = globalvar_temperature_grad * ux(k)	
+	// globalvar_temperature_grad = +1 for RB, and -1 for stratified flows
 	
-	else if (Pr_switch == "PRSMALL") 	
-		*T.Force =   complex<DP>(1/Pr, 0)*((*V1)); ;			//F(T) =  ux(k)/Pr
+	else if (globalvar_Pr_switch == "PRSMALL") 	
+		*T.Force =   complex<DP>(globalvar_temperature_grad/globalvar_Pr, 0)*(*V1); 			
+	//F(T) =  globalvar_temperature_grad * ux(k)/Pr
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		*T.Force =   globalvar_temperature_grad*(*V1);
+	}
 
 
 	if (alias_switch == "DEALIAS")		Dealias_force(T);	
@@ -102,13 +115,11 @@ void IncFluid::Compute_force_RB(IncSF& T, DP Ra, DP Pr, string Pr_switch, string
 
 void IncFluid::Compute_force_RB
 (
-	IncVF& W, IncSF& T, 
-	DP Ra, DP Pr, 
-	string Pr_switch, string RB_Uscaling
+	IncVF& W, IncSF& T 
 )
 {
 	
-	Compute_force_RB(T, Ra, Pr, Pr_switch, RB_Uscaling);
+	Compute_force_RB(T);
 
 	*W.Force1 = 0.0; 
 	*W.Force2 = 0.0; 
@@ -116,6 +127,24 @@ void IncFluid::Compute_force_RB
 
 	if (alias_switch == "DEALIAS")		W.Dealias_force();
 }
+
+
+//*********************************************************************************************
+
+
+void IncFluid::Compute_force_nonboussenesq(IncSF& T)
+{
+	/*
+	DP nonboussenesq_para = 1.0;
+	
+	Force1 = (*T.F);
+	Force2 = 0.0; 
+	Force3 = 0.0;	
+	
+	if (alias_switch == "DEALIAS")		Dealias_force(T);
+	 */
+}
+
 
 
 //************************ End of compute_force_RB.cc *****************************************

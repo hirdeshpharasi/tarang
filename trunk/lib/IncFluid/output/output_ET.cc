@@ -66,8 +66,19 @@ void IncFluid::Output_flux()
 
 //*********************************************************************************************
 // scalar
-  
+
 void IncFluid::Output_flux(IncSF& T)
+{
+
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_flux_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_flux_RB(T);
+}
+
+  
+void IncFluid::Output_flux_scalar(IncSF& T)
 {
 	
 	if (my_id == master_id)
@@ -89,6 +100,17 @@ void IncFluid::Output_flux(IncSF& T)
 	if (my_id == master_id)		flux_file << endl;
 } 
 
+
+//	RB- Convection	
+
+void IncFluid::Output_flux_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_flux();
+	
+	else
+		Output_flux_scalar(T);
+}
 
 //*********************************************************************************************
 // Vector
@@ -157,29 +179,6 @@ void IncFluid::Output_flux(IncVF& W, IncSF &T)
 	if (my_id == master_id)			flux_file << endl;
 }
 
-//*********************************************************************************************
-//	RB- Convection
-
-void IncFluid::Output_flux(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_flux();
-	
-	else
-		Output_flux(T);
-
-}
-
-void IncFluid::Output_flux(IncVF& W, IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_flux(W);
-	
-	else
-		Output_flux(W, T);
-}
-
-
 
 //*********************************************************************************************
 //*********************************************************************************************
@@ -209,6 +208,16 @@ void IncFluid::Output_shell_to_shell()
  
 void IncFluid::Output_shell_to_shell(IncSF& T)
 {
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_shell_to_shell_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_shell_to_shell_RB(T);
+}
+
+
+void IncFluid::Output_shell_to_shell_scalar(IncSF& T)
+{
 	
 	Compute_shell_tr(T);
 	
@@ -227,6 +236,17 @@ void IncFluid::Output_shell_to_shell(IncSF& T)
 	
 	}	
 } 
+
+//	RB Convection	
+
+void IncFluid::Output_shell_to_shell_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_shell_to_shell();
+	
+	else
+		Output_shell_to_shell_scalar(T);
+}
 
 
 //*********************************************************************************************
@@ -321,26 +341,6 @@ void IncFluid::Output_shell_to_shell(IncVF& W, IncSF& T)
 	}				
 } 
 
-//*********************************************************************************************
-//	RB Convection	
-
-void IncFluid::Output_shell_to_shell(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_shell_to_shell();
-	else
-		Output_shell_to_shell(T);
-}
-
-
-void IncFluid::Output_shell_to_shell(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_shell_to_shell(W);
-	else
-		Output_shell_to_shell(W, T);
-}
-
 
 //********************************************************************************************* 
 
@@ -374,8 +374,19 @@ void IncFluid::Output_ring_to_ring()
 
 //*********************************************************************************************
 // scalar
- 
+
+
 void IncFluid::Output_ring_to_ring(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_ring_to_ring_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_ring_to_ring_RB(T);
+}	
+
+ 
+void IncFluid::Output_ring_to_ring_scalar(IncSF& T)
 {
 	if (ET_anisotropic_ring_switch == 1)
 	{
@@ -405,7 +416,18 @@ void IncFluid::Output_ring_to_ring(IncSF& T)
 					
 		}	
 	}	
-} 
+}
+
+//	RB Convection	//
+
+void IncFluid::Output_ring_to_ring_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_ring_to_ring();
+	
+	else
+		Output_ring_to_ring_scalar(T);
+}
 
 //*********************************************************************************************
 void IncFluid::Output_ring_to_ring(IncVF& W)
@@ -518,27 +540,6 @@ void IncFluid::Output_ring_to_ring(IncVF& W, IncSF& T)
 	}										
 } 
 
-//*********************************************************************************************
-//	RB Convection	
-
-void IncFluid::Output_ring_to_ring(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_ring_to_ring();
-	else
-		Output_ring_to_ring(T);
-}
-
-
-void IncFluid::Output_ring_to_ring(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_ring_to_ring(W);
-	else
-		Output_ring_to_ring(W, T);
-}
-
-
 
 //*********************************************************************************************
 //*********************************************************************************************
@@ -574,8 +575,19 @@ void IncFluid::Output_cylinder_ring_to_ring()
 
 //*********************************************************************************************
 // scalar
- 
+
 void IncFluid::Output_cylinder_ring_to_ring(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_cylinder_ring_to_ring_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_cylinder_ring_to_ring_RB(T);
+}
+
+
+ 
+void IncFluid::Output_cylinder_ring_to_ring_scalar(IncSF& T)
 {
 	if (ET_anisotropic_cylinder_switch == 1)
 	{
@@ -606,6 +618,17 @@ void IncFluid::Output_cylinder_ring_to_ring(IncSF& T)
 		}	
 	}	
 } 
+
+//	RB Convection	//
+
+void IncFluid::Output_cylinder_ring_to_ring_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_cylinder_ring_to_ring();
+	
+	else
+		Output_cylinder_ring_to_ring_scalar(T);
+}
 
 //*********************************************************************************************
 void IncFluid::Output_cylinder_ring_to_ring(IncVF& W)
@@ -718,27 +741,6 @@ void IncFluid::Output_cylinder_ring_to_ring(IncVF& W, IncSF& T)
 	}						
 } 
 
-//*********************************************************************************************
-//	RB Convection	
-
-void IncFluid::Output_cylinder_ring_to_ring(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_cylinder_ring_to_ring();
-	else
-		Output_cylinder_ring_to_ring(T);
-}
-
-
-void IncFluid::Output_cylinder_ring_to_ring(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_cylinder_ring_to_ring(W);
-	else
-		Output_cylinder_ring_to_ring(W, T);
-}
-
-
 
 //*********************************************************************************************
 
@@ -850,30 +852,6 @@ void IncFluid::Output_Skpq(IncVF& W, IncSF& T)
 	}
 
 }
-
-
-//*********************************************************************************************
-//	RB Convection	
-
-void IncFluid::Output_Skpq(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_Skpq();
-		
-	else
-		Output_Skpq(T);
-}
-
-
-void IncFluid::Output_Skpq(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_Skpq(W);
-		
-	else
-		Output_Skpq(W, T);
-}
-
 
 
 

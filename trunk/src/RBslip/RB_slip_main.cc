@@ -107,33 +107,18 @@ int RB_slip_main(string data_dir_name)
 
 
 
-	// Variables connected to the initial conditions
-	
-	Array<int,1>	field_input_meta_para(MAXSIZE_INIT_COND_FIELD_META_PARA);			
-	
-	Array<DP,1>		init_cond_para(MAXSIZE_INIT_COND_FIELD_PARA);	
-	
-	
-	// Variables connected to the force field
-		
-	Array<int,1>	force_field_meta_para(MAXSIZE_FORCE_META_PARA);
-	
-	Array<DP, 1>	force_field_para(MAXSIZE_FORCE_PARA);
+	// init-cond para
+	Array<int,1>	init_cond_meta_para(MAXSIZE_INIT_COND_META_PARA);
+	Array<int,1>	init_cond_int_para(MAXSIZE_INIT_COND_INT_PARA);
+	Array<DP,1>		init_cond_double_para(MAXSIZE_INIT_COND_DOUBLE_PARA);
+	string			init_cond_string_para[MAXSIZE_INIT_COND_STRING_PARA];
 	
 	
-	// Variables connected to RB convection parameters
-
-	DP			Pr;							// Prandtl number
-	DP			Ra;							// Rayleigh number
-	DP			r;							// r=Ra/Rac
-	DP			k0;							// kfactor[2]=pi/sqrt(2)
-	DP			qbyk0;						// q/k0
-	
-	string		Pr_switch;					// PRLARGE, PRSMALL, PRZERO
-	string		RB_Uscaling;				// ULARGE, USMALL
-		
-	ifstream	RB_slip_para_file;			// RB para read from this file: data_dir_name/in/RB_para.d
-	
+	// forcing para
+	Array<int,1>	force_meta_para(MAXSIZE_FORCE_META_PARA);
+	Array<int,1>	force_int_para(MAXSIZE_FORCE_INT_PARA);
+	Array<DP,1>		force_double_para(MAXSIZE_FORCE_DOUBLE_PARA);
+	string			force_string_para[MAXSIZE_FORCE_STRING_PARA];
 	
 	
 	
@@ -146,54 +131,28 @@ int RB_slip_main(string data_dir_name)
 	para_file.open(filename.c_str());		// filename = data_dir_name/in/para.d
 	
 	Read_para(para_file, 3, no_of_fields, N, string_switches, switches,
-					diss_coefficients, hyper_diss_coefficients, 
-					solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
-					time_para, time_save, 
-					misc_output_para, ET_parameters, ET_shell_radii_sector_array,
-					no_output_k_r, out_k_r_array,
-					field_input_meta_para, init_cond_para,
-					force_field_meta_para, force_field_para);
+			  diss_coefficients, hyper_diss_coefficients, 
+			  solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+			  time_para, time_save, 
+			  misc_output_para, ET_parameters, ET_shell_radii_sector_array,
+			  no_output_k_r, out_k_r_array,
+			  init_cond_meta_para, init_cond_int_para, 
+			  init_cond_double_para, init_cond_string_para,
+			  force_meta_para, force_int_para, force_double_para, force_string_para);
 
 	string_switches[0] = data_dir_name;
 	
 	globalvar_anisotropy_switch = switches(13);
 	globalvar_waveno_switch = switches(14);
-		
-	
-	// Read RB parameters like Pr, r, etc.
-	
-	filename = "/in/RB_para.d"; 
-	filename = data_dir_name+ filename;					// filename = data_dir_name/in/RB_para.d	
-	RB_slip_para_file.open(filename.c_str());
-	
-	Read_RB_slip_para(RB_slip_para_file, Pr, r, qbyk0,  Pr_switch, RB_Uscaling);
-
-		
-	// Construct output prefix for all the output files
-	string prefix_str,  Pr_str, r_str;							
-	ostringstream Pr_buffer, r_buffer;
-	
-	Pr_buffer << Pr;  
-	Pr_str = Pr_buffer.str(); 
-	
-	r_buffer << r;	
-	r_str = r_buffer.str();
-	
-	prefix_str = "%% Pr = " + Pr_str +  "  r = " + r_str;	// goes into all the output files		
 	
 
+	if (my_id == master_id)
+		cout << " ================ RB PARAMTERS ==================== "  << endl;
+	
 	// kfactor computation
-	Ra = (27.0*pow4(M_PI)/4.0)*r; 
-	k0 = M_PI/sqrt(2.0);
+	DP	k0 = M_PI/sqrt(2.0);
 	
-	DP kfactor[4];
-	
-	/*	OLD SCHEME
-	 kfactor[1] = M_PI; 
-	kfactor[2] = k0; 
-	q = kfactor[3] = k0 * qbyk0;
-	 */
-	
+	DP	kfactor[4];
 	
 	if (solver_int_para(1) == 0)		// kfactor as given
 	{
@@ -210,45 +169,105 @@ int RB_slip_main(string data_dir_name)
 		kfactor[3] = k0 * solver_double_para(3);
 	}
 	
-	cout << "kfactor: " << kfactor[1] << " "  << kfactor[2] << " "  << kfactor[3] 
+	if (my_id == master_id)
+		cout << "kfactor: " << kfactor[1] << " "  << kfactor[2] << " "  << kfactor[3] 
 						<< endl << endl;
 	
 	
-	// Set Dissipation coefficients
+	// Ra, Pr, Pr_switch, 
+	if (solver_int_para(2) == 0)	
+		globalvar_Ra = solver_double_para(4);
 	
-	if (Pr_switch == "PRZERO") 
+	else if (solver_int_para(2) == 1)		
+		globalvar_Ra = (27.0*pow4(M_PI)/4.0)*solver_double_para(4); 
+	
+	globalvar_Pr = solver_double_para(5);  
+	
+	globalvar_temperature_grad = solver_double_para(6);  // +1 for RB and -1 for stratified
+	
+	if (my_id == master_id) 
+	{	
+		cout << " Rayleigh no:  Ra =  " << globalvar_Ra << endl;
+		cout << " Prandtl no:  Pr = " << globalvar_Pr << endl;
+		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow = " 
+				<< globalvar_temperature_grad << endl;
+	}
+	
+	// Pr_switch and RB_Uscaling
+	globalvar_Pr_switch = solver_string_para[1];
+	
+	globalvar_RB_Uscaling = solver_string_para[2];
+	
+	if (my_id == master_id) 
+	{
+		cout << " Pr_switch = " << globalvar_Pr_switch << endl;
+		cout << " RB_Uscaling = " << globalvar_RB_Uscaling << endl;
+		cout << "====================================================" << endl << endl;
+	}
+
+	// Construct output prefix for all the output files
+	string prefix_str,  Pr_str, r_str;							
+	ostringstream Pr_buffer, r_buffer;
+	
+	Pr_buffer << globalvar_Pr;  
+	Pr_str = Pr_buffer.str(); 
+	
+	r_buffer << globalvar_Ra;	
+	r_str = r_buffer.str();
+	
+	prefix_str = "%% Pr = " + Pr_str +  "  r = " + r_str;	// goes into all the output files
+	
+	
+	
+	// Set Dissipation coefficients
+	if (globalvar_Pr_switch == "PRZERO") 
 	{
 		diss_coefficients[0] = 1.0;
 		diss_coefficients[1] = 0.0;
 	}
 	
-	else if (Pr_switch == "PRLARGE") 
+	else if (globalvar_Pr_switch == "PRLARGE") 
 	{
-		if (RB_Uscaling == "USMALL") 
+		if (globalvar_RB_Uscaling == "USMALL") 
 		{
-			diss_coefficients[0] = Pr;              //  Coeff of grad^2 u
+			diss_coefficients[0] = globalvar_Pr;              //  Coeff of grad^2 u
 			diss_coefficients[1]  = 1.0;			// Coeff of grad^2 T
 		}
-		else if (RB_Uscaling == "ULARGE") 
+		else if (globalvar_RB_Uscaling == "ULARGE") 
 		{
-			diss_coefficients[0] = sqrt(Pr/Ra);             
-			diss_coefficients[1]  = 1/sqrt(Pr*Ra);			
+			diss_coefficients[0] = sqrt(globalvar_Pr/globalvar_Ra);             
+			diss_coefficients[1]  = 1/sqrt(globalvar_Pr*globalvar_Ra);			
 		}
 	}
 	
-	else if (Pr_switch == "PRSMALL") 
+	else if (globalvar_Pr_switch == "PRSMALL") 
 	{
-		if (RB_Uscaling == "USMALL") 
+		if (globalvar_RB_Uscaling == "USMALL") 
 		{
 			diss_coefficients[0] = 1.0;             
-			diss_coefficients[1]  = 1/Pr;			
+			diss_coefficients[1]  = 1/globalvar_Pr;			
 		}
-		else if (RB_Uscaling == "ULARGE") 
+		else if (globalvar_RB_Uscaling == "ULARGE") 
 		{
-			diss_coefficients[0] = sqrt(Pr/Ra);             
-			diss_coefficients[1]  = 1/sqrt(Pr*Ra);			
+			diss_coefficients[0] = sqrt(globalvar_Pr/globalvar_Ra);             
+			diss_coefficients[1]  = 1/sqrt(globalvar_Pr*globalvar_Ra);			
 		}
 	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		if (globalvar_RB_Uscaling == "USMALL") 
+		{
+			diss_coefficients[0] = globalvar_Pr;              //  Coeff of grad^2 u
+			diss_coefficients[1]  = 1.0;			// Coeff of grad^2 T
+		}
+		else if (globalvar_RB_Uscaling == "ULARGE") 
+		{
+			cout << "ERROR: For PRINFTY, ULARGE option is not allowed" << endl;
+			exit(0);
+		}
+	}
+
 	
 	
 	string basis_type  = string_switches[1];
@@ -303,13 +322,15 @@ int RB_slip_main(string data_dir_name)
 	// Constructors of Vector and Scalar fields
 
 	IncFluid  U(N, string_switches, switches, kfactor, 
-					diss_coefficients[0], hyper_diss_coefficients[0], 
-					time_para, time_save,
-					misc_output_para, no_output_k_r, out_k_r_array,
-					ET_parameters, ET_shell_radii_sector_array,
-					field_input_meta_para, init_cond_para,
-					force_field_meta_para, force_field_para
-				);	
+				diss_coefficients[0], hyper_diss_coefficients[0],
+				solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+				time_para, time_save,
+				misc_output_para, no_output_k_r, out_k_r_array,
+				ET_parameters, ET_shell_radii_sector_array,
+				init_cond_meta_para, init_cond_int_para, 
+				init_cond_double_para, init_cond_string_para,
+				force_meta_para, force_int_para, force_double_para, force_string_para
+				);		
 				
 	IncSF     T(N, string_switches, switches, kfactor, 
 					diss_coefficients[1], hyper_diss_coefficients[1],
@@ -326,7 +347,7 @@ int RB_slip_main(string data_dir_name)
 	if (my_id == master_id)		
 		U.Open_field_input_files();
 		
-	U.Read_init_cond_RB(Pr_switch, T);	
+	U.Read_init_cond(T);	
 	
 	if (my_id == master_id)		
 		U.Close_field_input_files();
@@ -339,87 +360,39 @@ int RB_slip_main(string data_dir_name)
 		U.Open_output_files(prefix_str);
 		cout << endl << "STARTING THE SIMULATION NOW" << endl;
 	}
-
-
-	/*
-	 
-	 Testting module..
-	 ===============
-	real(*U.V1) =  tensor::k+  (N[1]*(tensor::i));
-	
-	cout << "LOCAL N1, N3 " << local_N1 << " "  << local_N2 << endl << endl;
-	
-	cout << "stage 1 " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  <<  (*U.V1)(0,0,1) << endl << endl;
-	
-	 Transpose_array(N,*U.V1, *U.VF_temp_r);
-	
-	cout << "stage 2 " << *U.VF_temp_r << " " << (*U.VF_temp_r)(1,0,1) << " "  <<  (*U.VF_temp_r)(0,0,1) << endl;
-	
-	Inverse_transpose_array(N, *U.VF_temp_r, *U.V1);
-
-	cout << "stage 3 " << *U.VF_temp_r << " " << (*U.VF_temp_r)(1,0,1) << " "  <<  (*U.VF_temp_r)(0,0,1) << endl;
-	
-
-	cout << "stage 1 " << *U.V1 << endl << endl;  
-	
-	
-		//	ArrayISFT_SCFT(isintr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
-	
-				 ArrayICFT_SCFT(icostr_plan_SCFT, c2r_plan_SCFT, c2r_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
-	
-			cout << "After icft " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  << (*U.V1)(2,0,1) << endl<< endl ;
-	
-		//	ArraySFT_SCFT(sintr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
-	
-		 ArrayCFT_SCFT(costr_plan_SCFT, r2c_plan_SCFT, r2c_1d_plan_SCFT, N, *U.V1, *U.VF_temp_r);
-	
-			cout << "After cft " << *U.V1 << " " << (*U.V1)(1,0,1) << " "  << (*U.V1)(2,0,1) << endl<< endl;
-	
-	
-	exit(1);
-	*/
 	
 
 	int  iter=0;  // iterations
 	U.Tnow = U.Tinit;
-	U.Output_all_inloop(T, Ra, Pr, Pr_switch, RB_Uscaling);		// for init cond
+	U.Output_all_inloop(T);		// for init cond
 	
 	do
 	{
 		
-		U.Compute_force_RB(T, Ra, Pr, Pr_switch, RB_Uscaling);				
+		U.Compute_force(T);				
 		// Both for V and Temperature field
 	
-		U.Compute_nlin(T, Pr_switch);		
+		U.Compute_nlin(T);		
 		
-		/*
-		 Testing module
-		 cout << "NLIN " <<  sum(sqr(abs(*U.nlin1))) << " "  
-		<< sum(sqr(abs(*U.nlin2))) << " "  
-		<< sum(sqr(abs(*U.nlin3))) << " "  
-		<< (*U.nlin1)(Range(0,2), Range(0,2), Range(0,2)) << endl << endl;
-		*/
-		
-		
-		U.Output_field_k_inloop(T, Pr_switch);						
+		U.Output_field_k_inloop(T);						
 		// T(k) in the output computation needs nlin at the present time
 		
 		U.Satisfy_reality_condition(T);
 		
-		U.Add_force(T, Pr_switch);															
+		U.Add_force(T);															
 		
 		U.Compute_pressure();  
 		U.Output_pressure_spectrum_inloop();						
 		// Output pressure spectrum at the present time
-											
+										
 		U.Tdt = U.Get_dt(T);
 		U.Tnow = U.Tnow + U.Tdt;
 		iter++;
 	
-		U.Time_advance(T, Ra, Pr, Pr_switch, RB_Uscaling);
+		U.Time_advance(T);
 		// fields AT new time.
 		
-
+		
 		U.CV_Compute_totalenergy_diss(); 
 		T.CS_Compute_totalenergy_diss();
 		if ( isnan(U.CV_total_energy) || isnan(T.CS_total_energy) ) 
@@ -427,8 +400,7 @@ int RB_slip_main(string data_dir_name)
 			cout << "ERROR: Numerical Overflow " << endl;  break; 
 		}
 		
-		U.Output_all_inloop(T, Ra, Pr, Pr_switch, RB_Uscaling);
-
+		U.Output_all_inloop(T);
 	}
 	while (U.Tnow < U.Tfinal);
 

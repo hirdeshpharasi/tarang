@@ -47,11 +47,11 @@ void IncFluid::Compute_force_DYNAMO_SIX_MODE(IncVF& W)
 
 	if (is_force_field_para_read == 0)
 	{
-		int k0 = ((int) (*force_field_para)(1));
-		DP amp101 = (*force_field_para)(2);
-		DP amp011 = (*force_field_para)(3);
-		DP amp112 = (*force_field_para)(4);
-		DP h = (*force_field_para)(5);
+		int k0 = ((int) (*force_int_para)(1));
+		DP amp101 = (*force_int_para)(2);
+		DP amp011 = (*force_int_para)(3);
+		DP amp112 = (*force_int_para)(4);
+		DP h = (*force_int_para)(5);
 		
 		Setup_SIX_MODE_force_field(k0, amp101, amp011, amp112, h); 
 		// force only u field

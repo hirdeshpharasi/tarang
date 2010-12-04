@@ -84,6 +84,7 @@ void IncFluid::Read_init_cond()
 
 void IncFluid::Read_init_cond(IncSF& T)
 {
+	
 	switch (field_input_proc) 
 	{
 		
@@ -110,6 +111,12 @@ void IncFluid::Read_init_cond(IncSF& T)
 		
 		case (8) : Init_cond_ABC(T); break;			
 		// initialize only V field
+			
+		case (51) : Init_cond_RB_Lorenz(T); break;
+		// Lorenz initcond for RB convection
+			
+		case (511) : Init_cond_Rayleigh_Taylor(T); break;			
+		// initialize For Rayleigh Taylor instability.	
 		
 	}
 
@@ -183,81 +190,6 @@ void IncFluid::Read_init_cond(IncVF& W, IncSF& T)
 		// initialize V, W field
 		
 		case (8) : Init_cond_ABC(W, T); break;			
-		// initialize V, W field
-	
-	}
-
-}
-
-
-//
-//
-
-void  IncFluid::Read_init_cond_RB(string Pr_switch, IncSF& T)
-{
-	switch (field_input_proc) 
-	{
-	
-		case (0) : Init_cond_RB_Lorenz(T); break;		
-		// first 3 entries are w101, th101, th200
-		
-		case (1) : Init_cond(Pr_switch, T);	break;				
-		// read from field_in_file
-		
-		case (2) : Init_cond_reduced(Pr_switch, T);	break;		
-		// read from field_in_file with Nreduced D
-		
-		case (3) : Init_cond_modes_SIMPLE(Pr_switch, T);	break;		
-		// Modes - ki, Vx, (Vy:3D),Theta
-		
-		case (4) : Init_cond_modes_VORTICITY(Pr_switch, T); break;	
-		// Modes - ki, Vx,  vorticity, Theta
-		
-		case (5) : Init_cond_energy_spectrum(Pr_switch, T); break;			
-		// given energy spectrum
-		
-		case (6) : Init_cond_energy_helicity_spectrum(Pr_switch, T); break;	
-		// given energy and hel spectrum
-	
-		case (7) : Init_cond_Taylor_Green(Pr_switch, T); break;	
-		// initialize only V field
-		
-		case (8) : Init_cond_ABC(Pr_switch, T); break;			
-		// initialize only V field
-		
-	}
-}
-
-void IncFluid::Read_init_cond_RB(string Pr_switch, IncVF& W, IncSF& T)
-{
-	switch (field_input_proc) 
-	{
-		
-		case (0) : Init_cond_RB_Lorenz(T); break;		
-		// first 3 entries are w101, th101, th200 
-		
-		case (1) : Init_cond(Pr_switch, W, T);	break;			
-		// read from field_in_file
-		
-		case (2) : Init_cond_reduced(Pr_switch, W, T);	break;	
-		// read from field_in_file with Nreduced D
-		
-		case (3) : Init_cond_modes_SIMPLE(Pr_switch, W, T);	break;			
-		// Triad - ki, Vx, (Vy:3D),Theta
-		
-		case (4) : Init_cond_modes_VORTICITY(Pr_switch, W, T);	break;		
-		// Triad - ki, Vx,  vorticity, Theta
-		
-		case (5) : Init_cond_energy_spectrum(Pr_switch, W, T); break;			
-		// given spectrum
-		
-		case (6) : Init_cond_energy_helicity_spectrum(Pr_switch, W, T); break;	
-		// given energy and hel spectrum
-	
-		case (7) : Init_cond_Taylor_Green(Pr_switch, W, T); break;	
-		// initialize V, W field
-		
-		case (8) : Init_cond_ABC(Pr_switch, W, T); break;			
 		// initialize V, W field
 	
 	}

@@ -60,16 +60,6 @@ void IncFluid::Output_moment(IncVF& W, IncSF& T)
 {
 }
 
-//
-//
-
-void IncFluid::Output_moment(IncSF& T, string Pr_switch)
-{
-}
-
-void IncFluid::Output_moment(IncVF& W, IncSF& T, string Pr_switch)
-{
-}
 
 //*******************************	End of output.cc ******************************************
 

@@ -1,4 +1,4 @@
-/* Tarang-4.0
+*init_cond_int_para/* Tarang-4.0
  *
  * Copyright (C) 2008, 2009  Mahendra K. Verma
  *
@@ -52,7 +52,7 @@ extern Uniform<DP> SPECrand;
 
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters a = (*init_cond_para)(1).
+ *			Parameters a = (*init_cond_int_para)(1).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k) is constructed so that it has the given energy but the phases
@@ -72,7 +72,7 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid()
 	(*V2) = 0.0;
 	(*V3) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
 	
 //	cout << "Init energy spectrum U: " << *CV_shell_ek << endl;
 	
@@ -131,8 +131,8 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncSF& T)
 	(*V3) = 0.0;
 	(*T.F) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(2));
 	
 	for (int lx=0; lx<local_N1; lx++)										
 		for (int ly=0; ly<N[2]; ly++)  
@@ -203,8 +203,8 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W)
 	(*W.V2) = 0.0;
 	(*W.V3) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
 	
 	for (int lx=0; lx<local_N1; lx++)										
 		for (int ly=0; ly<N[2]; ly++)  
@@ -250,9 +250,9 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W)
 //*********************************************************************************************
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters: For velocity field a = (*init_cond_para)(1).
- *						For W field a = (*init_cond_para)(2).
- *						For T field a = (*init_cond_para)(3).
+ *			Parameters: For velocity field a = (*init_cond_int_para)(1).
+ *						For W field a = (*init_cond_int_para)(2).
+ *						For T field a = (*init_cond_int_para)(3).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k), W(k), T.F(k) is constructed so that it has the given energy 
@@ -280,9 +280,9 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W, IncSF& T)
 	
 	(*T.F) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(3));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(3));
 	
 	for (int lx=0; lx<local_N1; lx++)										
 		for (int ly=0; ly<N[2]; ly++) 
@@ -406,9 +406,9 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W)
 	(*W.V2) = 0.0;
 	(*W.V3) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
-	DP h = (*init_cond_para)(3);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
+	DP h = (*init_cond_int_para)(3);
 	
 	for (int lx=0; lx<local_N1; lx++)										
 		for (int ly=0; ly<N[2]; ly++)  
@@ -454,9 +454,9 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W)
 //*********************************************************************************************
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters: For velocity field a = (*init_cond_para)(1).
- *						For W field a = (*init_cond_para)(2).
- *						For T field a = (*init_cond_para)(3).
+ *			Parameters: For velocity field a = (*init_cond_int_para)(1).
+ *						For W field a = (*init_cond_int_para)(2).
+ *						For T field a = (*init_cond_int_para)(3).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k), W(k), T.F(k) is constructed so that it has the given energy 
@@ -484,11 +484,11 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W, IncSF& T
 	
 	(*T.F) = 0.0;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
-	DP h = (*init_cond_para)(3);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
+	DP h = (*init_cond_int_para)(3);
 	
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(4));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(4));
 	
 	for (int lx=0; lx<local_N1; lx++)										
 		for (int ly=0; ly<N[2]; ly++) 

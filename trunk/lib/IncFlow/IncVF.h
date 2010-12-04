@@ -187,8 +187,8 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 		Array<DP,1> ET_shell_radii_sector_array
 	);
 	
-	void Mult_field_exp_ksqr_dt(DP dt);
-	void Mult_nlin_exp_ksqr_dt(DP dt);
+	void Mult_field_exp_ksqr_dt(DP dt, DP a);
+	void Mult_nlin_exp_ksqr_dt(DP dt, DP a);
 	void Add_nlin_dt(DP dt);
 	
 	void Copy_field_to(CVF& W);
@@ -227,7 +227,7 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	
 	DP Get_cross_helicity(IncVF& W);
-	DP Get_Nusselt_no(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
+	DP Get_Nusselt_no(IncSF& T);
 	
 	void Compute_cross_vT_shell_spectrum(IncSF& T);
 	void Compute_cross_vT_ring_spectrum(IncSF& T);
@@ -273,10 +273,12 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	void Compute_nlin();							/// nlin[i] = FT[v.grad(v)][i]
 	void Compute_nlin(IncSF& T);					///  nlin[i] = FT[v.grad(v)][i]; T.nlin= FT[v.grad(T)]
-	void Compute_nlin(IncSF& T, string Pr_switch);			// RB convection
+	
+	void Compute_nlin_scalar(IncSF& T);				// scalar convection
+	void Compute_nlin_RB(IncSF& T);					// RB convection
 	void Compute_nlin(IncVF& W);
 	void Compute_nlin(IncVF& W, IncSF& T);  
-	void Compute_nlin(IncVF& W, IncSF& T, string Pr_switch); // RB convection
+
 
 	/// U.nlin[i] = FT[U.grad U]; W.nlin[i] = FT[W.grad W]   
 	/// nlinWdU contains FT[W.grad U]; nlinUdW contains FT[U.grad W]	
@@ -394,17 +396,17 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	void EnergyTr_Compute_nlin();
 	void EnergyTr_Compute_nlin(IncVF& W);
 	void EnergyTr_Compute_nlin(IncSF& T);
-	void EnergyTr_Compute_nlin(IncSF& T, string Pr_switch);
 	void EnergyTr_Compute_nlin_vorticity_helper();
 	void EnergyTr_Compute_nlin_UcrossB();
 	
 	// Flux
 	void Compute_flux();
 	void Compute_flux(IncSF& T);
+	void Compute_flux_scalar(IncSF& T);
+	void Compute_flux_RB(IncSF& T);
 	void Compute_flux(IncVF& W);
 	void Compute_flux(IncVF& W, IncSF& T);
-	void Compute_flux(IncSF& T, string Pr_switch);
-	void Compute_flux(IncVF& W, IncSF& T, string Pr_switch);
+
 	
 	void Compute_kinetic_helicity_flux();
 	void Compute_magnetic_helicity_flux(IncVF& W);
@@ -414,10 +416,11 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	// Shell-to-shell energy transfer
 	void Compute_shell_tr();
 	void Compute_shell_tr(IncSF& T);
+	void Compute_shell_tr_scalar(IncSF& T);
+	void Compute_shell_tr_RB(IncSF& T);
 	void Compute_shell_tr(IncVF& W);
 	void Compute_shell_tr(IncVF& W, IncSF& T);
-	void Compute_shell_tr(IncSF& T, string Pr_switch);
-	void Compute_shell_tr(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	void Compute_kinetic_helicity_shell_tr();
 	void Compute_magnetic_helicity_shell_tr(IncVF& W);
@@ -427,42 +430,42 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	// Ring_to_ring energy transfer
 	void Compute_ring_tr();
 	void Compute_ring_tr(IncSF& T);
+	void Compute_ring_tr_scalar(IncSF& T);
+	void Compute_ring_tr_RB(IncSF& T);
 	void Compute_ring_tr(IncVF& W);
 	void Compute_ring_tr(IncVF& W, IncSF& T);
-	void Compute_ring_tr(IncSF& T, string Pr_switch);
-	void Compute_ring_tr(IncVF& W, IncSF& T, string Pr_switch);		
 	
 	
 	// Cylinderical ring_to_ring energy transfer
 	void Compute_cylinder_ring_tr();
 	void Compute_cylinder_ring_tr(IncSF& T);
+	void Compute_cylinder_ring_tr_scalar(IncSF& T);
+	void Compute_cylinder_ring_tr_RB(IncSF& T);
 	void Compute_cylinder_ring_tr(IncVF& W);
 	void Compute_cylinder_ring_tr(IncVF& W, IncSF& T);
-	void Compute_cylinder_ring_tr(IncSF& T, string Pr_switch);
-	void Compute_cylinder_ring_tr(IncVF& W, IncSF& T, string Pr_switch);	
 	
 	// (F*conj(V(k))), 
 	
 	void Compute_force_feed_shell();
 	void Compute_force_feed_shell(IncSF& T);
+	void Compute_force_feed_shell_scalar(IncSF& T);
+	void Compute_force_feed_shell_RB(IncSF& T);
 	void Compute_force_feed_shell(IncVF& W);
 	void Compute_force_feed_shell(IncVF& W, IncSF& T);
-	void Compute_force_feed_shell(IncSF& T, string Pr_switch);
-	void Compute_force_feed_shell(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Compute_force_feed_ring();
 	void Compute_force_feed_ring(IncSF& T);
+	void Compute_force_feed_ring_scalar(IncSF& T);
+	void Compute_force_feed_ring_RB(IncSF& T);
 	void Compute_force_feed_ring(IncVF& W);
 	void Compute_force_feed_ring(IncVF& W, IncSF& T);
-	void Compute_force_feed_ring(IncSF& T, string Pr_switch);
-	void Compute_force_feed_ring(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Compute_force_feed_cylinder_ring();
 	void Compute_force_feed_cylinder_ring(IncSF& T);
+	void Compute_force_feed_cylinder_ring_scalar(IncSF& T);
+	void Compute_force_feed_cylinder_ring_RB(IncSF& T);
 	void Compute_force_feed_cylinder_ring(IncVF& W);
 	void Compute_force_feed_cylinder_ring(IncVF& W, IncSF& T);
-	void Compute_force_feed_cylinder_ring(IncSF& T, string Pr_switch);
-	void Compute_force_feed_cylinder_ring(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Compute_shell_ET_B0(IncVF& W);
 	void Compute_ring_ET_B0(IncVF& W);

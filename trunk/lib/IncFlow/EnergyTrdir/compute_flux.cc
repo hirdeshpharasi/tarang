@@ -74,7 +74,18 @@ void IncVF::Compute_flux()
 // Scalar
 //
 
+
 void IncVF::Compute_flux(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_flux_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_flux_RB(T);
+}
+
+
+void IncVF::Compute_flux_scalar(IncSF& T)
 {
 
 	(*flux_SF) = 0.0;
@@ -94,6 +105,38 @@ void IncVF::Compute_flux(IncSF& T)
 		// T.flux = (U.grad T<). T>		
 							
 	}
+}
+
+//
+// RB convection
+void IncVF::Compute_flux_RB(IncSF& T)
+{
+	
+	(*flux_self) = 0.0;
+	(*flux_SF) = 0.0;
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+		Compute_flux();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")		// fill only Temperature flux
+	{
+		
+		for (int sphere_index = 1; sphere_index <= no_spheres; sphere_index++) 
+		{
+			
+			Fill_in_sphere(sphere_index, T);	
+			
+			EnergyTr_Compute_nlin(T);						
+			// nlin = U.grad T<	
+			
+			(*flux_SF)(sphere_index) = -Prod_out_sphere_nlinV(sphere_index, T);		
+			// T.flux = -(U.grad T<). T>		
+			
+		}
+	}
+	
+	else
+		Compute_flux_scalar(T);	
 }
 
 
@@ -258,30 +301,7 @@ void IncVF::Compute_flux(IncVF& W, IncSF& T)
 	
 	}
 }
-
-
-//*********************************************************************************************
-//
-// RB convection
-
-void IncVF::Compute_flux(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO") 
-		Compute_flux();
-	else
-		Compute_flux(T);	
-}
-
-//
-//
-
-void IncVF::Compute_flux(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO") 
-		Compute_flux(W);
-	else
-		Compute_flux(W, T);
-}		
+		
 
 //****************************  End of compute_flux.cc ****************************************
 

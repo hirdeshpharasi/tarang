@@ -220,7 +220,6 @@ void IncFluid::Output_all_inloop(IncSF& T)
 		Tfield_frequent_save_next += Tfield_frequent_save_interval;
 	}
 	
-	
 	if (Tnow >= Tfield_reduced_save_next) 
 	{	
 		Output_field_reduced(T);
@@ -244,13 +243,13 @@ void IncFluid::Output_all_inloop(IncSF& T)
 		Output_flux(T);			// 0 -> real_imag off
 		Tflux_save_next += Tflux_save_interval;
 	}	
-			
+		
 	if (Tnow >= Tshell_to_shell_save_next)
 	{
 		Output_shell_to_shell(T);
 		Tshell_to_shell_save_next += Tshell_to_shell_save_interval;
 	}	
-		
+	
 
 	if ((Tnow >= Tring_spectrum_save_next)  && (CV_anisotropic_ring_switch == 1))
 	{  
@@ -523,214 +522,6 @@ void IncFluid::Output_all_inloop(IncVF& W, IncSF& T)
 
 
 //*********************************************************************************************
-// for convection
-//
-void IncFluid::Output_all_inloop(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling)
-{
-	
-	if (Tnow >= Tglobal_save_next) 
-	{	 
-		Output_global(T, Ra, Pr, Pr_switch, RB_Uscaling); 
-		Tglobal_save_next +=  Tglobal_save_interval; 
-	}
-			
-	if (Tnow >= Tfield_save_next)       
-	{  
-		Output_field(T, Pr_switch); 
-		Tfield_save_next += Tfield_save_interval;
-	}	
-	
-	if (Tnow >= Tfield_frequent_save_next)       
-	{  
-		Output_field_frequent(T, Pr_switch); 
-		Tfield_frequent_save_next += Tfield_frequent_save_interval;
-	}
-	
-	if (Tnow >= Tfield_reduced_save_next) 
-	{	
-		Output_field_reduced(T, Pr_switch);
-		Tfield_reduced_save_next += Tfield_reduced_save_interval;
-	}	
-	
-	if (Tnow >= Trealfield_save_next) 
-	{
-		Output_realfield(T, Pr_switch);
-		Trealfield_save_next += Trealfield_save_interval;
-	}	
-			
-	if (Tnow >= Tspectrum_save_next)
-	{
-		Output_shell_spectrum(T, Pr_switch);	
-		Tspectrum_save_next += Tspectrum_save_interval;
-	}		
-			
-	if (Tnow >= Tflux_save_next)
-	{
-		Output_flux(T, Pr_switch);			// 0 -> real_imag off
-		Tflux_save_next += Tflux_save_interval;
-	}	
-			
-	if (Tnow >= Tshell_to_shell_save_next)
-	{
-		Output_shell_to_shell(T, Pr_switch);
-		Tshell_to_shell_save_next += Tshell_to_shell_save_interval;
-	}	
-	
-	if ((Tnow >= Tring_spectrum_save_next) && (CV_anisotropic_ring_switch == 1))
-	{  
-		Output_ring_spectrum(T, Pr_switch); 
-		Tring_spectrum_save_next += Tring_spectrum_save_interval;
-	}	
-	
-	if ((Tnow >= Tring_to_ring_save_next) && (CV_anisotropic_ring_switch == 1))
-	{  
-		Output_ring_to_ring(T, Pr_switch); 
-		Tring_to_ring_save_next += Tring_to_ring_save_interval;
-	}	
-	
-	if ((Tnow >= Tcylinder_ring_spectrum_save_next) && (CV_anisotropic_cylinder_switch == 1))
-	{  
-		Output_cylinder_ring_spectrum(T, Pr_switch); 
-		Tcylinder_ring_spectrum_save_next += Tcylinder_ring_spectrum_save_interval;
-	}
-	
-	if ((Tnow >= Tcylinder_ring_to_ring_save_next) && (CV_anisotropic_cylinder_switch == 1)) 
-	{  
-		Output_cylinder_ring_to_ring(T, Pr_switch); 
-		Tcylinder_ring_to_ring_save_next += Tcylinder_ring_to_ring_save_interval;
-	}
-	
-	if (Tnow >= Tstructure_fn_save_next)
-	{
-		if (CV_structure_fn_switch == 1)
-			Output_structure_fn(T, Pr_switch);			
-		
-		if (CV_planar_structure_fn_switch == 1)
-			Output_planar_structure_fn(T, Pr_switch);
-			
-		Tstructure_fn_save_next += Tstructure_fn_save_interval;
-	}	
-	
-	if (Tnow >= Tmoment_save_next)
-	{
-		Output_moment(T, Pr_switch);			
-		Tmoment_save_next += Tmoment_save_interval;
-	}
-	
-	if (Tnow >= Tcout_save_next)   
-	{  
-		Output_cout(T); 
-		Tcout_save_next += Tcout_save_interval; 
-	}
-					
-}
-
-
-//*********************************************************************************************
-// Magnetoconvection
-//
-void IncFluid::Output_all_inloop(IncVF& W, IncSF& T,  DP Ra, DP Pr, string Pr_switch, 
-									string RB_Uscaling)
-{
-		if (Tnow >= Tglobal_save_next) 
-	{	 
-		Output_global(W, T, Ra, Pr, Pr_switch, RB_Uscaling);
-		Tglobal_save_next +=  Tglobal_save_interval; 
-	}
-			
-	if (Tnow >= Tfield_save_next)       
-	{  
-		Output_field(W, T, Pr_switch); 
-		Tfield_save_next += Tfield_save_interval;
-	}	
-	
-	if (Tnow >= Tfield_frequent_save_next)       
-	{  
-		Output_field_frequent(W, T, Pr_switch); 
-		Tfield_frequent_save_next += Tfield_frequent_save_interval;
-	}
-	
-	if (Tnow >= Tfield_reduced_save_next) 
-	{	
-		Output_field_reduced(W, T, Pr_switch);
-		Tfield_reduced_save_next += Tfield_reduced_save_interval;
-	}	
-	
-	if (Tnow >= Trealfield_save_next) 
-	{
-		Output_realfield(W, T, Pr_switch);
-		Trealfield_save_next += Trealfield_save_interval;
-	}	
-			
-	if (Tnow >= Tspectrum_save_next)
-	{
-		Output_shell_spectrum(W, T, Pr_switch);	
-		Tspectrum_save_next += Tspectrum_save_interval;
-	}		
-			
-	if (Tnow >= Tflux_save_next)
-	{
-		Output_flux(W, T, Pr_switch);			// 0 -> real_imag off
-		Tflux_save_next += Tflux_save_interval;
-	}	
-			
-	if (Tnow >= Tshell_to_shell_save_next)
-	{
-		Output_shell_to_shell(W, T, Pr_switch);
-		Tshell_to_shell_save_next += Tshell_to_shell_save_interval;
-	}	
-	
-	if ((Tnow >= Tring_spectrum_save_next)  && (CV_anisotropic_ring_switch == 1))
-	{  
-		Output_ring_spectrum(W, T, Pr_switch); 
-		Tring_spectrum_save_next += Tring_spectrum_save_interval;
-	}	
-	
-	if ((Tnow >= Tring_to_ring_save_next) && (CV_anisotropic_ring_switch == 1))
-	{  
-		Output_ring_to_ring(W, T, Pr_switch); 
-		Tring_to_ring_save_next += Tring_to_ring_save_interval;
-	}	
-	
-	if ((Tnow >= Tcylinder_ring_spectrum_save_next) && (CV_anisotropic_cylinder_switch == 1))
-	{  
-		Output_cylinder_ring_spectrum(W, T, Pr_switch); 
-		Tcylinder_ring_spectrum_save_next += Tcylinder_ring_spectrum_save_interval;
-	}
-	
-	if ((Tnow >= Tcylinder_ring_to_ring_save_next) && (CV_anisotropic_cylinder_switch == 1)) 
-	{  
-		Output_cylinder_ring_to_ring(W, T, Pr_switch); 
-		Tcylinder_ring_to_ring_save_next += Tcylinder_ring_to_ring_save_interval;
-	}
-	
-	if (Tnow >= Tstructure_fn_save_next)
-	{
-		if (CV_structure_fn_switch == 1)
-			Output_structure_fn(W, T, Pr_switch);			
-		
-		if (CV_planar_structure_fn_switch == 1)
-			Output_planar_structure_fn(W, T, Pr_switch);
-			
-		Tstructure_fn_save_next += Tstructure_fn_save_interval;
-	}	
-	
-	if (Tnow >= Tmoment_save_next)
-	{
-		Output_moment(W, T, Pr_switch);			
-		Tmoment_save_next += Tmoment_save_interval;
-	}	
-	
-	
-	if (Tnow >= Tcout_save_next)   
-	{  
-		Output_cout(W, T); 
-		Tcout_save_next += Tcout_save_interval; 
-	}																						
-}
-
-
-//*********************************************************************************************
 
 // Outputs V(k) at specified k's
 void IncFluid::Output_field_k_inloop()
@@ -845,67 +636,6 @@ void IncFluid::Output_field_k_inloop(IncVF& W, IncSF& T)
 		TSkpq_save_next += TSkpq_save_interval;
 	}
 }
-
-
-
-void IncFluid::Output_field_k_inloop(IncSF& T, string Pr_switch)
-{
-
-	if (Tnow >= Tfield_k_save_next)
-	{
-		Output_field_k(T, Pr_switch);
-		
-		Tfield_k_save_next += Tfield_k_save_interval;
-	}
-	
-	if (Tnow >= Tfield_r_save_next)
-	{
-		if (output_field_r_switch == 1)
-			Output_field_r(T, Pr_switch);
-			
-		Tfield_r_save_next += Tfield_r_save_interval;
-	}
-	
-	
-	if (Tnow >= TSkpq_save_next)
-	{
-		if (skpq_switch	== 1)
-			Output_Skpq(T, Pr_switch);
-			
-		TSkpq_save_next += TSkpq_save_interval;
-	}
-}
-
-
-
-void IncFluid::Output_field_k_inloop(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Tnow >= Tfield_k_save_next)
-	{
-		Output_field_k(W, T, Pr_switch);
-		
-		Tfield_k_save_next += Tfield_k_save_interval;
-	}
-	
-	
-	if (Tnow >= Tfield_r_save_next)
-	{
-		if (output_field_r_switch == 1)
-			Output_field_r(W, T, Pr_switch);
-			
-		Tfield_r_save_next += Tfield_r_save_interval;
-	}
-	
-	
-	if (Tnow >= TSkpq_save_next)
-	{
-		if (skpq_switch	== 1)
-			Output_Skpq(W, T, Pr_switch);
-			
-		TSkpq_save_next += TSkpq_save_interval;
-	}
-}
-
 
 
 //*********************************************************************************************

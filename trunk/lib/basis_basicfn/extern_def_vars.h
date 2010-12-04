@@ -119,6 +119,17 @@ extern fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;
 extern int	globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
 extern int	globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
 
+extern string	globalvar_prog_kind;				// program kind like INC_FLUID
+
+// for RB
+extern string	globalvar_Pr_switch;				// Prandtl number switch (PRLARGNE..) for RB
+extern string	globalvar_RB_Uscaling;				// UBscaling (ULARGE... ) for RB
+extern DP		globalvar_Ra;						// Rayleigh number
+extern DP		globalvar_r;						// normalized Rayleigh number
+extern DP		globalvar_Pr;						// Prandtl number
+extern DP		globalvar_temperature_grad;			// +1 for convection; -1 for stratification; 
+													// factor for u3 in temperature eqn
+
 // random extern vars
 					
 extern Uniform<DP> SPECrand;

@@ -82,7 +82,18 @@ void IncFluid::Output_global()
 
 //*********************************************************************************************
 
+
 void IncFluid::Output_global(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_global_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_global_RB(T);
+}
+
+
+void IncFluid::Output_global_scalar(IncSF& T)
 {
 	CV_Compute_totalenergy_diss(); 
 	T.CS_Compute_totalenergy_diss();
@@ -133,6 +144,68 @@ void IncFluid::Output_global(IncSF& T)
 			<<	endl;
 	}	
 	
+}
+
+//*********************************************************************************************
+
+// RB Convection //
+
+void IncFluid::Output_global_RB(IncSF& T)		
+{
+	
+	static DP nusselt_no;
+	
+	CV_Compute_totalenergy_diss(); 
+	T.CS_Compute_totalenergy_diss();
+	
+	CV_Compute_entropy(); 
+	T.CS_Compute_entropy(); 
+	
+	CV_Compute_total_helicity();
+	
+	nusselt_no = Get_Nusselt_no(T);
+	
+	if (my_id == master_id) 
+	{
+		DP kmax = Max_radius_inside(basis_type, alias_switch, N, kfactor);
+		
+		DP total_diss = dissipation_coefficient*CV_total_dissipation;
+		
+		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		
+		DP kmax_eta1 = kmax * kolm_scale_u;
+		
+		DP kmax_eta2 = kmax_eta1 * pow( (dissipation_coefficient/T.diffusion_coefficient), -3.0/4);
+		
+		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss));  
+		
+		
+		global_file  << Tnow										<< "	"  
+			<<	CV_total_energy										<< " " 
+			<<	T.CS_total_energy									<< "	" 
+			<<	CV_total_dissipation								<< " " 
+			<<	T.CS_total_dissipation								<< "	" 
+			<<	total_diss											<< " "
+			<<	(T.diffusion_coefficient)*(T.CS_total_dissipation)	<< "    "
+			<<	nusselt_no											<< "    "
+			<<	CV_total_helicity1									<< " " 
+			<<  CV_total_helicity2									<< "    " 
+			<<	CV_total_dissipation_H1								<< " " 
+			<<  CV_total_dissipation_H2								<< "    "
+			<<	CV_entropy											<< " "
+			<<	T.CS_entropy										<< "   " 
+			<<	kmax_eta1											<< " " 
+			<<	kmax_eta2											<< "    "
+			<<  dissipation_coefficient								<< " " 
+			<<  T.diffusion_coefficient								<< "    "
+			<<	Rlambda												<< "    "
+			<<	Tdt													<< "    "
+			<<	real((*V1)(0,0,0))									<< " "	
+			<<  real((*V2)(0,0,0))									<< " " 
+			<<  real((*V3)(0,0,0))									<< "	"
+			<<	real((*T.F)(0,0,0))
+			<<	endl;	
+	}
 }
 
 //*********************************************************************************************
@@ -281,72 +354,13 @@ void IncFluid::Output_global(IncVF& W, IncSF& T)
 		 
 }
 
-//*********************************************************************************************
 
-// RB Convection //
-
-void IncFluid::Output_global(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling)		
-{
-	
-	static DP nusselt_no;
-		
-	CV_Compute_totalenergy_diss(); 
-	T.CS_Compute_totalenergy_diss();
-	
-	CV_Compute_entropy(); 
-	T.CS_Compute_entropy(); 
-	
-	CV_Compute_total_helicity();
-	
-	nusselt_no = Get_Nusselt_no(T, Ra, Pr, Pr_switch, RB_Uscaling);
-	
-	if (my_id == master_id) 
-	{
-		DP kmax = Max_radius_inside(basis_type, alias_switch, N, kfactor);
-		
-		DP total_diss = dissipation_coefficient*CV_total_dissipation;
-
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
-		
-		DP kmax_eta1 = kmax * kolm_scale_u;
-		
-		DP kmax_eta2 = kmax_eta1 * pow( (dissipation_coefficient/T.diffusion_coefficient), -3.0/4);
-		
-		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss));  
-			
-		
-		global_file  << Tnow										<< "	"  
-			<<	CV_total_energy										<< " " 
-			<<	T.CS_total_energy									<< "	" 
-			<<	CV_total_dissipation								<< " " 
-			<<	T.CS_total_dissipation								<< "	" 
-			<<	total_diss											<< " "
-			<<	(T.diffusion_coefficient)*(T.CS_total_dissipation)	<< "    "
-			<<	nusselt_no											<< "    "
-			<<	CV_total_helicity1									<< " " 
-			<<  CV_total_helicity2									<< "    " 
-			<<	CV_total_dissipation_H1								<< " " 
-			<<  CV_total_dissipation_H2								<< "    "
-			<<	CV_entropy											<< " "
-			<<	T.CS_entropy										<< "   " 
-			<<	kmax_eta1											<< " " 
-			<<	kmax_eta2											<< "    "
-			<<  dissipation_coefficient								<< " " 
-			<<  T.diffusion_coefficient								<< "    "
-			<<	Rlambda												<< "    "
-			<<	Tdt													<< "    "
-			<<	real((*V1)(0,0,0))									<< " "	
-			<<  real((*V2)(0,0,0))									<< " " 
-			<<  real((*V3)(0,0,0))									<< "	"
-			<<	real((*T.F)(0,0,0))
-			<<	endl;	
-	}
-}
 
 //
 //
 //*********************************************************************************************
 
+/*
 void IncFluid::Output_global
 (
 	IncVF& W, IncSF& T, 
@@ -430,6 +444,7 @@ void IncFluid::Output_global
 
 }
 
+ */
 
 //*********************************************************************************************
 //*********************************************************************************************
@@ -464,8 +479,18 @@ void IncFluid::Output_shell_spectrum()
 
 //*********************************************************************************************  
 // scalar
-  
 void IncFluid::Output_shell_spectrum(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_shell_spectrum_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_shell_spectrum_RB(T);
+}
+
+
+  
+void IncFluid::Output_shell_spectrum_scalar(IncSF& T)
 {
 	
 	if (my_id == master_id) 
@@ -501,6 +526,18 @@ void IncFluid::Output_shell_spectrum(IncSF& T)
 				<<	endl;
 	
 	if (my_id == master_id)		spectrum_file << endl;
+}
+
+//  RB Convection	
+
+
+void IncFluid::Output_shell_spectrum_RB(IncSF &T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_shell_spectrum();
+	
+	else
+		Output_shell_spectrum_scalar(T);
 }
  
 //********************************************************************************************* 
@@ -603,29 +640,7 @@ void IncFluid::Output_shell_spectrum(IncVF& W, IncSF &T)
 }
 
 
-//*********************************************************************************************
-//  RB Convection	
 
-void IncFluid::Output_shell_spectrum(IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_shell_spectrum();
-		
-	else
-		Output_shell_spectrum(T);
-}
-
-//
-//
-
-void IncFluid::Output_shell_spectrum(IncVF& W, IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_shell_spectrum(W);
-		
-	else
-		Output_shell_spectrum(W, T);
-}
  
 /**********************************************************************************************
 	
@@ -673,8 +688,16 @@ void IncFluid::Output_ring_spectrum()
 
 //*********************************************************************************************  
 // scalar
-  
 void IncFluid::Output_ring_spectrum(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_ring_spectrum_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_ring_spectrum_RB(T);
+}
+  
+void IncFluid::Output_ring_spectrum_scalar(IncSF& T)
 {
 
 	if (CV_anisotropic_ring_switch == 1)
@@ -732,6 +755,17 @@ void IncFluid::Output_ring_spectrum(IncSF& T)
 							   << endl	<< endl;		
 		}
 	}
+}
+
+//  RB Convection	//
+
+void IncFluid::Output_ring_spectrum_RB(IncSF &T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_ring_spectrum();
+	
+	else
+		Output_ring_spectrum_scalar(T);
 }
  
 //********************************************************************************************* 
@@ -885,29 +919,6 @@ void IncFluid::Output_ring_spectrum(IncVF& W, IncSF &T)
 
 }
 
-//*********************************************************************************************
-//  RB Convection	
-
-void IncFluid::Output_ring_spectrum(IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_ring_spectrum();
-	
-	else
-		Output_ring_spectrum(T);
-}
-
-
-void IncFluid::Output_ring_spectrum(IncVF& W, IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_ring_spectrum(W);
-	
-	else
-		Output_ring_spectrum(W, T);
-}
-
-
 
 /**********************************************************************************************
 	
@@ -962,7 +973,19 @@ void IncFluid::Output_cylinder_ring_spectrum()
 //
 //
 
+//
+//  scalar
 void IncFluid::Output_cylinder_ring_spectrum(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_cylinder_ring_spectrum_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_cylinder_ring_spectrum_RB(T);
+}
+
+
+void IncFluid::Output_cylinder_ring_spectrum_scalar(IncSF& T)
 {
 	
 	if (CV_anisotropic_cylinder_switch == 1)
@@ -1018,7 +1041,18 @@ void IncFluid::Output_cylinder_ring_spectrum(IncSF& T)
 		}				
 	}															
 								
-}   
+} 
+
+//  RB Convection	//
+
+void IncFluid::Output_cylinder_ring_spectrum_RB(IncSF &T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_cylinder_ring_spectrum();
+	
+	else
+		Output_cylinder_ring_spectrum_scalar(T);
+}
 
 //
 //
@@ -1171,28 +1205,6 @@ void IncFluid::Output_cylinder_ring_spectrum(IncVF& W, IncSF& T)
 			
 
 } 
-
-
-//  RB Convection	//
-
-void IncFluid::Output_cylinder_ring_spectrum(IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_cylinder_ring_spectrum();
-	
-	else
-		Output_cylinder_ring_spectrum(T);
-}
-
-
-void IncFluid::Output_cylinder_ring_spectrum(IncVF& W, IncSF &T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_cylinder_ring_spectrum(W);
-	
-	else
-		Output_cylinder_ring_spectrum(W, T);
-}
 
  
 /**********************************************************************************************

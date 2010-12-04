@@ -190,6 +190,8 @@ void  IncFluid::Compute_force_given_modes_SIMPLE()
  *
  * @note Scalar field is added simply.
  */	 
+
+
 void IncFluid::Compute_force_given_modes_SIMPLE(IncSF& T)
 {
 

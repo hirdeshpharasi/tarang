@@ -117,7 +117,7 @@ void IncVF::Compute_nlin(IncVF& W, IncSF& T)
 	// *Vir = Inv_tr(*Vi) 
 	         
 	T.RS_Inverse_transform_transpose_order(*F, *VF_temp);							
-	// *VF_temp = Inv_tr(*F) 
+	// *T.Fr = Inv_tr(*F) 
 	
 	Array_real_mult(N, *V1r, *T.Fr, *VF_temp_r);
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *T.nlin, 0);
@@ -139,18 +139,6 @@ void IncVF::Compute_nlin(IncVF& W, IncSF& T)
 	
 }
 
-//*********************************************************************************************
-// For RB convection
-//
-
-void IncVF::Compute_nlin(IncVF& W, IncSF& T, string Pr_switch) 
-{
-
-	if (Pr_switch == "PRZERO") 
-		Compute_nlin(W);
-	else
-		Compute_nlin(W, T);
-}		
 
 
 //***************************** fn compute_nlin_VF_SF ends ************************************

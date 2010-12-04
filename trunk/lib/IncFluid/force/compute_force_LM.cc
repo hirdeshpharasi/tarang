@@ -46,9 +46,9 @@
 void IncFluid::Compute_force_Liquid_metal()
 {	
 	
-	DP B0x = (*force_field_para)(1);
-	DP B0y = (*force_field_para)(2);
-	DP B0z = (*force_field_para)(3);
+	DP B0x = (*force_int_para)(1);
+	DP B0y = (*force_int_para)(2);
+	DP B0z = (*force_int_para)(3);
 	
 	TinyVector <DP,3> B0;
 	B0 = B0x, B0y, B0z;

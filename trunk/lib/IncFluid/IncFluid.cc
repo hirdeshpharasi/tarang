@@ -43,23 +43,31 @@
 
 IncFluid:: IncFluid
 (
-	int N[], 
-	string string_switches[], 
-	Array<int,1> switches, 
-	DP prog_kfactor[],
-	DP diss_coefficient, 
-	DP hyper_diss_coefficient,	
-	Array<DP,1> time_para, 
-	Array<DP,1> time_save_interval, 
-	Array<int,1> misc_output_para,  
-	Array<int,1> no_output_k_r, 
-	Array<int,2> out_k_r_array, 
-	Array<int,1> ET_parameters, 
-	Array<DP,1> ET_shell_radii_sector_array, 
-	Array<int,1> field_input_meta_para, 
-	Array<DP,1> init_cond_parameters,
-	Array<int,1> force_field_meta_para, 
-	Array<DP,1> force_field_parameters
+	 int N[], 
+	 string string_switches[], 
+	 Array<int,1> switches, 
+	 DP prog_kfactor[],
+	 DP diss_coefficient, 
+	 DP hyper_diss_coefficient,	
+	 Array<int,1> solver_meta_parameters,  
+	 Array<int,1> solver_int_parameters,
+	 Array<DP,1>	solver_double_parameters,  
+	 string	solver_string_parameters[],
+	 Array<DP,1> time_para, 
+	 Array<DP,1> time_save_interval, 
+	 Array<int,1> misc_output_para,  
+	 Array<int,1> no_output_k_r, 
+	 Array<int,2> out_k_r_array, 
+	 Array<int,1> ET_parameters, 
+	 Array<DP,1> ET_shell_radii_sector_array, 
+	 Array<int,1> input_meta_parameters,  
+	 Array<int,1> input_int_parameters,
+	 Array<DP,1>	input_double_parameters,  
+	 string	input_string_parameters[],
+	 Array<int,1> force_meta_parameters,  
+	 Array<int,1> force_int_parameters,
+	 Array<DP,1>	force_double_parameters,  
+	 string	force_string_parameters[]
 ): 
 		IncVF(N, string_switches, switches, prog_kfactor, 
 				diss_coefficient, hyper_diss_coefficient,  misc_output_para,
@@ -125,19 +133,47 @@ IncFluid:: IncFluid
 			<< endl << endl;	
 	}
 
+	
+	// Solver para
+	// solver_meta_para(1:3)=  no_int_para, no_DP_para, no_string_para
+	solver_meta_para = new Array<int,1>(MAXSIZE_SOLVER_META_PARA); 
+	solver_int_para = new Array<int,1>(MAXSIZE_SOLVER_INT_PARA);
+	solver_double_para  = new Array<DP,1>(MAXSIZE_SOLVER_DOUBLE_PARA);
+	
+	*solver_meta_para = 0;						// init to 0
+	*solver_int_para = 0;						// init to 0
+	*solver_double_para = 0.0;					// initialize to 0.0
+	
+	*solver_meta_para = solver_meta_parameters;	// copy 
+	*solver_int_para = solver_int_parameters;		
+	*solver_double_para = solver_double_parameters;	
+	
+	for (int i=1; i<=(*solver_meta_para)(3); i++)
+		solver_string_para[i] = solver_string_parameters[i];
+	
+	
 	// Initial condition parameters
+	// init_cond_meta_para(1:4)=  field_input_proc, no_int_para, no_DP_para, no_string_para
+	init_cond_meta_para = new Array<int,1>(MAXSIZE_INIT_COND_META_PARA); 
+	init_cond_int_para = new Array<int,1>(MAXSIZE_INIT_COND_INT_PARA);
+	init_cond_double_para  = new Array<DP,1>(MAXSIZE_INIT_COND_DOUBLE_PARA);
 	
-	field_input_proc			= field_input_meta_para(1);
-	number_of_init_cond_para	= field_input_meta_para(2);
+	*init_cond_meta_para = 0;						// init to 0
+	*init_cond_int_para = 0;						// init to 0
+	*init_cond_double_para = 0.0;					// initialize to 0.0
 	
+	*init_cond_meta_para = input_meta_parameters;	// copy 
+	*init_cond_int_para = input_int_parameters;		
+	*init_cond_double_para = input_double_parameters;	
 	
-	for (int i=1; i<=3; i++)
-		N_in_reduced[i] = field_input_meta_para(i+2);
+	for (int i=1; i<=(*init_cond_meta_para)(3); i++)
+		init_cond_string_para[i] = input_string_parameters[i];
 	
-	init_cond_para  = new Array<DP,1>(MAXSIZE_INIT_COND_FIELD_PARA);
-	*init_cond_para = 0.0;							// initialize to 0.0
+	field_input_proc			= (*init_cond_int_para)(1);
 	
-	*init_cond_para = init_cond_parameters;			// copy 
+	if (field_input_proc == 2)
+		for (int i=2; i<=4; i++)
+			N_in_reduced[i] = (*init_cond_int_para)(i);
 		
 	
 	// field_modes for initial condition
@@ -152,13 +188,24 @@ IncFluid:: IncFluid
 	
 	
 	// Force field parameters.
-	force_field_proc		= force_field_meta_para(1);
-	number_of_force_para	=  force_field_meta_para(2);
+	// force_meta_para(1:4)=  force_field_proc, no_int_para, no_DP_para, no_string_para
+	force_meta_para = new Array<int,1>(MAXSIZE_FORCE_META_PARA); 
+	force_int_para = new Array<int,1>(MAXSIZE_FORCE_INT_PARA);
+	force_double_para  = new Array<DP,1>(MAXSIZE_FORCE_DOUBLE_PARA);
 	
-	force_field_para = new Array<DP, 1>(MAXSIZE_FORCE_PARA);
-	*force_field_para = 0.0;						// initialize to 0.0
+	*force_meta_para = 0;						// init to 0
+	*force_int_para = 0;						// init to 0
+	*force_double_para = 0.0;					// initialize to 0.0
 	
-	*force_field_para = force_field_parameters;		// Copy
+	*force_meta_para = force_meta_parameters;	// copy 
+	*force_int_para = force_int_parameters;		
+	*force_double_para = force_double_parameters;
+	
+	for (int i=1; i<=(*force_meta_para)(3); i++)
+		force_string_para[i] = force_string_parameters[i];
+	
+	force_field_proc		= (*force_int_para)(1);
+	
 	
 	// force_field_modes to be read
 	
@@ -171,6 +218,8 @@ IncFluid:: IncFluid
 	is_force_field_para_read = 0;
 	
 	num_force_waveno = 0;
+	
+	// RB related switches
 	
 	
 	if (low_dim_switch == 1)

@@ -61,6 +61,15 @@ void IncFluid::Output_field()
 
 void IncFluid::Output_field(IncSF& T)
 {
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_field_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_field_RB(T);
+}
+
+void IncFluid::Output_field_scalar(IncSF& T)
+{
 	if (my_id == master_id)	
 		field_out_file << "%% Time = " << Tnow << endl; 
 	
@@ -69,7 +78,24 @@ void IncFluid::Output_field(IncSF& T)
 	// *VF_temp is the temporary array useful in this operation
 }
 
- 
+
+void IncFluid::Output_field_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_field();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		if (my_id == master_id)	
+			field_out_file << "%% Time = " << Tnow << endl; 
+		
+		T.CS_output(field_out_file, *VF_temp);
+	}
+	
+	else
+		Output_field_scalar(T);
+}
+
 void IncFluid::Output_field(IncVF& W)
 {
 	if (my_id == master_id)	
@@ -92,27 +118,6 @@ void IncFluid::Output_field(IncVF& W, IncSF& T)
 	// *VF_temp is the temporary array useful in this operation
 }
 
-//
-//
-
-void IncFluid::Output_field(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field();
-	
-	else
-		Output_field(T);
-}
-
-void IncFluid::Output_field(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field(W);
-	
-	else
-		Output_field(W, T);
-}
-
 
 //*********************************************************************************************
 
@@ -128,7 +133,7 @@ void IncFluid::Output_field_frequent()
 		filename = data_dir_name+ filename;   
 		field_frequent_out_file.open(filename.c_str(), ios::trunc);	
 		
-		field_frequent_out_file << "%% Time = " << Tnow << endl; 
+	//	field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	}
 	
 	CV_output(field_frequent_out_file, *VF_temp);
@@ -138,8 +143,18 @@ void IncFluid::Output_field_frequent()
 		field_frequent_out_file.close();
 }
   
- 
+
 void IncFluid::Output_field_frequent(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_field_frequent_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_field_frequent_RB(T);
+} 
+
+
+void IncFluid::Output_field_frequent_scalar(IncSF& T)
 {
 	if (my_id == master_id)	
 	{
@@ -147,7 +162,7 @@ void IncFluid::Output_field_frequent(IncSF& T)
 		filename = data_dir_name+ filename;   
 		field_frequent_out_file.open(filename.c_str(), ios::trunc);	
 		
-		field_frequent_out_file << "%% Time = " << Tnow << endl; 
+//		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	}
 	
 	
@@ -159,7 +174,34 @@ void IncFluid::Output_field_frequent(IncSF& T)
 		field_frequent_out_file.close();
 }
   
-  
+void IncFluid::Output_field_frequent_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_field_frequent();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		if (my_id == master_id)	
+		{
+			string filename = "/out/field_frequent_out.d";
+			filename = data_dir_name+ filename;   
+			field_frequent_out_file.open(filename.c_str(), ios::trunc);	
+		}
+		
+//		field_frequent_out_file << "%% Time = " << Tnow << endl; 
+		
+		T.CS_output(field_frequent_out_file, *VF_temp);
+		
+		if (my_id == master_id)	
+			field_frequent_out_file.close();
+	}
+	
+	else
+		Output_field_frequent_scalar(T);
+}
+
+
+
 void IncFluid::Output_field_frequent(IncVF& W)
 {
 	if (my_id == master_id)	
@@ -168,7 +210,7 @@ void IncFluid::Output_field_frequent(IncVF& W)
 		filename = data_dir_name+ filename;   
 		field_frequent_out_file.open(filename.c_str(), ios::trunc);	
 		
-		field_frequent_out_file << "%% Time = " << Tnow << endl; 
+//		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	}
 	
 	CV_output(field_frequent_out_file, *VF_temp);
@@ -186,7 +228,7 @@ void IncFluid::Output_field_frequent(IncVF& W, IncSF& T)
 		filename = data_dir_name+ filename;   
 		field_frequent_out_file.open(filename.c_str(), ios::trunc);	
 		
-		field_frequent_out_file << "%% Time = " << Tnow << endl; 
+//		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	} 
 	
 	CV_output(field_frequent_out_file, *VF_temp);
@@ -195,27 +237,6 @@ void IncFluid::Output_field_frequent(IncVF& W, IncSF& T)
 
 	if (my_id == master_id)	
 		field_frequent_out_file.close();
-}
-
-//
-//
-
-void IncFluid::Output_field_frequent(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_frequent();
-	
-	else
-		Output_field_frequent(T);
-}
-
-void IncFluid::Output_field_frequent(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_frequent(W);
-	
-	else
-		Output_field_frequent(W, T);
 }
 
 
@@ -234,6 +255,7 @@ void IncFluid::Output_realfield()
 
 #ifdef TRANSPOSE
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r); 
 
 #else	
 	*V1r = *V1;  
@@ -241,9 +263,9 @@ void IncFluid::Output_realfield()
 	*V3r = *V3; 
 	
 	RV_Inverse_transform(*VF_temp_r);
-#endif
 
 	RV_Output(realfield_out_file, *VF_temp);  
+#endif	
 }
 
 //*********************************************************************************************
@@ -251,12 +273,25 @@ void IncFluid::Output_realfield()
 
 void IncFluid::Output_realfield(IncSF& T)
 {	
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_realfield_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_realfield_RB(T);
+}
+
+
+void IncFluid::Output_realfield_scalar(IncSF& T)
+{	
 	if (my_id == master_id)		
 		realfield_out_file << "%% Time = " << Tnow << endl; 	
 	
 #ifdef TRANSPOSE
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
 	T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp); 
+	
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r); 
+	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
 	
 #else	
 
@@ -267,10 +302,35 @@ void IncFluid::Output_realfield(IncSF& T)
 	
 	*T.Fr = *T.F;   
 	T.RS_Inverse_transform(*VF_temp_r);
-#endif
   
 	RV_Output(realfield_out_file, *VF_temp); 
 	T.RS_Output(realfield_out_file, *VF_temp);
+#endif	
+}
+
+//	RB Convection	//
+
+void IncFluid::Output_realfield_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_realfield();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+#ifdef TRANSPOSE		
+		T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp);
+		T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
+		
+#else
+		*T.Fr = *T.F;
+		T.RS_Inverse_transform(*VF_temp_r);	
+		T.RS_Output(realfield_out_file, *VF_temp);
+#endif
+		
+	}
+	
+	else
+		Output_realfield_scalar(T);
 }
 
 //*********************************************************************************************
@@ -282,7 +342,10 @@ void IncFluid::Output_realfield(IncVF& W)
 	
 #ifdef TRANSPOSE
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
-	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp); 
+	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp);
+	
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
 	
 #else
 	*V1r = *V1;  
@@ -294,10 +357,10 @@ void IncFluid::Output_realfield(IncVF& W)
 	*W.V2r = *W.V2;  
 	*W.V3r = *W.V3; 
 	W.RV_Inverse_transform(*VF_temp_r);
-#endif
-
+	
 	RV_Output(realfield_out_file, *VF_temp); 
 	W.RV_Output(realfield_out_file, *VF_temp);
+#endif
 }
 
 //*********************************************************************************************
@@ -312,6 +375,10 @@ void IncFluid::Output_realfield(IncVF& W, IncSF& T)
 	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp); 
 	T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp); 
 	
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	
 #else	
 	*V1r = *V1;  
 	*V2r = *V2; 
@@ -325,36 +392,12 @@ void IncFluid::Output_realfield(IncVF& W, IncSF& T)
 	
 	*T.Fr = *T.F;   
 	T.RS_Inverse_transform(*VF_temp_r);
-#endif
-
+	
 	RV_Output(realfield_out_file, *VF_temp); 
 	W.RV_Output(realfield_out_file, *VF_temp);
 	T.RS_Output(realfield_out_file, *VF_temp);
+#endif
 }  
-
-
-//*********************************************************************************************  
-//	RB Convection	
-
-void IncFluid::Output_realfield(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_realfield();
-	
-	else
-		Output_realfield(T);
-}
-
-
-void IncFluid::Output_realfield(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_realfield(W);
-	
-	else
-		Output_realfield(W, T);
-}
-  
 
 
 
@@ -374,8 +417,20 @@ void IncFluid::Output_field_reduced()
 } 
 
 //*********************************************************************************************
-// scalar	
+// scalar
+
+
 void IncFluid::Output_field_reduced(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Output_field_reduced_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Output_field_reduced_RB(T);
+}
+
+
+void IncFluid::Output_field_reduced_scalar(IncSF& T)
 {
 
 	if (my_id == master_id)	
@@ -385,6 +440,24 @@ void IncFluid::Output_field_reduced(IncSF& T)
 	T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
 }
 
+//		RB-Convection		//
+
+void IncFluid::Output_field_reduced_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+		Output_field_reduced();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		if (my_id == master_id)
+			field_out_reduced_file << "%% Time = " << Tnow << endl; 
+		
+		T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+	}
+	
+	else
+		Output_field_reduced_scalar(T);
+}
 
 //*********************************************************************************************
 //		MHD		
@@ -411,26 +484,6 @@ void IncFluid::Output_field_reduced(IncVF& W, IncSF& T)
 	W.CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);
 	T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
 
-}
-
-//*********************************************************************************************
-//		RB-Convection		
-void IncFluid::Output_field_reduced(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_reduced();
-	
-	else
-		Output_field_reduced(T);
-}
-
-void IncFluid::Output_field_reduced(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_reduced(W);
-	
-	else
-		Output_field_reduced(W, T);
 }
 
 /**********************************************************************************************
@@ -777,28 +830,6 @@ void IncFluid::Output_field_k(IncVF& W, IncSF& T)
 			MPI_Barrier(MPI_COMM_WORLD);		// Sync procs
 		}	
 	}		// of for loop
-}
-
-
-//*********************************************************************************************
-// RB Convection
-
-void IncFluid::Output_field_k(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_k();
-	
-	else
-		Output_field_k(T);
-}
-
-void IncFluid::Output_field_k(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_k(W);
-	
-	else
-		Output_field_k(W, T);
 }
 
 
@@ -1257,27 +1288,6 @@ void IncFluid::Output_field_r(IncVF& W, IncSF& T)
 		}	
 	}
 
-}
-
-//*********************************************************************************************
-// RB Convection
-
-void IncFluid::Output_field_r(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_r();
-	
-	else
-		Output_field_r(T);
-}
-
-void IncFluid::Output_field_r(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_field_r(W);
-	
-	else
-		Output_field_r(W, T);
 }
 
 

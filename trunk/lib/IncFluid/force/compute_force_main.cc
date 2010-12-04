@@ -51,7 +51,7 @@ void IncFluid::Compute_force()
 		case (4) : Compute_force_ABC(); break;
 		case (5) : Compute_force_given_modes_SIMPLE(); break;
 		case (6) : Compute_force_given_modes_VORTICITY(); break;		
-		case (11) : Compute_force_Liquid_metal(); break;
+		case (11): Compute_force_Liquid_metal(); break;
 	}		
 }
 
@@ -69,6 +69,8 @@ void IncFluid::Compute_force(IncSF& T)
 		case (4) : Compute_force_ABC(T); break;
 		case (5) : Compute_force_given_modes_SIMPLE(T); break;
 		case (6) : Compute_force_given_modes_VORTICITY(T); break;
+		case (51) : Compute_force_RB(T); break;	
+		case (52): Compute_force_nonboussenesq(T); break;	
 	}		
 }
 
@@ -104,6 +106,7 @@ void IncFluid::Compute_force(IncVF& W, IncSF& T)
 		case (4) : Compute_force_ABC(W, T); break;
 		case (5) : Compute_force_given_modes_SIMPLE(W, T); break;
 		case (6) : Compute_force_given_modes_VORTICITY(W, T); break;
+		case (51) : Compute_force_RB(W,T); break;
 	}		
 }
 

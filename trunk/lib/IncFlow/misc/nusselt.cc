@@ -50,36 +50,41 @@
  * @return \f$ Nu = 1 + \sum u_z T \f$ 
  * @return For Pr=0, Nu = 1, but the function returns \f$ Nu = \sum u_z T \f$
  */
-DP IncVF::Get_Nusselt_no(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling)
+DP IncVF::Get_Nusselt_no(IncSF& T)
 {
 
 	// Actually Nu = 1 for Pr=0.  Here we just report the product.
-	if (Pr_switch == "PRZERO") 
+	if (globalvar_Pr_switch == "PRZERO") 
 		return ( 2* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
 	
 	
-	else if (Pr_switch == "PRLARGE") 
+	else if (globalvar_Pr_switch == "PRLARGE") 
 	{
-		if (RB_Uscaling == "USMALL") 
+		if (globalvar_RB_Uscaling == "USMALL") 
 			return ( 1 + 2* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
 			
-		else if (RB_Uscaling == "ULARGE") 
-			return ( 1 + 2*sqrt(Ra*Pr) 
+		else if (globalvar_RB_Uscaling == "ULARGE") 
+			return ( 1 + 2*sqrt(globalvar_Ra*globalvar_Pr)
 							* Get_total_energy(basis_type, alias_switch,N, *V1, *T.F) );
 	}
 	
-	else if (Pr_switch == "PRSMALL") 
+	else if (globalvar_Pr_switch == "PRSMALL") 
 	{
-		if (RB_Uscaling == "USMALL") 
-			return ( 1 + 2*Pr*Pr* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
+		if (globalvar_RB_Uscaling == "USMALL") 
+			return ( 1 + 2*globalvar_Pr*globalvar_Pr
+					* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
 			
-		else if (RB_Uscaling == "ULARGE") 
-			return ( 1 + 2*Pr*sqrt(Ra*Pr)
-							* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
+		else if (globalvar_RB_Uscaling == "ULARGE") 
+			return ( 1 + 2*globalvar_Pr*sqrt(globalvar_Ra*globalvar_Pr)
+					* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
 	}
 	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+		return ( 1 + 2* Get_total_energy(basis_type, alias_switch, N, *V1, *T.F) );
+
 	
-	return 0;	// forw -Wall
+	else
+		return 0;	// forw -Wall
 
 }
 

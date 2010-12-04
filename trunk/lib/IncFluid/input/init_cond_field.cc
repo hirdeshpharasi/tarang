@@ -62,7 +62,18 @@ void  IncFluid::Init_cond()
 }
 
 //*********************************************************************************************
+
 void  IncFluid::Init_cond(IncSF& T)
+{ 
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_RB(T);
+}
+
+
+void  IncFluid::Init_cond_scalar(IncSF& T)
 {   
 	Input_prefix(field_in_file);
 		
@@ -77,6 +88,36 @@ void  IncFluid::Init_cond(IncSF& T)
 	
 	if (alias_switch == "DEALIAS")		Dealias(T);
 }
+
+
+void  IncFluid::Init_cond_RB(IncSF& T)
+{  
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond();	
+		
+		*T.F = *V1;  
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		T.CS_input(field_in_file, *VF_temp);
+		
+		Init_cond_Prinfty(T);
+	}
+	
+	else
+		Init_cond_scalar(T);
+	
+	Zero_modes_RB_slip(T);	
+	
+	if (sincos_horizontal_2D_switch == 1)
+		Sincos_horizontal(T);		
+		
+}
+
 
 //
 //
@@ -145,7 +186,18 @@ void  IncFluid::Init_cond_reduced()
 //*********************************************************************************************
 // Passive scalar + RB convection
 
+
 void  IncFluid::Init_cond_reduced(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_reduced_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_reduced_RB(T);
+}
+
+
+void  IncFluid::Init_cond_reduced_scalar(IncSF& T)
 {    
 	Input_prefix(field_in_file);
 	
@@ -161,7 +213,35 @@ void  IncFluid::Init_cond_reduced(IncSF& T)
 	if (alias_switch == "DEALIAS")		Dealias(T);
 }
 
-
+void  IncFluid::Init_cond_reduced_RB(IncSF& T)
+{   
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_reduced();
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		
+		T.CS_input(field_in_file, N_in_reduced, *VF_temp);
+		
+		Init_cond_Prinfty(T);
+	}
+	
+	else
+		Init_cond_reduced_scalar(T);
+	
+	
+	
+	Zero_modes_RB_slip(T);	
+	
+	if (sincos_horizontal_2D_switch == 1)
+		Sincos_horizontal(T);
+}
 
 //*********************************************************************************************
 // MHD
@@ -203,93 +283,6 @@ void  IncFluid::Init_cond_reduced(IncVF& W, IncSF& T)
 	
 	if (alias_switch == "DEALIAS")		Dealias(W, T);
 }
-
-
-/**********************************************************************************************
-
-						Input from a file: for RB convection
-
-***********************************************************************************************/
-
-void  IncFluid::Init_cond(string Pr_switch, IncSF& T)
-{  
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond();	
-					
-		*T.F = *V1;  
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond(T);
-		
-	Zero_modes_RB_slip(T);		
-			
-}
-
-
-//*********************************************************************************************
-void  IncFluid::Init_cond(string Pr_switch, IncVF& W, IncSF& T)
-{  
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond(W);	
-					
-		*T.F = *V1;  
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);	
-	}
-	
-	else
-		Init_cond(W, T);
-		
-	Zero_modes_RB_slip(W, T);	
-	
-}
-
-
-
-//*********************************************************************************************
-void  IncFluid::Init_cond_reduced(string Pr_switch, IncSF& T)
-{   
- 
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_reduced();
-						
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_reduced(T);
-
-	Zero_modes_RB_slip(T);	
-	
-}
-
-
-//*********************************************************************************************
-void  IncFluid::Init_cond_reduced(string Pr_switch, IncVF& W, IncSF& T)
-{  
- 
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_reduced(W);	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_reduced(W, T);
-		
-	Zero_modes_RB_slip(W, T);	
-
-}
-
 
 
 //******************************** End of Init_cond_field.cc **********************************

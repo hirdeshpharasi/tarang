@@ -63,11 +63,16 @@ const int MAXSIZE_K_R_BUFFER = 20;                // for MPI data transfer of u(
 const int MAXSIZE_ET_PARAMETERS = 20;				// For energy transfer 
 const int MAXSIZE_ET_RADII_SECTOR_ARRAY = 200;							
 
-const int MAXSIZE_INIT_COND_FIELD_META_PARA = 10;
-const int MAXSIZE_INIT_COND_FIELD_PARA = 20;
+const int MAXSIZE_INIT_COND_META_PARA = 10;
+const int MAXSIZE_INIT_COND_INT_PARA = 10;
+const int MAXSIZE_INIT_COND_DOUBLE_PARA = 10;
+const int MAXSIZE_INIT_COND_STRING_PARA = 10;
 
 const int MAXSIZE_FORCE_META_PARA = 10;
-const int MAXSIZE_FORCE_PARA = 20;	
+const int MAXSIZE_FORCE_INT_PARA = 10;
+const int MAXSIZE_FORCE_DOUBLE_PARA = 10;
+const int MAXSIZE_FORCE_STRING_PARA = 10;
+
 
 
 // When we input init conditions using modes.

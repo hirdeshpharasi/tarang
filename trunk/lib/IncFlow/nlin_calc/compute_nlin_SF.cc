@@ -59,9 +59,21 @@
 #include "../IncSF.h"
 
 
-//*********************************************************************************************									
+
+//**************************************************************************************************
 
 void IncVF::Compute_nlin(IncSF& T) 
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_nlin_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_nlin_RB(T);
+}
+
+//*********************************************************************************************									
+
+void IncVF::Compute_nlin_scalar(IncSF& T) 
 {
 
 //	Normal order
@@ -129,7 +141,7 @@ void IncVF::Compute_nlin(IncSF& T)
 	// *Vir = Inv_tr(*Vi) 
 	
 	T.RS_Inverse_transform_transpose_order(*F, *VF_temp);							
-	// *VF_temp = Inv_tr(*F) 
+	// *T.Fr = Inv_tr(*F) ; *VF_temp is temporary storage
 	
 	Array_real_mult(N, *V1r, *T.Fr, *VF_temp_r);
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *T.nlin, 0);
@@ -165,12 +177,85 @@ void IncVF::Compute_nlin(IncSF& T)
 // For RB convection
 //
 
-void IncVF::Compute_nlin(IncSF& T, string Pr_switch) 
+void IncVF::Compute_nlin_RB(IncSF& T) 
 {
-	if (Pr_switch == "PRZERO") 
+	if (globalvar_Pr_switch == "PRZERO") 
 		Compute_nlin();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		*V1r = *V1;  
+		*V2r = *V2; 
+		*V3r = *V3;	
+		
+		*T.Fr = *T.F;
+		
+		*nlin1 = 0.0;
+		*nlin2 = 0.0;
+		*nlin3 = 0.0;
+		
+#ifndef TRANSPOSE
+		// Compute T.nlin = Dj FT(Vj*T) 
+		RVF::RV_Inverse_transform(*VF_temp_r);							
+		T.RS_Inverse_transform(*VF_temp_r);								// Inv Transform of *T.Fr 
+		
+		Array_real_mult(N, *V1r, *T.Fr, *T.nlin);						// T.nlin = V1r * (T.Fr)
+		Array_real_mult(N, *V2r, *T.Fr, *T.SF_temp);					// T.SF_temp = V2r * (T.Fr)
+		
+		Forward_transform_array(basis_type, N, *T.nlin, *VF_temp_r, 0);	    
+		// parity = 0; sin*sin =cos
+		
+		Forward_transform_array(basis_type, N, *T.SF_temp, *VF_temp_r, 1);	
+		// parity = 1; sin*cos =sin	
+		
+		
+		Xderiv_RSprod_VT(*T.nlin, *T.nlin);					 
+		Yderiv_RSprod_VT(*T.SF_temp, *T.SF_temp);	
+		
+		
+		*T.nlin = *T.nlin + *T.SF_temp;									// T.nlin= Dj T[Vj  F]
+		
+		Array_real_mult(N, *V3r, *T.Fr, *T.SF_temp); 
+		
+		Forward_transform_array(basis_type, N, *T.SF_temp, *VF_temp_r, 1);	
+		// parity = 1; sin*cos =sin
+		
+		Zderiv_RSprod_VT(*T.SF_temp, *T.SF_temp);
+		
+		*T.nlin = *T.nlin + *T.SF_temp; 
+		
+		//*********************************************************************************************	
+		// TRANSPOSE ORDER
+		
+#else		
+		
+		RVF::RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp);  
+		// *Vir = Inv_tr(*Vi) 
+	
+		T.RS_Inverse_transform_transpose_order(*F, *VF_temp);							
+		// *T.Fr = Inv_tr(*F) 
+		
+		Array_real_mult(N, *V1r, *T.Fr, *VF_temp_r);
+		Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *T.nlin, 0);
+		Xderiv_RSprod_VT(*T.nlin, *T.nlin);	
+		
+		Array_real_mult(N, *V2r, *T.Fr, *VF_temp_r);			
+		Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *VF_temp, 1);
+		Yderiv_RSprod_VT(*VF_temp, *VF_temp);	
+		*T.nlin = *T.nlin + *VF_temp;
+		
+		Array_real_mult(N, *V3r, *T.Fr, *VF_temp_r);			
+		Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *VF_temp, 1);
+		Zderiv_RSprod_VT(*VF_temp, *VF_temp);	
+		*T.nlin = *T.nlin + *VF_temp;
+		
+#endif		
+		
+	}
+	
 	else
-		Compute_nlin(T);
+		Compute_nlin_scalar(T);
+	
 }		
 
 

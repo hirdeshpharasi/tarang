@@ -251,19 +251,6 @@ void IncVF::EnergyTr_Compute_nlin(IncSF& T)
 }
 
 
-//*********************************************************************************************
-
-///	For RB Convection
-/// If Pr_switch == 0, no nonlinear term computation
-/// If Pr_switch != 0, computes \f$ N_1 = D_j \mathcal{F} (Vr_j  T^<) \f$.
-// 
-
-void IncVF::EnergyTr_Compute_nlin(IncSF& T, string Pr_switch) 
-{
-	if (Pr_switch != "PRZERO")
-		IncVF::EnergyTr_Compute_nlin(T);
-}
-
 
 //*********************************************************************************************
 

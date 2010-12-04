@@ -140,6 +140,70 @@ void Output_asreal
 
 }
 
+
+void Output_asreal_transpose_order
+(
+	 ofstream& file_out, 
+	 int N[], 
+	 Array<complx,3> A, 
+	 Array<complx,3> temp_r
+)
+{
+	
+	int source_local_N2, source_local_N2_start;			// that of worker
+	int data_size;
+	int tag = 123;
+	
+	if (my_id == master_id) 
+	{
+		file_out << "%% Array " <<  N[2] << " x "  << N[1] << " x " << N[3] << endl;
+		
+		for (int i=0; i<local_N2; i++) 
+		{
+			for (int j=0; j<N[1]; j++) 
+				for (int k=0; k<N[3]/2; k++) 
+					file_out << real(A(i,j,k)) << " " << imag(A(i,j,k)) << " " ;
+			file_out << endl; 
+		}
+		
+		for (int source = 1; source <= numprocs-1; source++) 
+		{
+			MPI_Recv( &source_local_N2, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &status );
+			MPI_Recv( &source_local_N2_start, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
+			MPI_Recv( &data_size, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &status );
+			
+			MPI_Recv( reinterpret_cast<double*>((temp_r).data()), data_size, 
+					 MPI_DOUBLE, source, tag, MPI_COMM_WORLD, &status );	
+			
+			for (int i=0; i<local_N2; i++) 
+			{
+				for (int j=0; j<N[1]; j++) 
+					for (int k=0; k<N[3]/2; k++) 
+						file_out << real(temp_r(i,j,k)) << " " << imag(temp_r(i,j,k)) 
+						<< " " ;
+				file_out << endl; 
+			}
+		}
+		
+		file_out << endl << endl;
+	}
+	
+	else		// process is not master
+	{
+		MPI_Send( &local_N2, 1, MPI_INT, master_id, tag, MPI_COMM_WORLD );
+		MPI_Send( &local_N2_start, 1, MPI_INT, master_id, tag, MPI_COMM_WORLD );
+		data_size = 2* local_N2 * N[1] * (N[3]/2 + 1);
+		MPI_Send( &data_size, 1, MPI_INT, master_id, tag, MPI_COMM_WORLD );
+		
+		MPI_Send( reinterpret_cast<double*>(A.data()), data_size, 
+				 MPI_DOUBLE, master_id, tag, MPI_COMM_WORLD );								
+	}						
+	
+	MPI_Barrier(MPI_COMM_WORLD);
+	
+	
+}
+
 /*
 void Output_asreal_hdf5
 (

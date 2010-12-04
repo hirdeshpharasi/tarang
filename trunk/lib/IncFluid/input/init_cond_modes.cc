@@ -180,7 +180,18 @@ void  IncFluid::Init_cond_modes_SIMPLE()
  *
  * @note Scalar field is added simply.
  */	 
+
 void  IncFluid::Init_cond_modes_SIMPLE(IncSF& T)
+{
+	
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_modes_SIMPLE_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_modes_SIMPLE_RB(T);
+}
+
+void  IncFluid::Init_cond_modes_SIMPLE_scalar(IncSF& T)
 {
 		
 	Input_prefix(field_in_file);
@@ -240,6 +251,83 @@ void  IncFluid::Init_cond_modes_SIMPLE(IncSF& T)
 	
 }
 
+// RBC
+void  IncFluid::Init_cond_modes_SIMPLE_RB(IncSF& T)
+{
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_modes_SIMPLE();		
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		
+		Input_prefix(field_in_file);
+		
+		(*field_modes_k_array) = 0;  
+		(*field_modes_V_array) = 0.0;
+		
+		int  space_dim = 3;
+		int  no_of_vectors_read = 1;
+		
+		if (my_id == master_id)	
+			Read_waveno_field(space_dim, no_of_vectors_read, num_field_waveno);
+		
+		
+		MPI_Bcast(&num_field_waveno, 1, MPI_INT, master_id, MPI_COMM_WORLD); 
+		
+		int data_size = INIT_COND_MAX_NO_FIELD_MODES * 4;
+		MPI_Bcast( reinterpret_cast<int*>((*field_modes_k_array).data()), data_size, 
+				  MPI_INT, master_id, MPI_COMM_WORLD); 
+		
+		data_size = INIT_COND_MAX_NO_FIELD_MODES * 16;
+		MPI_Bcast( reinterpret_cast<double*>((*field_modes_V_array).data()), data_size, 
+				  MPI_DOUBLE, master_id, MPI_COMM_WORLD); 
+		
+		int kx, ky, kz;
+		complex<DP> G;
+		
+		(*V1) = 0.0; 
+		(*V2) = 0.0; 
+		(*V3) = 0.0; 
+		(*T.F) = 0.0;
+		
+		for (int i = 1; i <= num_field_waveno; i++) 
+		{
+			kx = (*field_modes_k_array)(i,1); 
+			ky = (*field_modes_k_array)(i,2); 
+			kz = (*field_modes_k_array)(i,3);
+			
+			G = (*field_modes_V_array)(i,1); 
+			
+			T.Assign_field_comp_conj(kx, ky, kz, G);
+			
+			// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
+			if (my_id == master_id)
+				cout	<< "k, G : (" << kx << " " << ky  << " " <<kz << ") " 
+						<< G << endl;  
+		}
+		
+		if (my_id == master_id)
+			cout << "*******************************************" << endl;
+		
+		Init_cond_Prinfty(T);
+	}
+	
+	else
+		Init_cond_modes_SIMPLE_scalar(T);
+	
+	Zero_modes_RB_slip(T);
+	
+	if (sincos_horizontal_2D_switch == 1)
+		Sincos_horizontal(T);
+}	
 //*********************************************************************************************
 
 /** @brief Read V(k) and W(k) for some modes as initial condition.
@@ -477,11 +565,13 @@ void  IncFluid::Init_cond_modes_VORTICITY()
 		Assign_field_comp_conj(kx, ky, kz, Vx, Vy, Vz);
 		// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
 		
-		cout	<< "k, V : (" << kx << " " << ky  << " " <<kz << ") " 
+		if (my_id == master_id)
+			cout	<< "k, V : (" << kx << " " << ky  << " " <<kz << ") " 
 				<<	Vx << " " << Vy << " " << Vz <<  endl;  
 	}
 
-	cout << "**********************************************" << endl;
+	if (my_id == master_id)
+		cout << "**********************************************" << endl;
 
 }
 
@@ -499,7 +589,18 @@ void  IncFluid::Init_cond_modes_VORTICITY()
  *
  * @note Complex conjugate modes are automatically added.
  */
+
 void  IncFluid::Init_cond_modes_VORTICITY(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_modes_VORTICITY_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_modes_VORTICITY_RB(T);
+}
+
+
+void  IncFluid::Init_cond_modes_VORTICITY_scalar(IncSF& T)
 {
 	
 	Input_prefix(field_in_file);
@@ -549,16 +650,94 @@ void  IncFluid::Init_cond_modes_VORTICITY(IncSF& T)
 		T.Assign_field_comp_conj(kx, ky, kz, G);		
 		// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
 		
-		cout	<< "k, V, G : (" << kx << " " << ky  << " " <<kz << ") " 
+		if (my_id == master_id)
+			cout	<< "k, V, G : (" << kx << " " << ky  << " " <<kz << ") " 
 				<< Vx  << " "  << Vy << " " << Vz << " "  
 				<< G << endl;  
 	}
 	
-	cout << "**********************************************" << endl;
+	if (my_id == master_id)
+		cout << "**********************************************" << endl;
 
 
 }
 
+
+
+void  IncFluid::Init_cond_modes_VORTICITY_RB(IncSF& T)
+{
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_modes_VORTICITY();	
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		Input_prefix(field_in_file);
+		
+		(*field_modes_k_array) = 0;  
+		(*field_modes_V_array) = 0.0;
+		
+		int  space_dim = 3;
+		int  no_of_vectors_read = 1;
+		
+		if (my_id == master_id)	
+			Read_waveno_field(space_dim, no_of_vectors_read, num_field_waveno);
+		
+		MPI_Bcast(&num_field_waveno, 1, MPI_INT, master_id, MPI_COMM_WORLD); 
+		
+		int data_size = INIT_COND_MAX_NO_FIELD_MODES * 4;
+		MPI_Bcast( reinterpret_cast<int*>((*field_modes_k_array).data()), data_size, 
+				  MPI_INT, master_id, MPI_COMM_WORLD); 
+		
+		data_size = INIT_COND_MAX_NO_FIELD_MODES * 16;
+		MPI_Bcast( reinterpret_cast<double*>((*field_modes_V_array).data()), data_size, 
+				  MPI_DOUBLE, master_id, MPI_COMM_WORLD); 
+		
+		int kx, ky, kz;	
+		complex<DP> G;
+		
+		(*V1) = 0.0; 
+		(*V2) = 0.0; 
+		(*V3) = 0.0; 
+		(*T.F) = 0.0;
+		
+		for (int i = 1; i <= num_field_waveno; i++) 
+		{
+			kx = (*field_modes_k_array)(i,1); 
+			ky = (*field_modes_k_array)(i,2); 
+			kz = (*field_modes_k_array)(i,3);	
+			
+			G = (*field_modes_V_array)(i,1); 
+			
+			T.Assign_field_comp_conj(kx, ky, kz, G);		
+			// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
+			
+			if (my_id == master_id)
+				cout	<< "k, G : (" << kx << " " << ky  << " " <<kz << ") " 
+						<< G << endl;  
+		}
+		
+		if (my_id == master_id)
+			cout << "============================================" << endl;
+		
+		Init_cond_Prinfty(T);
+	}
+	
+	else
+		Init_cond_modes_VORTICITY_scalar(T);
+	
+	Zero_modes_RB_slip(T);	
+	
+	if (sincos_horizontal_2D_switch == 1)
+		Sincos_horizontal(T);	
+}	
+		
 
 //*********************************************************************************************
 
@@ -630,12 +809,14 @@ void  IncFluid::Init_cond_modes_VORTICITY(IncVF& W)
 		W.Assign_field_comp_conj(kx, ky, kz, Wx, Wy, Wz);
 		// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
 		
-		cout	<< "k, V, W : (" << kx << " " << ky  << " " <<kz << ") " 
-				<< Vx << " " << Vy << " "  << Vz << "   " 
-				<< Wx << " " << Wy << " "  << Wz << endl;
+		if (my_id == master_id)
+			cout	<< "k, V, W : (" << kx << " " << ky  << " " <<kz << ") " 
+					<< Vx << " " << Vy << " "  << Vz << "   " 
+					<< Wx << " " << Wy << " "  << Wz << endl;
 	}
 	
-	cout << "**********************************************" << endl;
+	if (my_id == master_id)
+		cout << "**********************************************" << endl;
 
 }
 
@@ -716,104 +897,16 @@ void  IncFluid::Init_cond_modes_VORTICITY(IncVF& W, IncSF& T)
 		T.Assign_field_comp_conj(kx, ky, kz, G);
 		// *V(k)=(Vx,Vy,Vz); Add complex conj if kz=0.
 		
-		cout	<< "k, V, G : (" << kx << " " << ky  << " " <<kz << ") " 
-				<< Vx << " " << Vy << " " << Vz << " " 
-				<< Wx << " " << Wy << " " << Wz << " " 
-				<< G << endl;
+		if (my_id == master_id)
+			cout	<< "k, V, G : (" << kx << " " << ky  << " " <<kz << ") " 
+					<< Vx << " " << Vy << " " << Vz << " " 
+					<< Wx << " " << Wy << " " << Wz << " " 
+					<< G << endl;
 	}
 	
-	cout << "**********************************************" << endl;
+	if (my_id == master_id)
+		cout << "**********************************************" << endl;
 	
-}
-
-
-
-//*********************************************************************************************
-void  IncFluid::Init_cond_modes_SIMPLE(string Pr_switch, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_modes_SIMPLE();		
-				
-		*T.F = *V1; 
-		 Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_modes_SIMPLE(T);
-		
-	Zero_modes_RB_slip(T);	
-		
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);
-}	
-	
-//*********************************************************************************************	
-void  IncFluid::Init_cond_modes_VORTICITY(string Pr_switch, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_modes_VORTICITY();	
-					
-		*T.F = *V1; 
-		 Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_modes_VORTICITY(T);
-		
-	Zero_modes_RB_slip(T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);
-		
-}	
-
-
-
-//*********************************************************************************************
-void IncFluid::Init_cond_modes_SIMPLE(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_modes_SIMPLE(W);	
-					
-		*T.F = *V1; 
-		 Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_modes_SIMPLE(W, T);
-		
-	Zero_modes_RB_slip(W, T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(W, T);		
-		
-}	
-	
-//*********************************************************************************************	
-void IncFluid::Init_cond_modes_VORTICITY(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_modes_VORTICITY(W);		
-				
-		*T.F = *V1; 
-		 Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_modes_VORTICITY(W, T);
-		
-	Zero_modes_RB_slip(W, T);		
-		
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(W, T);
 }
 
 

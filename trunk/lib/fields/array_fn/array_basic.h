@@ -116,6 +116,14 @@ void Output_asreal
 );
 
 
+void Output_asreal_transpose_order
+(
+	 ofstream& file_out, 
+	 int N[], 
+	 Array<complx,3> A, 
+	 Array<complx,3> temp_r
+ );
+
 /*
 void Output_asreal_hdf5
 (

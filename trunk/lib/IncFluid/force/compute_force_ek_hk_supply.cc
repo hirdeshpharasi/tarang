@@ -61,10 +61,10 @@ void IncFluid::Compute_force_const_energy_helicity_supply()
 	if (is_force_field_para_read == 0)
 	{
 		
-		inner_radius = (*force_field_para)(1);
-		outer_radius = (*force_field_para)(2);
-		energy_supply = (*force_field_para)(3);
-		epsh_by_k_epse = (*force_field_para)(4);				// epsh(k)/(k*eps(k))
+		inner_radius = (*force_int_para)(1);
+		outer_radius = (*force_int_para)(2);
+		energy_supply = (*force_int_para)(3);
+		epsh_by_k_epse = (*force_int_para)(4);				// epsh(k)/(k*eps(k))
 		
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -177,11 +177,11 @@ void IncFluid::Compute_force_const_energy_helicity_supply(IncSF& T)
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_field_para)(1);
-		outer_radius = (*force_field_para)(2);
-		energy_supply = (*force_field_para)(3);
-		epsh_by_k_epse = (*force_field_para)(4);				// epsh(k)/(k*eps(k))
-		energy_supply_scalar = (*force_field_para)(5);
+		inner_radius = (*force_int_para)(1);
+		outer_radius = (*force_int_para)(2);
+		energy_supply = (*force_int_para)(3);
+		epsh_by_k_epse = (*force_int_para)(4);				// epsh(k)/(k*eps(k))
+		energy_supply_scalar = (*force_int_para)(5);
 		
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -276,7 +276,7 @@ void IncFluid::Compute_force_const_energy_helicity_supply(IncSF& T)
 		
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1, outer_radius, kfactor) == 1) )
-		Dealias_force();
+		Dealias_force(T);
 	
 	Satisfy_reality_condition_force_field(T);
 						
@@ -305,12 +305,12 @@ void IncFluid::Compute_force_const_energy_helicity_supply(IncVF& W)
 	if (is_force_field_para_read == 0)
 	{
 		
-		inner_radius = (*force_field_para)(1);
-		outer_radius = (*force_field_para)(2);
-		energy_supply = (*force_field_para)(3);
-		epsh_by_k_epse = (*force_field_para)(4);				// epsh(k)/(k*eps(k))
-		energy_supply_W = (*force_field_para)(5);
-		epsh_by_k_epse_W = (*force_field_para)(6);			// W.epsh(k)/(k*W.eps(k))
+		inner_radius = (*force_int_para)(1);
+		outer_radius = (*force_int_para)(2);
+		energy_supply = (*force_int_para)(3);
+		epsh_by_k_epse = (*force_int_para)(4);				// epsh(k)/(k*eps(k))
+		energy_supply_W = (*force_int_para)(5);
+		epsh_by_k_epse_W = (*force_int_para)(6);			// W.epsh(k)/(k*W.eps(k))
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
@@ -455,13 +455,13 @@ void IncFluid::Compute_force_const_energy_helicity_supply(IncVF& W, IncSF& T)
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_field_para)(1);
-		outer_radius = (*force_field_para)(2);
-		energy_supply = (*force_field_para)(3);
-		epsh_by_k_epse = (*force_field_para)(4);				// epsh(k)/(k*eps(k))
-		energy_supply_W = (*force_field_para)(5);
-		epsh_by_k_epse_W = (*force_field_para)(6);			// W.epsh(k)/(k*W.eps(k))
-		energy_supply_scalar = (*force_field_para)(7);
+		inner_radius = (*force_int_para)(1);
+		outer_radius = (*force_int_para)(2);
+		energy_supply = (*force_int_para)(3);
+		epsh_by_k_epse = (*force_int_para)(4);				// epsh(k)/(k*eps(k))
+		energy_supply_W = (*force_int_para)(5);
+		epsh_by_k_epse_W = (*force_int_para)(6);			// W.epsh(k)/(k*W.eps(k))
+		energy_supply_scalar = (*force_int_para)(7);
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		

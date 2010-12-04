@@ -141,26 +141,6 @@ void IncFluid::Output_structure_fn(IncVF& W, IncSF& T)
  */		
 } 
 
-//
-//
-
-void IncFluid::Output_structure_fn(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_structure_fn();
-	
-	else
-		Output_structure_fn(T);
-}
-
-void IncFluid::Output_structure_fn(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_structure_fn(W);
-	
-	else
-		Output_structure_fn(W, T);
-}
 
 
 //*********************************************************************************************
@@ -252,26 +232,6 @@ void IncFluid::Output_planar_structure_fn(IncVF& W, IncSF& T)
 									<< (*T.CS_st_planar)		<< endl << endl;					
 	}	
 	*/													
-}
-//
-//
-
-void IncFluid::Output_planar_structure_fn(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_planar_structure_fn();
-	
-	else
-		Output_planar_structure_fn(T);
-}
-
-void IncFluid::Output_planar_structure_fn(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Output_planar_structure_fn(W);
-	
-	else
-		Output_planar_structure_fn(W, T);
 }
 
 

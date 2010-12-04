@@ -157,13 +157,22 @@ public:
 	
 			
 
+	// Solver para
+	Array<int,1>	*solver_meta_para;  
+	Array<int,1>	*solver_int_para;
+	Array<DP,1>		*solver_double_para;
+	string			solver_string_para[MAXSIZE_SOLVER_STRING_PARA];
+	
 	// Initial condition parameters
 	
+	Array<int,1>	*init_cond_meta_para;  
+	Array<int,1>	*init_cond_int_para;
+	Array<DP,1>		*init_cond_double_para;
+	string			init_cond_string_para[MAXSIZE_INIT_COND_STRING_PARA];
+	
 	int				field_input_proc;
-	int				number_of_init_cond_para;
 	int				N_in_reduced[4];	
-	Array<DP,1>		*init_cond_para;
-		
+	
 	// field_modes for initial condition
 	
 	Array<int,2>	*field_modes_k_array;
@@ -171,13 +180,17 @@ public:
 	
 	int				num_field_waveno;				// No of vector field wavenumber read
 													// as input of V.
-
 	
 	// Force parameters
-	int				force_field_proc;				//!< forcing procedure, eg, 0 for decaying		
-	int				number_of_force_para;
-	Array<DP,1>		*force_field_para;
-		
+	
+	Array<int,1>	*force_meta_para;  
+	Array<int,1>	*force_int_para;
+	Array<DP,1>		*force_double_para;
+	string			force_string_para[MAXSIZE_FORCE_STRING_PARA];
+	
+	int				force_field_proc;				//!< forcing procedure, eg, 0 for decaying	
+	
+	
 	// force_field_modes to be read
 			
 	Array<int,2>	*force_field_modes_k_array;	
@@ -192,23 +205,42 @@ public:
 
 public:
 			
-	IncFluid(int N[], string string_switches[], Array<int,1> switches, 
-				DP prog_kfactor[],
-				DP diss_coefficient, DP hyper_diss_coefficient,	
-				Array<DP,1> time_para, Array<DP,1> time_save_interval, 
-				Array<int,1> misc_output_para, 
-				Array<int,1> no_output_k_r, Array<int,2> out_k_r_array, 
-				Array<int,1> ET_parameters, Array<DP,1> ET_shell_radii_sector_array, 
-				Array<int,1> field_input_meta_para, Array<DP,1> init_cond_parameters,
-				Array<int,1> force_field_meta_para, Array<DP,1> force_field_parameters);
+	IncFluid(int N[], 
+			 string string_switches[], 
+			 Array<int,1> switches, 
+			 DP prog_kfactor[],
+			 DP diss_coefficient, 
+			 DP hyper_diss_coefficient,	
+			 Array<int,1> solver_meta_para,  
+			 Array<int,1> solver_int_para,
+			 Array<DP,1>	solver_double_para,  
+			 string	solver_string_para[],
+			 Array<DP,1> time_para, 
+			 Array<DP,1> time_save_interval, 
+			 Array<int,1> misc_output_para, 
+			 Array<int,1> no_output_k_r, 
+			 Array<int,2> out_k_r_array, 
+			 Array<int,1> ET_parameters, 
+			 Array<DP,1> ET_shell_radii_sector_array, 
+			 Array<int,1> init_cond_meta_para,  
+			 Array<int,1> init_cond_int_para,
+			 Array<DP,1>	init_cond_double_para,  
+			 string	init_cond_string_para[],
+			 Array<int,1> force_meta_para,  
+			 Array<int,1> force_int_para,
+			 Array<DP,1>	force_double_para,  
+			 string	force_string_para[]
+			);
+	
 	
 	void Compute_force();
 	void Compute_force(IncSF& T);
 	void Compute_force(IncVF& W);
 	void Compute_force(IncVF& W, IncSF& T);		
 					
-	void Compute_force_RB(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);	
-	void Compute_force_RB(IncVF& W, IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);	
+	void Compute_force_RB(IncSF& T);
+	void Compute_force_RB(IncVF& W, IncSF& T);
+	void Compute_force_nonboussenesq(IncSF& T);
 	
 	void Compute_force_decay();
 	void Compute_force_decay(IncSF& T);
@@ -263,10 +295,11 @@ public:
 			
 	void Compute_rhs();       // nlin[i]=-ik[i]*pressure(k)+nlin[i] 
 	void Compute_rhs(IncSF& T); 
+	void Compute_rhs_scalar(IncSF& T); 
+	void Compute_rhs_RB(IncSF& T); 
 	void Compute_rhs(IncVF& W);  // nlin[i]=-FT(grad(pressure)) +nlin[i]; W.nlin[i] = -W.nlin[i]
 	void Compute_rhs(IncVF& W, IncSF& T); 
-	void Compute_rhs(IncSF& T, string Pr_switch); 
-	void Compute_rhs(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	DP Get_dt();
 	DP Get_dt(IncSF& T);
@@ -274,35 +307,36 @@ public:
 	DP Get_dt(IncVF& W, IncSF& T);
 	
 	
-	void Single_time_step_EULER(DP dt);           
-	void Single_time_step_EULER(IncSF& T, DP dt); 
-	void Single_time_step_EULER(IncVF& W, DP dt); 
-	void Single_time_step_EULER(IncVF& W, IncSF& T,  DP dt); 
-	void Single_time_step_EULER(IncSF& T, string Pr_switch, DP dt);
-	void Single_time_step_EULER(IncVF& W, IncSF& T, string Pr_switch, DP dt);
-  
-	void Single_time_step_RK2(DP dt);           // Time-advace V by a single-time-step
-	void Single_time_step_RK2(IncSF& T, DP dt); // Time-advance V and Scalar T by a single-time-step
-	void Single_time_step_RK2(IncVF& W, DP dt); // Time-advance V and Vector W by a single-time-step
-	void Single_time_step_RK2(IncVF& W, IncSF& T,  DP dt); 
-	void Single_time_step_RK2(IncSF& T, string Pr_switch, DP dt);
-	void Single_time_step_RK2(IncVF& W, IncSF& T, string Pr_switch, DP dt);
+	void Single_time_step(DP dt, DP a, DP b, DP c);         
+	void Single_time_step(IncSF& T, DP dt, DP a, DP b, DP c);
+	void Single_time_step_scalar(IncSF& T, DP dt, DP a, DP b, DP c);
+	void Single_time_step_RB(IncSF& T, DP dt, DP a, DP b, DP c); 
+	void Single_time_step(IncVF& W, DP dt, DP a, DP b, DP c);
+	void Single_time_step(IncVF& W, IncSF& T,  DP dt, DP a, DP b, DP c);
 	
-	void Single_time_step_Semi_implicit(DP dt);           
-	void Single_time_step_Semi_implicit(IncSF& T, DP dt); 
-	void Single_time_step_Semi_implicit(IncVF& W, DP dt); 
-	void Single_time_step_Semi_implicit(IncVF& W, IncSF& T,  DP dt); 
-	void Single_time_step_Semi_implicit(IncSF& T, string Pr_switch, DP dt);
-	void Single_time_step_Semi_implicit(IncVF& W, IncSF& T, string Pr_switch, DP dt);
+	void Compute_force_TO_rhs();
+	void Compute_force_TO_rhs(IncSF& T);
+	void Compute_force_TO_rhs(IncVF& W);
+	void Compute_force_TO_rhs(IncVF& W, IncSF& T);
+	
+	void Compute_RK4_parts(PlainCVF& tot_Vrhs, DP dt, DP b, DP factor);
+	void Compute_RK4_parts(IncSF& T, PlainCVF& tot_Vrhs, PlainCSF& tot_Srhs, 
+						   DP dt, DP b, DP factor);
+	void Compute_RK4_parts_scalar(IncSF& T, PlainCVF& tot_Vrhs, 
+								  PlainCSF& tot_Srhs, DP dt, DP b, DP factor);
+	void Compute_RK4_parts_RB(IncSF& T, PlainCVF& tot_Vrhs, 
+							  PlainCSF& tot_Srhs, DP dt, DP b, DP factor);
+	void Compute_RK4_parts(IncVF& W, PlainCVF& tot_Vrhs, PlainCVF& tot_Wrhs, 
+						   DP dt, DP b, DP factor);
+	void Compute_RK4_parts(IncVF& W, IncSF& T, PlainCVF& tot_Vrhs, PlainCVF& tot_Wrhs, 
+						   PlainCSF& tot_Srhs, DP dt, DP b, DP factor);
+	
 
 	  
 	void Time_advance();			// time advance 
 	void Time_advance(IncSF& T);	//  time advance both V and scalar field T 
 	void Time_advance(IncVF& W);	//  time advance U and B (MHD) 
-  
-  
-	void Time_advance(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
-	void Time_advance(IncVF& W, IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
+	void Time_advance(IncVF& W, IncSF& T);
 	
 	/// File operations
 	
@@ -326,45 +360,59 @@ public:
 	void Read_init_cond(IncSF& T);	
 	void Read_init_cond(IncVF& W);
 	void Read_init_cond(IncVF& W, IncSF& T);
-	void Read_init_cond_RB(string Pr_switch, IncSF& T);
-	void Read_init_cond_RB(string Pr_switch, IncVF& W, IncSF& T);
 	
 		
 	void Init_cond();
 	void Init_cond(IncSF& T);
+	void Init_cond_scalar(IncSF& T);
+	void Init_cond_RB(IncSF& T);
 	void Init_cond(IncVF& W);
 	void Init_cond(IncVF& W, IncSF& T);
 	
+	void Init_cond_Prinfty(IncSF& T);
+	
 	void Init_cond_reduced();
 	void Init_cond_reduced(IncSF& T);
+	void Init_cond_reduced_scalar(IncSF& T);
+	void Init_cond_reduced_RB(IncSF& T);
 	void Init_cond_reduced(IncVF& W);
 	void Init_cond_reduced(IncVF& W, IncSF& T);
 	
 	void Read_waveno_field(int k_dim, int V_n, int& num_field_waveno);
 	void Init_cond_modes_SIMPLE();
 	void Init_cond_modes_SIMPLE(IncSF& T);
+	void Init_cond_modes_SIMPLE_scalar(IncSF& T);
+	void Init_cond_modes_SIMPLE_RB(IncSF& T);
 	void Init_cond_modes_SIMPLE(IncVF& W);
 	void Init_cond_modes_SIMPLE(IncVF& W, IncSF& T);
 	
 	void Init_cond_modes_VORTICITY();
 	void Init_cond_modes_VORTICITY(IncSF& T);
+	void Init_cond_modes_VORTICITY_scalar(IncSF& T);
+	void Init_cond_modes_VORTICITY_RB(IncSF& T);
 	void Init_cond_modes_VORTICITY(IncVF& W);
 	void Init_cond_modes_VORTICITY(IncVF& W, IncSF& T);
 	
 	void Init_cond_energy_spectrum();
 	void Init_cond_energy_spectrum(IncSF& T);
+	void Init_cond_energy_spectrum_scalar(IncSF& T);
+	void Init_cond_energy_spectrum_RB(IncSF& T);
 	void Init_cond_energy_spectrum(IncVF& W);
 	void Init_cond_energy_spectrum(IncVF& W, IncSF& T);
 	
 	
 	void Init_cond_energy_helicity_spectrum();
 	void Init_cond_energy_helicity_spectrum(IncSF& T);
+	void Init_cond_energy_helicity_spectrum_scalar(IncSF& T);
+	void Init_cond_energy_helicity_spectrum_RB(IncSF& T);
 	void Init_cond_energy_helicity_spectrum(IncVF& W);
 	void Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T);
 	
 	
 	void Init_cond_Taylor_Green();
 	void Init_cond_Taylor_Green(IncSF& T);
+	void Init_cond_Taylor_Green_scalar(IncSF& T);
+	void Init_cond_Taylor_Green_RB(IncSF& T);
 	void Init_cond_Taylor_Green(IncVF& W);
 	void Init_cond_Taylor_Green(IncVF& W, IncSF& T);
 	
@@ -378,25 +426,10 @@ public:
 	// Init condition RB Convection
 	void Init_cond_RB_Lorenz(IncSF& T);  // Lorenz
 	
-	void Init_cond(string Pr_switch, IncSF& T);
-	void Init_cond_reduced(string Pr_switch, IncSF& T);
-	void Init_cond_modes_SIMPLE(string Pr_switch, IncSF& T);
-	void Init_cond_modes_VORTICITY(string Pr_switch, IncSF& T);
-	void Init_cond_energy_spectrum(string Pr_switch, IncSF& T);
-	void Init_cond_energy_helicity_spectrum(string Pr_switch, IncSF& T);
-	void Init_cond_Taylor_Green(string Pr_switch, IncSF& T);
-	void Init_cond_ABC(string Pr_switch, IncSF& T);
+	// For Rayleigh Taylor instability
+	void Init_cond_Rayleigh_Taylor(IncSF& T);
 	
-	void Init_cond(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_reduced(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_modes_SIMPLE(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_modes_VORTICITY(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_energy_spectrum(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_energy_helicity_spectrum(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_Taylor_Green(string Pr_switch, IncVF& W, IncSF& T);
-	void Init_cond_ABC(string Pr_switch, IncVF& W, IncSF& T);
-	
-	
+		
   // Output functions
   
 	void Output_all_inloop();
@@ -404,112 +437,112 @@ public:
 	void Output_all_inloop(IncVF& W);
 	void Output_all_inloop(IncVF& W, IncSF& T);
 	
-	void Output_all_inloop(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
-	void Output_all_inloop(IncVF& W, IncSF& T,  DP Ra, DP Pr, string Pr_switch, 
-									string RB_Uscaling);
+	
 	void Output_all_inloop_hdf5();
 
 	void Output_field_k_inloop();
 	void Output_field_k_inloop(IncSF& T);
 	void Output_field_k_inloop(IncVF& W);
 	void Output_field_k_inloop(IncVF& W, IncSF& T);
-	void Output_field_k_inloop(IncSF& T, string Pr_switch);
-	void Output_field_k_inloop(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	void Output_pressure_spectrum_inloop();
 	
 	
 	void Output_global();
 	void Output_global(IncSF& T);
+	void Output_global_scalar(IncSF& T);
+	void Output_global_RB(IncSF& T);
 	void Output_global(IncVF& W);
 	void Output_global(IncVF& W, IncSF& T);
-	void Output_global(IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
-	void Output_global(IncVF& W, IncSF& T, DP Ra, DP Pr, string Pr_switch, string RB_Uscaling);
+	
   
 	void Output_field();
 	void Output_field(IncSF& T);
+	void Output_field_scalar(IncSF& T);
+	void Output_field_RB(IncSF& T);
 	void Output_field(IncVF& W);
 	void Output_field(IncVF& W, IncSF& T);
-	void Output_field(IncSF& T, string Pr_switch);
-	void Output_field(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Output_field_hdf5();
 
 	void Output_field_frequent();
 	void Output_field_frequent(IncSF& T);
+	void Output_field_frequent_scalar(IncSF& T);
+	void Output_field_frequent_RB(IncSF& T);
 	void Output_field_frequent(IncVF& W);
 	void Output_field_frequent(IncVF& W, IncSF& T);
-	void Output_field_frequent(IncSF& T, string Pr_switch);
-	void Output_field_frequent(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	void Output_realfield();
 	void Output_realfield(IncSF& T);
+	void Output_realfield_scalar(IncSF& T);
+	void Output_realfield_RB(IncSF& T);
 	void Output_realfield(IncVF& W);
 	void Output_realfield(IncVF& W, IncSF& T);
-	void Output_realfield(IncSF& T, string Pr_switch);
-	void Output_realfield(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	void Output_realfield_hdf5();
 
 	void Output_shell_spectrum();
 	void Output_shell_spectrum(IncSF& T);
+	void Output_shell_spectrum_scalar(IncSF& T);
+	void Output_shell_spectrum_RB(IncSF& T);
 	void Output_shell_spectrum(IncVF& W);
 	void Output_shell_spectrum(IncVF& W, IncSF &T);
-	void Output_shell_spectrum(IncSF &T, string Pr_switch);
-	void Output_shell_spectrum(IncVF& W, IncSF &T, string Pr_switch);
+	
 	
 	void Output_ring_spectrum();
 	void Output_ring_spectrum(IncSF& T);
+	void Output_ring_spectrum_scalar(IncSF& T);
+	void Output_ring_spectrum_RB(IncSF& T);
 	void Output_ring_spectrum(IncVF& W);
 	void Output_ring_spectrum(IncVF& W, IncSF &T);
-	void Output_ring_spectrum(IncSF &T, string Pr_switch);
-	void Output_ring_spectrum(IncVF& W, IncSF &T, string Pr_switch);
 
 	void Output_cylinder_ring_spectrum();
 	void Output_cylinder_ring_spectrum(IncSF& T);
+	void Output_cylinder_ring_spectrum_scalar(IncSF &T);
+	void Output_cylinder_ring_spectrum_RB(IncSF &T);
 	void Output_cylinder_ring_spectrum(IncVF& W);
 	void Output_cylinder_ring_spectrum(IncVF& W, IncSF &T);
-	void Output_cylinder_ring_spectrum(IncSF &T, string Pr_switch);
-	void Output_cylinder_ring_spectrum(IncVF& W, IncSF &T, string Pr_switch);
+	
 	
 	void Output_pressure_spectrum();
 	
 	
 	void Output_flux();
 	void Output_flux(IncSF& T);
+	void Output_flux_scalar(IncSF& T);
+	void Output_flux_RB(IncSF& T);
 	void Output_flux(IncVF& W);
 	void Output_flux(IncVF& W, IncSF& T);	
-	void Output_flux(IncSF& T, string Pr_switch);
-	void Output_flux(IncVF& W, IncSF &T, string Pr_switch);
 	
 	
 	void Output_shell_to_shell();
 	void Output_shell_to_shell(IncSF& T);
+	void Output_shell_to_shell_scalar(IncSF& T);
+	void Output_shell_to_shell_RB(IncSF& T);
 	void Output_shell_to_shell(IncVF& W);
 	void Output_shell_to_shell(IncVF& W, IncSF& T);
-	void Output_shell_to_shell(IncSF& T, string Pr_switch);
-	void Output_shell_to_shell(IncVF& W, IncSF& T, string Pr_switch);
 
 	void Output_field_reduced();
 	void Output_field_reduced(IncSF& T);
+	void Output_field_reduced_scalar(IncSF& T);
+	void Output_field_reduced_RB(IncSF& T);
 	void Output_field_reduced(IncVF& W);
 	void Output_field_reduced(IncVF& W, IncSF& T);
-	void Output_field_reduced(IncSF& T, string Pr_switch);
-	void Output_field_reduced(IncVF& W, IncSF& T, string Pr_switch);
+
 	
 	void Output_field_k();
 	void Output_field_k(IncSF& T);
 	void Output_field_k(IncVF& W);
     void Output_field_k(IncVF& W, IncSF& T);
-	void Output_field_k(IncSF& T, string Pr_switch);
-	void Output_field_k(IncVF& W, IncSF& T, string Pr_switch);
+
 
 	void Output_field_r();
 	void Output_field_r(IncSF& T);
 	void Output_field_r(IncVF& W);
     void Output_field_r(IncVF& W, IncSF& T);
-	void Output_field_r(IncSF& T, string Pr_switch);
-	void Output_field_r(IncVF& W, IncSF& T, string Pr_switch);
 	
 	
 	void Output_cout();
@@ -520,46 +553,40 @@ public:
 	
 	void Output_ring_to_ring();
 	void Output_ring_to_ring(IncSF& T);
+	void Output_ring_to_ring_scalar(IncSF& T);
+	void Output_ring_to_ring_RB(IncSF& T);
 	void Output_ring_to_ring(IncVF& W);
 	void Output_ring_to_ring(IncVF& W, IncSF &T);
-	void Output_ring_to_ring(IncSF& T, string Pr_switch);
-	void Output_ring_to_ring(IncVF& W, IncSF& T, string Pr_switch);
+
 	
 	void Output_cylinder_ring_to_ring();
 	void Output_cylinder_ring_to_ring(IncSF& T);
+	void Output_cylinder_ring_to_ring_scalar(IncSF& T);
+	void Output_cylinder_ring_to_ring_RB(IncSF& T);
 	void Output_cylinder_ring_to_ring(IncVF& W);
 	void Output_cylinder_ring_to_ring(IncVF& W, IncSF &T);
-	void Output_cylinder_ring_to_ring(IncSF& T, string Pr_switch);
-	void Output_cylinder_ring_to_ring(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Output_structure_fn();
 	void Output_structure_fn(IncSF& T);
 	void Output_structure_fn(IncVF& W);
 	void Output_structure_fn(IncVF& W, IncSF &T);
-	void Output_structure_fn(IncSF& T, string Pr_switch);
-	void Output_structure_fn(IncVF& W, IncSF& T, string Pr_switch);
+	
 	
 	void Output_planar_structure_fn();
 	void Output_planar_structure_fn(IncSF& T);
 	void Output_planar_structure_fn(IncVF& W);
 	void Output_planar_structure_fn(IncVF& W, IncSF &T);
-	void Output_planar_structure_fn(IncSF& T, string Pr_switch);
-	void Output_planar_structure_fn(IncVF& W, IncSF& T, string Pr_switch);
-	
+		
 	void Output_moment();
 	void Output_moment(IncSF& T);
 	void Output_moment(IncVF& W);
 	void Output_moment(IncVF& W, IncSF &T);
-	void Output_moment(IncSF& T, string Pr_switch);
-	void Output_moment(IncVF& W, IncSF &T, string Pr_switch);
+	
 	
 	void Output_Skpq();
 	void Output_Skpq(IncSF& T);
 	void Output_Skpq(IncVF& W);
 	void Output_Skpq(IncVF& W, IncSF &T);
-	void Output_Skpq(IncSF& T, string Pr_switch);
-	void Output_Skpq(IncVF& W, IncSF &T, string Pr_switch);
-	
 	
 };
 

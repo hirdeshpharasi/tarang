@@ -42,347 +42,462 @@
 
 
 //*********************************************************************************************
-
-/** @brief Single time step using Euler's scheme.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt)
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$
- */
-void IncFluid::Single_time_step_EULER(DP dt)
-{	
-
-	Add_nlin_dt(dt);										// V = V + dt*nlin
-	Mult_field_exp_ksqr_dt(dt);
-}
-
-	
-//*********************************************************************************************	
-//	Passive scalar 
-/** @brief Passive scalar Single time step using Euler's scheme.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt).
- * @return \f$ F(t+dt) = [F(t) + dt T.N(t)] 
- *					*\exp(-K^2*\kappa*dt).
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$. Similarly for scalar
- */
-void IncFluid::Single_time_step_EULER(IncSF& T, DP dt)
-{						
-	Single_time_step_EULER(dt);	
-	
-	T.Add_nlin_dt(dt);
-	T.Mult_field_exp_ksqr_dt(dt);	
-}  
-
-
 //*********************************************************************************************
-//	MHD		
-/** @brief Passive scalar Single time step using Euler's scheme.
+/** @brief Single time step
  *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt).
- * @return \f$ \vec{W}(t+dt) = [\vec{W}(t) + dt W.\vec{N}(t)] 
- *					*\exp(-K^2*W.\nu*dt).
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$. Similarly for vector W.
- */
-void IncFluid::Single_time_step_EULER(IncVF& W, DP dt)
-{  
-	Single_time_step_EULER(dt);									
-
-	W.Add_nlin_dt(dt);
-	W.Mult_field_exp_ksqr_dt(dt);
-}  
-
-
-//*********************************************************************************************
-//	MHD + passive scalar  
-/** @brief Passive scalar Single time step using Euler's scheme.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt).
- * @return \f$ \vec{W}(t+dt) = [\vec{W}(t) + dt W.\vec{N}(t)] 
- *					*\exp(-K^2*W.\nu*dt).
- * @return \f$ F(t+dt) = [F(t) + dt T.N(t)] 
- *					*\exp(-K^2*\kappa*dt).
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$. Similarly for vector W &scalar
- */
-void IncFluid::Single_time_step_EULER(IncVF& W, IncSF& T,  DP dt)
-{
-	Single_time_step_EULER(W, dt);
-																										
-	T.Add_nlin_dt(dt);
-	T.Mult_field_exp_ksqr_dt(dt);
-}
-
-
-
-//*********************************************************************************************
-//	RB Convection	
-/** @brief RB convection: Single time step using Euler's scheme.
- *
- * @return If Pr != 0, time-advance passive scalar.
- *			Else time-advance velocity field, and \f$ F = V_x /K^2 \f$.
- */
-void IncFluid::Single_time_step_EULER(IncSF& T, string Pr_switch, DP dt)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Single_time_step_EULER(dt);								// V advance
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
-	}  
-
-	else
-		Single_time_step_EULER(T, dt);
-
-}
-
-
-//*********************************************************************************************
-//	Magnetoconvection	
-/** @brief RB magnetoconvection: Single time step using Euler's scheme.
- *
- * @return If Pr != 0, time-advance passive scalar & vector W.
- *			Else time-advance velocity & W fields, and \f$ F = V_x /K^2 \f$.
- */
-void IncFluid::Single_time_step_EULER(IncVF& W, IncSF& T, string Pr_switch, DP dt)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Single_time_step_EULER(W, dt);
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);							// theta(k) = v1(k)/k^2
-	}  
-
-	else 
-		Single_time_step_EULER(W, T, dt);
-}
-
-
-
-//*********************************************************************************************
-//*********************************************************************************************
-
-/** @brief Single time step using RK2 scheme.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt)
+ * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt*a) 
+ *								+ c dt \vec{N}(t+dt) *\exp(-K^2*\nu*dt*b) ] 
  *
  * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
  *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$
  */
-void IncFluid::Single_time_step_RK2(DP dt)
+void IncFluid::Single_time_step(DP dt, DP a, DP b, DP c)
 {	
-	Mult_field_exp_ksqr_dt(dt / 2);
-	Add_nlin_dt(dt);	
-	Mult_field_exp_ksqr_dt(dt / 2);
+	
+	if ((abs(a) < MYEPS) && (abs(b) < MYEPS))
+	{
+		Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a) < MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_nlin_exp_ksqr_dt(b, dt);
+		Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt(a, dt);
+		Add_nlin_dt(c*dt);	
+	}
+	
+	else if ((abs(a-b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Add_nlin_dt(c*dt);									// V = V + c*dt*nlin
+		Mult_field_exp_ksqr_dt(a, dt);
+	}
+	
+	else if ((abs(a) > MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt((a-b), dt);
+		Add_nlin_dt(c*dt);	
+		Mult_field_exp_ksqr_dt(b, dt);
+	}
 }
 
-	
+
 //*********************************************************************************************	
 //	Passive scalar  
-/** @brief Single time step using RK2 scheme.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt)
- * @return \f$ F(t+dt) = [F(t) *\exp(-K^2*\kappa*dt)  + dt T.N(t)] 
- *					*\exp(-K^2*\kappa*dt).
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$. Similarly for scalar.
- */
-void IncFluid::Single_time_step_RK2(IncSF& T, DP dt)
+void IncFluid::Single_time_step(IncSF& T, DP dt, DP a, DP b, DP c)
+{	
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Single_time_step_scalar(T,dt, a, b, c);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Single_time_step_RB(T,dt, a, b, c);
+	
+}	
+
+//*********************************************************************************
+void IncFluid::Single_time_step_scalar(IncSF& T, DP dt, DP a, DP b, DP c)
+{	
+	
+	if ((abs(a) < MYEPS) && (abs(b) < MYEPS))
+	{
+		Add_nlin_dt(c*dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a) < MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_nlin_exp_ksqr_dt(b, dt);
+		Add_nlin_dt(c*dt);
+		
+		T.Mult_nlin_exp_ksqr_dt(b, dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt(a, dt);
+		Add_nlin_dt(c*dt);	
+		
+		T.Mult_field_exp_ksqr_dt(a, dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a-b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Add_nlin_dt(c*dt);									// V = V + c*dt*nlin
+		Mult_field_exp_ksqr_dt(a, dt);
+		
+		T.Add_nlin_dt(c*dt);								
+		T.Mult_field_exp_ksqr_dt(a, dt);
+	}
+	
+	else if ((abs(a) > MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt((a-b), dt);
+		Add_nlin_dt(c*dt);	
+		Mult_field_exp_ksqr_dt(b, dt);
+		
+		T.Mult_field_exp_ksqr_dt((a-b), dt);
+		T.Add_nlin_dt(c*dt);	
+		T.Mult_field_exp_ksqr_dt(b, dt);
+	}
+	
+}
+
+
+//*********************************************************************************
+void IncFluid::Single_time_step_RB(IncSF& T, DP dt, DP a, DP b, DP c)
 {
-	Single_time_step_RK2(dt);								// V time-advance
- 
-	T.Mult_field_exp_ksqr_dt(dt / 2);
-	T.Add_nlin_dt(dt);
-	T.Mult_field_exp_ksqr_dt(dt / 2);	
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{	
+#if defined(D2) || defined(D3)
+		Single_time_step(dt, a, b, c);						// V advance
+		
+		*T.F = *V1;
+		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
+#endif
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+#ifdef D2	
+		*V1 = *nlin1;
+		*V2 = *nlin2;
+		
+		Array_divide_ksqr_SCFT(N, *V1, kfactor);				// u(k) = nlin(k)/k^2	
+		Array_divide_ksqr_SCFT(N, *V2, kfactor);			
+#endif		
+		
+#ifdef D3	
+		*V1 = *nlin1;
+		*V2 = *nlin2;
+		*V3 = *nlin3;
+		
+		Array_divide_ksqr_SCFT(N, *V1, kfactor);				// u(k) = nlin(k)/k^2	
+		Array_divide_ksqr_SCFT(N, *V2, kfactor);
+		Array_divide_ksqr_SCFT(N, *V3, kfactor);
+#endif
+		
+		// Time advance T
+		if ((abs(a) < MYEPS) && (abs(b) < MYEPS))
+		{
+			T.Add_nlin_dt(c*dt);
+		}
+		
+		else if ((abs(a) < MYEPS) && (abs(b) > MYEPS))
+		{
+			T.Mult_nlin_exp_ksqr_dt(b, dt);
+			T.Add_nlin_dt(c*dt);
+		}
+		
+		else if ((abs(b) < MYEPS) && (abs(a) > MYEPS))
+		{
+			T.Mult_field_exp_ksqr_dt(a, dt);
+			T.Add_nlin_dt(c*dt);
+		}
+		
+		else if ((abs(a-b) < MYEPS) && (abs(a) > MYEPS))
+		{
+			T.Add_nlin_dt(c*dt);								
+			T.Mult_field_exp_ksqr_dt(a, dt);
+		}
+		
+		else if ((abs(a) > MYEPS) && (abs(b) > MYEPS))
+		{
+			T.Mult_field_exp_ksqr_dt((a-b), dt);
+			T.Add_nlin_dt(c*dt);	
+			T.Mult_field_exp_ksqr_dt(b, dt);
+		}
+	}
+	
+	else 
+		Single_time_step_scalar(T, dt, a, b, c);
+	
 }  
 
 
 //*********************************************************************************************
 //	MHD		
-/** @brief Single time step using RK2 scheme for V and W.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt)
- * @return \f$ \vec{W}(t+dt) = [\vec{W}(t) *\exp(-K^2*W.\nu*dt) + dt W.\vec{N}(t)] 
- *					*\exp(-K^2*W.\nu*dt)
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$.  Similar for W.
- */
-void IncFluid::Single_time_step_RK2(IncVF& W, DP dt)
+
+void IncFluid::Single_time_step(IncVF& W, DP dt, DP a, DP b, DP c)
 {  
-	Single_time_step_RK2(dt);									// V advance
-    
-	W.Mult_field_exp_ksqr_dt(dt / 2);
-	W.Add_nlin_dt(dt);
-	W.Mult_field_exp_ksqr_dt(dt / 2);
+	
+	if ((abs(a) < MYEPS) && (abs(b) < MYEPS))
+	{
+		Add_nlin_dt(c*dt);
+		W.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a) < MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_nlin_exp_ksqr_dt(b, dt);
+		Add_nlin_dt(c*dt);
+		
+		W.Mult_nlin_exp_ksqr_dt(b, dt);
+		W.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt(a, dt);
+		Add_nlin_dt(c*dt);	
+		
+		W.Mult_field_exp_ksqr_dt(a, dt);
+		W.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a-b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Add_nlin_dt(c*dt);									// V = V + c*dt*nlin
+		Mult_field_exp_ksqr_dt(a, dt);
+		
+		W.Add_nlin_dt(c*dt);								
+		W.Mult_field_exp_ksqr_dt(a, dt);
+	}
+	
+	else if ((abs(a) > MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt((a-b), dt);
+		Add_nlin_dt(c*dt);	
+		Mult_field_exp_ksqr_dt(b, dt);
+		
+		W.Mult_field_exp_ksqr_dt((a-b), dt);
+		W.Add_nlin_dt(c*dt);	
+		W.Mult_field_exp_ksqr_dt(b, dt);
+	}
+	
 }  
 
 
 //*********************************************************************************************
 //	MHD + passive scalar  
-/** @brief Single time step using RK2 scheme for V, W, and T.
- *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt) + dt \vec{N}(t)] 
- *					*\exp(-K^2*\nu*dt)
- * @return \f$ \vec{W}(t+dt) = [\vec{W}(t) *\exp(-K^2*W.\nu*dt) + dt W.\vec{N}(t)] 
- *					*\exp(-K^2*W.\nu*dt)
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$.  Similar for W.
- */
-void IncFluid::Single_time_step_RK2(IncVF& W, IncSF& T,  DP dt)
+
+void IncFluid::Single_time_step(IncVF& W, IncSF& T,  DP dt, DP a, DP b, DP c)
 {
-	Single_time_step_RK2(W, dt);
 	
-	T.Mult_field_exp_ksqr_dt(dt / 2);																										
-	T.Add_nlin_dt(dt);
-	T.Mult_field_exp_ksqr_dt(dt / 2);
-}
-
-
-
-//*********************************************************************************************
-//	RB Convection	
-/** @brief RB convection: Single time step using RK2 scheme.
- *
- * @return If Pr != 0, time-advance passive scalar.
- *			Else time-advance velocity field, and \f$ F = V_x /K^2 \f$.
- */
-void IncFluid::Single_time_step_RK2(IncSF& T, string Pr_switch, DP dt)
-{
-	if (Pr_switch == "PRZERO") 
+	if ((abs(a) < MYEPS) && (abs(b) < MYEPS))
 	{
-		Single_time_step_RK2(dt);								// V advance
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
-	}  
-
-	else
-		Single_time_step_RK2(T, dt);
-}
-
-
-//*********************************************************************************************
-//	Magnetoconvection	
-/** @brief RB magnetoconvection: Single time step using Euler's scheme.
- *
- * @return If Pr != 0, time-advance passive scalar & vector W.
- *			Else time-advance velocity & W fields, and \f$ F = V_x /K^2 \f$.
- */
-void IncFluid::Single_time_step_RK2(IncVF& W, IncSF& T, string Pr_switch, DP dt)
-{
-
-	if (Pr_switch == "PRZERO") 
+		Add_nlin_dt(c*dt);
+		W.Add_nlin_dt(c*dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a) < MYEPS) && (abs(b) > MYEPS))
 	{
-		Single_time_step_RK2(W, dt);
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
-	}  
+		Mult_nlin_exp_ksqr_dt(b, dt);
+		Add_nlin_dt(c*dt);
+		
+		W.Mult_nlin_exp_ksqr_dt(b, dt);
+		W.Add_nlin_dt(c*dt);
+		
+		T.Mult_nlin_exp_ksqr_dt(b, dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt(a, dt);
+		Add_nlin_dt(c*dt);	
+		
+		W.Mult_field_exp_ksqr_dt(a, dt);
+		W.Add_nlin_dt(c*dt);
+		
+		T.Mult_field_exp_ksqr_dt(a, dt);
+		T.Add_nlin_dt(c*dt);
+	}
+	
+	else if ((abs(a-b) < MYEPS) && (abs(a) > MYEPS))
+	{
+		Add_nlin_dt(c*dt);									// V = V + c*dt*nlin
+		Mult_field_exp_ksqr_dt(a, dt);
+		
+		W.Add_nlin_dt(c*dt);								
+		W.Mult_field_exp_ksqr_dt(a, dt);
+		
+		T.Add_nlin_dt(c*dt);								
+		T.Mult_field_exp_ksqr_dt(a, dt);
+	}
+	
+	else if ((abs(a) > MYEPS) && (abs(b) > MYEPS))
+	{
+		Mult_field_exp_ksqr_dt((a-b), dt);
+		Add_nlin_dt(c*dt);	
+		Mult_field_exp_ksqr_dt(b, dt);
+		
+		W.Mult_field_exp_ksqr_dt((a-b), dt);
+		W.Add_nlin_dt(c*dt);	
+		W.Mult_field_exp_ksqr_dt(b, dt);
+		
+		T.Mult_field_exp_ksqr_dt((a-b), dt);
+		T.Add_nlin_dt(c*dt);	
+		T.Mult_field_exp_ksqr_dt(b, dt);
+	}
+	
+}
 
-	else 
-		Single_time_step_RK2(W, T, dt);
+//*********************************************************************************************
+//*********************************************************************************************
+/** @brief Compute_force_TO_rhs()
+ *
+ * @return Computes force and nlin; add them; compute pressure; combine them to compute rhs.
+ *
+ */
+void IncFluid::Compute_force_TO_rhs()
+{
+	Compute_force();
+	
+	Compute_nlin();										// Compute nlin using V(t+dt/2)
+	
+	Satisfy_reality_condition_nlin();
+	
+	Add_force();										// nlin = nlin - f
+	
+	Compute_pressure();									// Compute pressure using V(t+dt/2)
+	
+	Compute_rhs();
+	
+}
+
+void IncFluid::Compute_force_TO_rhs(IncSF& T)
+{
+	Compute_force(T);
+	
+	Compute_nlin(T);									// Compute nlin using V(t+dt/2)
+	
+	Satisfy_reality_condition_nlin(T);
+	
+	Add_force(T);										// nlin = nlin - f
+	
+	Compute_pressure();									// Compute pressure using V(t+dt/2)
+	
+	Compute_rhs(T);		
+}
+
+
+void IncFluid::Compute_force_TO_rhs(IncVF& W)
+{
+	Compute_force(W);
+	
+	Compute_nlin(W);										// Compute nlin using V(t+dt/2)
+	
+	Satisfy_reality_condition_nlin(W);
+	
+	Add_force(W);											// nlin = nlin - f
+	
+	Compute_pressure();										// Compute pressure using V(t+dt/2)
+	
+	Compute_rhs(W);
+}
+
+
+void IncFluid::Compute_force_TO_rhs(IncVF& W, IncSF& T)
+{
+	Compute_force(W, T);
+	
+	Compute_nlin(W, T);										// Compute nlin using V(t+dt/2)
+	
+	Satisfy_reality_condition_nlin(W, T);
+	
+	Add_force(W, T);										// nlin = nlin - f
+	
+	Compute_pressure();										// Compute pressure using V(t+dt/2)
+	
+	Compute_rhs(W, T);
 }
 
 
 //*********************************************************************************************
 //*********************************************************************************************
-
-/** @brief Single time step using Semi_implicit scheme.
+/** @brief Compute_RK4_parts(PlainCVF& tot_Vrhs, DP dt, DP b, DP factor) conmputes Ci's for 
+ *		for computing fields at t+dt.
  *
- * @return \f$ \vec{V}(t+dt) = [\vec{V}(t) *\exp(-K^2*\nu*dt) + dt \vec{N}(t+dt)] 
- *
- * @note For hyperviscosity:  \f$ \exp(-K^2*\nu*dt) \f$ is replaced by
- *					 $ \exp(-K^2*\nu*dt - K^4*\nu_h dt) \f$
+ * @return tot_Vrhs += factor*RHS(t)*exp(-nu k^2 b*dt)
+ *			RHS is contained in *nlin
  */
-void IncFluid::Single_time_step_Semi_implicit(DP dt)
+void IncFluid::Compute_RK4_parts(PlainCVF& tot_Vrhs, DP dt, DP b, DP factor)
 {	
-	Mult_field_exp_ksqr_dt(dt);	
-	Add_nlin_dt(dt);										// V = V + dt*nlin
+	Mult_nlin_exp_ksqr_dt(Tdt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+	Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
 }
 
+
+void IncFluid::Compute_RK4_parts(IncSF& T, PlainCVF& tot_Vrhs, PlainCSF& tot_Srhs, 
+								 DP dt, DP b, DP factor)
+{	
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_RK4_parts_scalar(T,tot_Vrhs, tot_Srhs, dt, b, factor);
 	
-//*********************************************************************************************	
-//	Passive scalar 
-void IncFluid::Single_time_step_Semi_implicit(IncSF& T, DP dt)
-{						
-	Single_time_step_Semi_implicit(dt);	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_RK4_parts_RB(T,tot_Vrhs, tot_Srhs, dt, b, factor);
+}
+
+
+void IncFluid::Compute_RK4_parts_scalar(IncSF& T, PlainCVF& tot_Vrhs, 
+										PlainCSF& tot_Srhs, DP dt, DP b, DP factor)
+{	
+	Mult_nlin_exp_ksqr_dt(dt, b);								// *nlin = *nlin x exp(-nu k^2 dt/d)
+	Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
 	
-	T.Mult_field_exp_ksqr_dt(dt);	
-	T.Add_nlin_dt(dt);
-}  
-
-
-//*********************************************************************************************
-//	MHD	
-void IncFluid::Single_time_step_Semi_implicit(IncVF& W, DP dt)
-{  
-	Single_time_step_Semi_implicit(dt);									
-
-	W.Mult_field_exp_ksqr_dt(dt);
-	W.Add_nlin_dt(dt);
-}  
-
-
-//*********************************************************************************************
-//	MHD + passive scalar 
-void IncFluid::Single_time_step_Semi_implicit(IncVF& W, IncSF& T,  DP dt)
-{
-	Single_time_step_Semi_implicit(W, dt);
-																										
-	T.Mult_field_exp_ksqr_dt(dt);
-	T.Add_nlin_dt(dt);
+	T.Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+	T.Add_nlin_to_field(tot_Srhs, factor);					// rhs(t0, u0) in nlin
 }
 
 
-
-//*********************************************************************************************
-//	RB Convection	
-
-void IncFluid::Single_time_step_Semi_implicit(IncSF& T, string Pr_switch, DP dt)
-{
-
-	if (Pr_switch == "PRZERO")
+void IncFluid::Compute_RK4_parts_RB(IncSF& T, PlainCVF& tot_Vrhs, 
+									PlainCSF& tot_Srhs, DP dt, DP b, DP factor)
+{	
+	if ((globalvar_Pr_switch != "PRZERO") && (globalvar_Pr_switch != "PRINFTY"))
 	{
-		Single_time_step_Semi_implicit(dt);						// V advance
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
-	}  
-
-	else
-		Single_time_step_Semi_implicit(T, dt);
+		Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+		Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
+		
+		T.Mult_nlin_exp_ksqr_dt(dt, b);							
+		T.Add_nlin_to_field(tot_Srhs, factor);					
+	}
+	
+	else if (globalvar_Pr_switch == "PRZERO")
+	{
+		Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+		Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		T.Mult_nlin_exp_ksqr_dt(dt, b);							
+		T.Add_nlin_to_field(tot_Srhs, factor);	
+	}
+	
+	
 }
 
 
-//*********************************************************************************************
-//	Magnetoconvection
+void IncFluid::Compute_RK4_parts(IncVF& W, PlainCVF& tot_Vrhs, PlainCVF& tot_Wrhs, 
+								 DP dt, DP b, DP factor)
+{	
+	Mult_nlin_exp_ksqr_dt(dt, b);								// *nlin = *nlin x exp(-nu k^2 dt/d)
+	Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
+	
+	W.Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+	W.Add_nlin_to_field(tot_Wrhs, factor);					// rhs(t0, u0) in nlin
+}
 
-void IncFluid::Single_time_step_Semi_implicit(IncVF& W, IncSF& T, string Pr_switch, DP dt)
-{
 
-	if (Pr_switch == "PRZERO") 
-	{
-		Single_time_step_Semi_implicit(W, dt);
-		*T.F = *V1;
-		Array_divide_ksqr_SCFT(N, *T.F, kfactor);				// theta(k) = v1(k)/k^2
-	}  
-
-	else 
-		Single_time_step_Semi_implicit(W, T, dt);
+void IncFluid::Compute_RK4_parts(IncVF& W, IncSF& T, PlainCVF& tot_Vrhs, PlainCVF& tot_Wrhs, 
+								 PlainCSF& tot_Srhs, DP dt, DP b, DP factor)
+{	
+	Mult_nlin_exp_ksqr_dt(dt, b);								// *nlin = *nlin x exp(-nu k^2 dt/d)
+	Add_nlin_to_field(tot_Vrhs, factor);					// rhs(t0, u0) in nlin
+	
+	T.Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+	T.Add_nlin_to_field(tot_Srhs, factor);					// rhs(t0, u0) in nlin
+	
+	W.Mult_nlin_exp_ksqr_dt(dt, b);							// *nlin = *nlin x exp(-nu k^2 dt/d)
+	W.Add_nlin_to_field(tot_Wrhs, factor);					// rhs(t0, u0) in nlin
 }
 
 

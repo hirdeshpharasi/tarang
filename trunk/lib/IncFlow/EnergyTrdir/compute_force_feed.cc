@@ -80,14 +80,50 @@ void IncVF::Compute_force_feed_shell()
 
 void IncVF::Compute_force_feed_shell(IncSF& T)
 {
+
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_force_feed_shell_scalar(T);
 	
-	Compute_force_feed_shell();
-		
-	Shell_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
-									*forceSF_shell, kfactor);		
-															
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_force_feed_shell_RB(T);	
 }
 
+
+
+void IncVF::Compute_force_feed_shell_scalar(IncSF& T)
+{
+	Compute_force_feed_shell();
+	
+	Shell_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
+									*forceSF_shell, kfactor);																
+}
+
+//
+// RB Convection
+//
+
+void IncVF::Compute_force_feed_shell_RB(IncSF& T)
+{
+
+	if (globalvar_Pr_switch == "PRZERO")
+	{
+		Compute_force_feed_ring();
+		
+		*forceSF_shell = 0.0;
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		Shell_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *shell_radius, 
+					   *forceSF_shell, kfactor);
+		
+		*forceV_shell = 0.0;
+	}
+	
+	else
+		Compute_force_feed_shell_scalar(T);
+		
+}
 
 //*********************************************************************************************
 void IncVF::Compute_force_feed_shell(IncVF& W)
@@ -115,26 +151,6 @@ void IncVF::Compute_force_feed_shell(IncVF& W, IncSF& T)
 
 }
 
-//
-// RB Convection
-//
-
-void IncVF::Compute_force_feed_shell(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_shell(T);
-	else
-		Compute_force_feed_shell();
-}
-
-void IncVF::Compute_force_feed_shell(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_shell(W, T);
-	else
-		Compute_force_feed_shell(W);
-}
-
 
 /**********************************************************************************************
 
@@ -151,7 +167,18 @@ void IncVF::Compute_force_feed_ring()
 			
 }
 
+
 void IncVF::Compute_force_feed_ring(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_force_feed_ring_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_force_feed_ring_RB(T);
+}
+
+
+void IncVF::Compute_force_feed_ring_scalar(IncSF& T)
 {
 	
 	Compute_force_feed_ring();
@@ -159,6 +186,31 @@ void IncVF::Compute_force_feed_ring(IncSF& T)
 	
 	Ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *ring_shell_radius, 
 								*sector_angle_ring_tr, *forceSF_ring, kfactor);		
+}
+
+//
+// RB Convection
+//
+
+void IncVF::Compute_force_feed_ring_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+	{
+		Compute_force_feed_ring();
+		
+		*forceSF_ring = 0.0;
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		Ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *ring_shell_radius, 
+					  *sector_angle_ring_tr, *forceSF_ring, kfactor);
+		
+		*forceV_ring = 0.0;
+	}
+	
+	else
+		Compute_force_feed_ring_scalar(T);
 }
 
 
@@ -193,26 +245,6 @@ void IncVF::Compute_force_feed_ring(IncVF& W, IncSF& T)
 		
 }
 
-//
-// RB Convection
-//
-
-void IncVF::Compute_force_feed_ring(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_ring(T);
-	else
-		Compute_force_feed_ring();
-}
-
-void IncVF::Compute_force_feed_ring(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_ring(W, T);
-	else
-		Compute_force_feed_ring(W);
-}
-
 
 
 /**********************************************************************************************
@@ -230,7 +262,18 @@ void IncVF::Compute_force_feed_cylinder_ring()
 			
 }
 
+
 void IncVF::Compute_force_feed_cylinder_ring(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_force_feed_cylinder_ring_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_force_feed_cylinder_ring_RB(T);
+}
+
+
+void IncVF::Compute_force_feed_cylinder_ring_scalar(IncSF& T)
 {
 	
 	Compute_force_feed_cylinder_ring();
@@ -239,6 +282,33 @@ void IncVF::Compute_force_feed_cylinder_ring(IncSF& T)
 								*cylinder_shell_radius, *cylinder_kpll_array_tr, 
 								*forceSF_cylinder_ring, kfactor);		
 					
+}
+
+//
+// RB Convection
+//
+
+void IncVF::Compute_force_feed_cylinder_ring_RB(IncSF& T)
+{
+	if (globalvar_Pr_switch == "PRZERO")
+	{
+		Compute_force_feed_cylinder_ring();
+		
+		*forceSF_cylinder_ring = 0.0;
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		Cyl_ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, 
+						  *cylinder_shell_radius, *cylinder_kpll_array_tr, 
+						  *forceSF_cylinder_ring, kfactor);
+		
+		*forceV_cylinder_ring = 0.0;
+	}
+	
+	else
+		Compute_force_feed_cylinder_ring_scalar(T);
+		
 }
 
 
@@ -270,26 +340,6 @@ void IncVF::Compute_force_feed_cylinder_ring(IncVF& W, IncSF& T)
 	Cyl_ring_mult_all(basis_type, alias_switch, N, *T.Force, *T.F, *cylinder_shell_radius, 
 								*cylinder_kpll_array_tr, *forceSF_cylinder_ring, kfactor);		
 		
-}
-
-//
-// RB Convection
-//
-
-void IncVF::Compute_force_feed_cylinder_ring(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_cylinder_ring(T);
-	else
-		Compute_force_feed_cylinder_ring();
-}
-
-void IncVF::Compute_force_feed_cylinder_ring(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch != "PRZERO")
-		Compute_force_feed_cylinder_ring(W, T);
-	else
-		Compute_force_feed_cylinder_ring(W);
 }
 
 

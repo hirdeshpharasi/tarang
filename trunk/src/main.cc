@@ -60,7 +60,18 @@ fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;  // for 2D
 int		globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
 int		globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
 
-					
+
+string	globalvar_prog_kind;
+
+// for RB 
+string	globalvar_Pr_switch;					// Prandtl number switch (PRLARGNE..) for RB
+string	globalvar_RB_Uscaling;					// UBscaling (ULARGE... ) for RB
+DP		globalvar_Ra;							// Rayleigh number
+DP		globalvar_r;							// normalized Rayleigh number
+DP		globalvar_Pr;							// Prandtl number
+DP		globalvar_temperature_grad;				// +1 for convection; -1 for stratification; 
+												// factor for u3 in temperature eqn
+
 Uniform<DP> SPECrand;					// Global variable for random no generation		
 			
 					
@@ -69,8 +80,7 @@ Uniform<DP> SPECrand;					// Global variable for random no generation
 
 int main(int argc, char** argv)
 {
-
-	string		prog_kind;
+	
 	string		data_dir_name;					// data is stored here
 	
 	time_t		start;
@@ -91,30 +101,30 @@ int main(int argc, char** argv)
 
 	ifstream prog_para_file;				// prog_para_file defined only in the master node
 	prog_para_file.open("prog_para.d");
-	Read_prog_para(prog_para_file, prog_kind, data_dir_name); 
+	Read_prog_para(prog_para_file, globalvar_prog_kind, data_dir_name); 
 		
-	if (prog_kind == "INC_FLUID")
+	if (globalvar_prog_kind == "INC_FLUID")
 		Ifluid_main(data_dir_name);
 	
-	else if (prog_kind == "INC_FLUID_DIAG")
+	else if (globalvar_prog_kind == "INC_FLUID_DIAG")
 		Ifluid_diag_main(data_dir_name);
 	
-	else if (prog_kind == "INC_SCALAR")
+	else if (globalvar_prog_kind == "INC_SCALAR")
 		Iscalar_main(data_dir_name);
 	
-	else if (prog_kind == "INC_SCALAR_DIAG")
+	else if (globalvar_prog_kind == "INC_SCALAR_DIAG")
 		Iscalar_diag_main(data_dir_name);
 	
-	else if (prog_kind == "INC_MHD")
+	else if (globalvar_prog_kind == "INC_MHD")
 		IMHD_main(data_dir_name);
 	
-	else if (prog_kind == "INC_MHD_DIAG")
+	else if (globalvar_prog_kind == "INC_MHD_DIAG")
 		IMHD_diag_main(data_dir_name);
 	
-	else if (prog_kind == "RB_SLIP")
+	else if (globalvar_prog_kind == "RB_SLIP")
 		RB_slip_main(data_dir_name);
 	
-	else if (prog_kind == "RB_SLIP_DIAG")
+	else if (globalvar_prog_kind == "RB_SLIP_DIAG")
 		RB_slip_diag_main(data_dir_name);
 		
 	else

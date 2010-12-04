@@ -151,29 +151,33 @@ extern MPI_Status status;
 				
 void Read_diag_para
 (
-	ifstream& para_file, 
-	int dim, 
-	int number_of_fields,  
-	int N[], 
-	string string_switches[], 
-	Array<int,1> switches,
-	double diss_coefficient[], 
-	double hyper_diss_coefficient[],
-	Array<int,1> solver_meta_para,
-	Array<int,1> solver_int_para,
-	Array<DP,1> solver_double_para,
-	string solver_string_para[],
-	Array<int,1>  diagnostic_procedure,
-	Array<DP,1> time_para, 
-	Array<int,1> misc_output_para,
-	Array<int,1> ET_parameters, 
-	Array<DP,1> ET_shell_radii_sector_array,
-	Array<int,1> no_output_k_r, 
-	Array<int,2> out_k_r_array,
-	Array<int,1> field_input_meta_para, 
-	Array<DP,1> init_cond_para,
-	Array<int,1> force_field_meta_para, 
-	Array<DP,1> force_field_para
+	 ifstream& para_file, 
+	 int dim, 
+	 int number_of_fields,  
+	 int N[], 
+	 string string_switches[], 
+	 Array<int,1> switches,
+	 double diss_coefficient[], 
+	 double hyper_diss_coefficient[],
+	 Array<int,1> solver_meta_para,
+	 Array<int,1> solver_int_para,
+	 Array<DP,1> solver_double_para,
+	 string solver_string_para[],
+	 Array<int,1>  diagnostic_procedure,
+	 Array<DP,1> time_para, 
+	 Array<int,1> misc_output_para,
+	 Array<int,1> ET_parameters, 
+	 Array<DP,1> ET_shell_radii_sector_array,
+	 Array<int,1> no_output_k_r, 
+	 Array<int,2> out_k_r_array,
+	 Array<int,1> init_cond_meta_para,
+	 Array<int,1> init_cond_int_para,
+	 Array<DP,1> init_cond_double_para,
+	 string init_cond_string_para[],
+	 Array<int,1> force_meta_para,
+	 Array<int,1> force_int_para,
+	 Array<DP,1> force_double_para,
+	 string force_string_para[]
 )
 {
 
@@ -396,7 +400,7 @@ void Read_diag_para
 	
 	
 	//
-	//	Time-para and Time-save
+	//	Time-para 
 	//
 	if (my_id == master_id)
 		cout << "time_para (t0, tfinal, dt_min): ";
@@ -539,99 +543,119 @@ void Read_diag_para
 	if (my_id == master_id)	
 		cout  << "*********** Reading of field para over ***********" << endl << endl;
 	
-	
-	
+		
+		
 	//
 	//	Initial condition
 	//
 	if (my_id == master_id)
 		cout  << "*********** Reading of initial condition parameter starts ***********" 
-			  << endl << endl;
+		<< endl << endl;
 	
-
-	para_file >> s >> field_input_meta_para(1);
-	para_file >> s >> field_input_meta_para(2);		
 	
-	int number_of_init_cond_para = field_input_meta_para(2);
-																															
+	para_file >> s >> init_cond_meta_para(1) >> init_cond_meta_para(2) >> init_cond_meta_para(3);
+	
 	if (my_id == master_id) 
 	{
-		cout << "Field_input_proc: " << field_input_meta_para(1) << endl;	
-		cout << "Number of init cond para: " << field_input_meta_para(2) << endl;
+		cout << "Init cond meta para (intgers): " << init_cond_meta_para(1) << endl;
+		cout << "Init cond meta para (double): "  << init_cond_meta_para(2) << endl;
+		cout << "Init cond meta para (string): "  << init_cond_meta_para(3) << endl << endl;
+	}
+	
+	
+	
+	init_cond_int_para = 0;
+	init_cond_double_para = 0.0;
+	
+	if (my_id == master_id)		cout << "Init cond integer parameters: ";
+	para_file >>s;	
+	for (i = 1; i <= init_cond_meta_para(1); i++) 
+	{
+		para_file >> init_cond_int_para(i); 
+		if (my_id == master_id)		cout << init_cond_int_para(i) << "    ";		
+	}		
+	if (my_id == master_id)		cout << endl << endl;
+	
+	
+	if (my_id == master_id)		cout << "Init cond double parameters: ";
+	para_file >>s;	
+	for (i = 1; i <= init_cond_meta_para(2); i++) 
+	{
+		para_file >> init_cond_double_para(i); 
+		if (my_id == master_id)	cout << init_cond_double_para(i) << "    ";		
+	}		
+	if (my_id == master_id)		cout << endl << endl;
+	getline(para_file, s); 
+	
+	
+	if (my_id == master_id)		cout << "Init cond string parameters: ";
+	para_file >> s;
+	for (i=1; i<=init_cond_meta_para(3); i++)
+	{
+		para_file >> init_cond_string_para[i];
+		if (my_id == master_id)		cout <<  init_cond_string_para[i] << endl; 
 	}	
 	
 	
-	// N_in_reduced
-	if (my_id == master_id)
-		cout << "N_in_reduced[i]: " ;	
-	para_file >> s;			
-	
-	for (i = 3; i<= 2+dim; i++)  
-	{
-		para_file >> field_input_meta_para(i);  
-		
-		if (my_id == master_id)
-			cout << field_input_meta_para(i) << "   " ;				
-	}		
-	if (my_id == master_id)		cout << endl << endl;		
-	
-	
-	if (my_id == master_id)		
-		cout << "	Init condition parameter: " ;
-	
-	init_cond_para = 0.0;
-	
-	para_file >> s;
-	for (i = 1; i <= number_of_init_cond_para; i++) 
-	{
-		para_file >> init_cond_para(i); 
-		
-		if (my_id == master_id)
-			cout << init_cond_para(i) << "    ";		
-	}		
-	
-	if (my_id == master_id)		cout << endl << endl;
 	getline(para_file, s); getline(para_file, s); getline(para_file, s); 
 	
 	if (my_id == master_id)
-		cout << "*********** Reading of initial condition parameter over ***********" 
-			 << endl << endl;
+		cout  << "*********** Reading of Init-cond-para over **************" << endl << endl;
 	
 	
 	
 	//
 	//	Forcing
 	//
+	
 	if (my_id == master_id)
-		cout  << "*********** Reading of Forcing parameter starts ***********" << endl << endl;
+		cout  << "*********** Reading of Force parameter starts ***********" << endl << endl;
 	
-	para_file >> s >> force_field_meta_para(1);
-	para_file >> s >> force_field_meta_para(2);
-	
-	int number_of_force_para = force_field_meta_para(2);
+	para_file >> s >> force_meta_para(1) >> force_meta_para(2) >> force_meta_para(3);
 	
 	if (my_id == master_id)
 	{
-		cout << "Force field procedure: " << force_field_meta_para(1) << endl;
-		cout << "Number of force field parameters: " << force_field_meta_para(2) << endl;
+		cout << "Force meta para (intgers): " << force_meta_para(1) << endl;
+		cout << "Force meta para (double): "  << force_meta_para(2) << endl;
+		cout << "Force meta para (string): "  << force_meta_para(3) << endl << endl;
 	}
-			
 	
-	if (my_id == master_id)
-		cout << "	Force field parameter: " ;
 	
-	force_field_para = 0.0;
+	force_int_para = 0;
+	force_double_para = 0.0;
 	
+	if (my_id == master_id)		cout << "Force integer parameters: ";
 	para_file >>s;	
-	for (i = 1; i <= number_of_force_para; i++) 
+	for (i = 1; i <= force_meta_para(1); i++) 
 	{
-		para_file >> force_field_para(i); 
-		
-		if (my_id == master_id)
-			cout << force_field_para(i) << "    ";		
+		para_file >> force_int_para(i); 
+		if (my_id == master_id)	cout << force_int_para(i) << "    ";		
 	}		
-	
 	if (my_id == master_id)		cout << endl << endl;
+	
+	
+	if (my_id == master_id)		cout << "Force double parameters: ";
+	para_file >>s;	
+	for (i = 1; i <= force_meta_para(2); i++) 
+	{
+		para_file >> force_double_para(i); 
+		if (my_id == master_id)	cout << force_double_para(i) << "    ";		
+	}		
+	if (my_id == master_id)		cout << endl << endl;
+	getline(para_file, s); 
+	
+	
+	if (my_id == master_id)		cout << "Force string parameters: ";
+	para_file >> s;
+	for (i=1; i<=force_meta_para(3); i++)
+	{
+		para_file >> force_string_para[i];
+		if (my_id == master_id)	cout <<  force_string_para[i] << endl; 
+	}	
+	
+	
+	getline(para_file, s); getline(para_file, s); getline(para_file, s); 
+	
 	
 	if (my_id == master_id)
 		cout  << "*********** Reading of force parameter over **************" << endl << endl;

@@ -1,4 +1,4 @@
-/* Tarang-4.0
+force_int_para/* Tarang-4.0
  *
  * Copyright (C) 2008, 2009  Mahendra K. Verma
  *
@@ -50,9 +50,9 @@
 void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid()
 {
 
-	DP inner_radius = (*force_field_para)(1);
-	DP outer_radius = (*force_field_para)(2);
-	DP energy_level = (*force_field_para)(3);
+	DP inner_radius = (*force_int_para)(1);
+	DP outer_radius = (*force_int_para)(2);
+	DP energy_level = (*force_int_para)(3);
 	
 	
 	int nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -120,10 +120,10 @@ void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid()
 void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid(IncSF& T)
 {
 
-	DP inner_radius = (*force_field_para)(1);
-	DP outer_radius = (*force_field_para)(2);
-	DP energy_level = (*force_field_para)(3);
-	DP energy_scalar_level = (*force_field_para)(4);
+	DP inner_radius = (*force_int_para)(1);
+	DP outer_radius = (*force_int_para)(2);
+	DP energy_level = (*force_int_para)(3);
+	DP energy_scalar_level = (*force_int_para)(4);
 	
 	int nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 	DP energy_per_mode = energy_level / nf;
@@ -201,10 +201,10 @@ void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid(IncSF& T)
 void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid(IncVF& W)
 {
 
-	DP inner_radius = (*force_field_para)(1);
-	DP outer_radius = (*force_field_para)(2);
-	DP energy_level = (*force_field_para)(3);
-	DP energyW_level = (*force_field_para)(4);
+	DP inner_radius = (*force_int_para)(1);
+	DP outer_radius = (*force_int_para)(2);
+	DP energy_level = (*force_int_para)(3);
+	DP energyW_level = (*force_int_para)(4);
 	
 	
 	int nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -287,11 +287,11 @@ void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid(IncVF& W)
 void IncFluid::Compute_force_const_energy_helicity_2Din3Dgrid(IncVF& W, IncSF& T)
 {
 
-	DP inner_radius = (*force_field_para)(1);
-	DP outer_radius = (*force_field_para)(2);
-	DP energy_level = (*force_field_para)(3);
-	DP energyW_level = (*force_field_para)(4);
-	DP energy_scalar_level = (*force_field_para)(5);
+	DP inner_radius = (*force_int_para)(1);
+	DP outer_radius = (*force_int_para)(2);
+	DP energy_level = (*force_int_para)(3);
+	DP energyW_level = (*force_int_para)(4);
+	DP energy_scalar_level = (*force_int_para)(5);
 	
 	int nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 	DP energy_per_mode = energy_level / nf;

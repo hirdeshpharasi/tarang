@@ -82,16 +82,23 @@ void IncVF::Compute_shell_tr()
 //	SCALAR   
 //
 
-
 void IncVF::Compute_shell_tr(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_shell_tr_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_shell_tr_RB(T);
+}
+
+
+void IncVF::Compute_shell_tr_scalar(IncSF& T)
 {
 
 	// U to U
 	Compute_shell_tr();
 	
 	(*shelltoshell_SF) = 0.0;
-	
-	
 	
 	for (int shell_from_index = 1; shell_from_index < no_shells; shell_from_index++) 
 	{	
@@ -108,6 +115,39 @@ void IncVF::Compute_shell_tr(IncSF& T)
 	}
 }
 
+// RB
+void IncVF::Compute_shell_tr_RB(IncSF& T)
+{
+	
+	(*shelltoshell_self) = 0.0;
+	(*shelltoshell_SF) = 0.0;
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+		Compute_shell_tr();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")		// fill only Temperature flux
+	{
+		(*shelltoshell_SF) = 0.0;
+		
+		
+		for (int shell_from_index = 1; shell_from_index < no_shells; shell_from_index++) 
+		{
+			Fill_shell( shell_from_index, T );	
+			
+			EnergyTr_Compute_nlin(T);										
+			// nlin1 = U.grad Tm	
+			
+			Shell_mult_all(basis_type, alias_switch, N, *nlin1, *T.F, *shell_radius, 
+						   *temp_shell_tr, kfactor);		
+			
+			(*shelltoshell_SF)(shell_from_index, Range::all()) = -*temp_shell_tr;	
+			
+		}
+	}
+	
+	else
+		Compute_shell_tr_scalar(T);
+}
 
 //*********************************************************************************************
 //	 MHD   
@@ -118,7 +158,6 @@ void IncVF::Compute_shell_tr(IncVF& W)
 	Compute_shell_tr();
 	
 	(*W.shelltoshell_self) = 0.0;
-	
 	
 	
 	// W to W
@@ -239,26 +278,6 @@ void IncVF::Compute_shell_tr(IncVF& W, IncSF& T)
 	}
 		
 }	
-
-//*********************************************************************************************
-// RB Convection
-//
-void IncVF::Compute_shell_tr(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Compute_shell_tr();
-	else
-		Compute_shell_tr(T);
-}
-
-void IncVF::Compute_shell_tr(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Compute_shell_tr(W);
-	else
-		Compute_shell_tr(W, T);
-}
-
 
 
 //******************************  End of Compute_shell_tr.cc  *********************************

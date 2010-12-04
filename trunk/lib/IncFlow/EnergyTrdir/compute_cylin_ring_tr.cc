@@ -83,7 +83,18 @@ void IncVF::Compute_cylinder_ring_tr()
 //*********************************************************************************************
 //	SCALAR   
 //
+
 void IncVF::Compute_cylinder_ring_tr(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Compute_cylinder_ring_tr_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Compute_cylinder_ring_tr_RB(T);
+}
+
+
+void IncVF::Compute_cylinder_ring_tr_scalar(IncSF& T)
 {
 	
 	// U to U
@@ -114,6 +125,45 @@ void IncVF::Compute_cylinder_ring_tr(IncSF& T)
 			
 		}
 					
+}
+
+
+// RBC
+void IncVF::Compute_cylinder_ring_tr_RB(IncSF& T)
+{
+	
+	(*cylinder_ring_to_ring_self) = 0.0;
+	(*cylinder_ring_to_ring_SF) = 0.0;
+	
+	if (globalvar_Pr_switch == "PRZERO")
+		Compute_cylinder_ring_tr();
+	
+	else if (globalvar_Pr_switch == "PRINFTY")		// fill only Temperature transfers
+	{
+		// T to T
+		// skip the last shell -- outer rad = infty				
+		for (int cylinder_shell_from_i = 1; cylinder_shell_from_i < no_cylinder_shells; 
+											cylinder_shell_from_i++) 
+			for (int slab_from_i = 1; slab_from_i <= no_cylinder_kpll_slabs; slab_from_i++)
+			{
+				
+				Fill_cylinder_ring(cylinder_shell_from_i, slab_from_i, T);	
+				
+				EnergyTr_Compute_nlin(T);									// nlin = U.grad Tm	
+				
+				Cyl_ring_mult_all(basis_type, alias_switch, N, *nlin1, *T.F, 
+								  *cylinder_shell_radius, *cylinder_kpll_array_tr,  
+								  *temp_cylinder_ring_tr, kfactor);
+				
+				(*cylinder_ring_to_ring_SF)(cylinder_shell_from_i, slab_from_i, 
+											Range::all(), Range::all()) = -*temp_cylinder_ring_tr;	
+				
+			}
+	}	
+	
+	else
+		Compute_cylinder_ring_tr_scalar(T);
+				
 }
 
 
@@ -271,29 +321,6 @@ void IncVF::Compute_cylinder_ring_tr(IncVF& W, IncSF& T)
 			
 		}		
 }		
-
-//*********************************************************************************************
-// RB Convection
-//
-void IncVF::Compute_cylinder_ring_tr(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Compute_cylinder_ring_tr();
-	
-	else
-		Compute_cylinder_ring_tr(T);
-}
-
-
-
-void IncVF::Compute_cylinder_ring_tr(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Compute_cylinder_ring_tr(W);
-	
-	else
-		Compute_cylinder_ring_tr(W, T);
-}
 
 
 //**************************** End of Compute_ring_tr.cc **************************************

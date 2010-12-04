@@ -58,6 +58,8 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	input/init_cond_field.cc
 	input/init_cond_main.cc
 	input/init_cond_modes.cc
+	input/init_cond_Prinfty.cc
+	input/init_cond_RayleighTaylor.cc
 	input/init_cond_RB_misc.cc
 	input/init_cond_TG.cc
 	output/output_energy.cc
@@ -67,8 +69,8 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	output/output_moment.cc
 	output/output_str_fn.cc
 	time_advance/single_time_step.cc
-	time_advance/time_advance_RBslip.cc
-	time_advance/time_advance_RBslipMHD.cc
+#	time_advance/time_advance_RBslip.cc
+#	time_advance/time_advance_RBslipMHD.cc
     	time_advance/time_advance_SF.cc 
 	time_advance/time_advance_VF_MHD.cc 
   	time_advance/time_advance.cc 

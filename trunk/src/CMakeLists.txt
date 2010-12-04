@@ -78,8 +78,8 @@ ADD_EXECUTABLE(../tarangMPI  main.h main.cc
 	IMHD/IMHD_diag_main.cc
 	RBslip/RB_slip_main.h   
 	RBslip/RB_slip_main.cc 
-	RBslip/RB_slip_diag_main.cc   
-	RBslip/read_RB_slip_para.cc)
+	RBslip/RB_slip_diag_main.cc
+	)
 
 
 # Link the executable to the Hello library.

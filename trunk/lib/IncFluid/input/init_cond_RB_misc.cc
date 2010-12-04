@@ -59,9 +59,9 @@ void  IncFluid::Init_cond_RB_Lorenz(IncSF& T)
 {
 
 	 DP		W101,T101,T200;
-	 W101 = (*init_cond_para)(1);
-	 T101 = (*init_cond_para)(2);
-	 T200 = (*init_cond_para)(3);
+	W101 = (*init_cond_double_para)(1);
+	T101 = (*init_cond_double_para)(2);
+	T200 = (*init_cond_double_para)(3);
 	  
 
 	if (my_id == master_id) 

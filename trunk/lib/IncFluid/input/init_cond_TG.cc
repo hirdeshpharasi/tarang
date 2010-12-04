@@ -52,8 +52,8 @@
 void IncFluid::Init_cond_Taylor_Green()
 {
 	
-	int k0 = ((int) (*init_cond_para)(1));
-	DP amp = (*init_cond_para)(2);
+	int k0 = (*init_cond_int_para)(1);
+	DP amp = (*init_cond_double_para)(1);
 	
 	Setup_Taylor_Green_field(k0, amp);
 }
@@ -62,13 +62,50 @@ void IncFluid::Init_cond_Taylor_Green()
 // Scalar 
 //
 
+
 void IncFluid::Init_cond_Taylor_Green(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_Taylor_Green_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_Taylor_Green_RB(T);
+}
+
+
+void IncFluid::Init_cond_Taylor_Green_scalar(IncSF& T)
 {	
 	Init_cond_Taylor_Green();
 	
 	*T.F = 0.0;
 }
 
+
+void  IncFluid::Init_cond_Taylor_Green_RB(IncSF& T)
+{
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_Taylor_Green();	
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		cout << "TG forcing not allowed for PRINFTY option" << endl;
+		exit(0);
+	}
+	
+	else
+		Init_cond_Taylor_Green(T);
+	
+	Zero_modes_RB_slip(T);	
+	
+	if (sincos_horizontal_2D_switch == 1)
+		Sincos_horizontal(T);		
+}
 
 //
 // Vector
@@ -77,9 +114,9 @@ void IncFluid::Init_cond_Taylor_Green(IncSF& T)
 void IncFluid::Init_cond_Taylor_Green(IncVF& W)
 {
 
-	int k0 = ((int) (*init_cond_para)(1));
-	DP amp = (*init_cond_para)(2);
-	DP ampW = (*init_cond_para)(3);
+	int k0 = (*init_cond_int_para)(1);
+	DP amp = (*init_cond_double_para)(1);
+	DP ampW = (*init_cond_double_para)(3);
 	
 	Setup_Taylor_Green_field(k0, amp);
 	W.Setup_Taylor_Green_field_mag_field(k0, ampW);		
@@ -98,51 +135,6 @@ void IncFluid::Init_cond_Taylor_Green(IncVF& W, IncSF& T)
 }
 
 
-
-
-void  IncFluid::Init_cond_Taylor_Green(string Pr_switch, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_Taylor_Green();	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_Taylor_Green(T);
-		
-	Zero_modes_RB_slip(T);
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);				
-
-}	
-
-
-
-void  IncFluid::Init_cond_Taylor_Green(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_Taylor_Green(W);		
-				
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_Taylor_Green(W, T);
-	
-	Zero_modes_RB_slip(W, T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(W, T);
-
-}	
 
 //******************************** End of Init_cond_TG.cc *************************************
 

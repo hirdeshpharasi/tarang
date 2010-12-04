@@ -139,11 +139,16 @@ void RSF::RS_Dealias()
    
 **********************************************************************************************/
 
-void RSF::RS_Output(ofstream& fileout, Array<complx,3> temp_array)
+void RSF::RS_Output(ofstream& fileout, Array<complx,3> temp)
 {
-  Output_asreal(fileout, Nrs, *Fr, temp_array);
+  Output_asreal(fileout, Nrs, *Fr, temp);
 }
 
+
+void RSF::RS_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_r)
+{
+	Output_asreal(fileout, Nrs, *Fr, temp_r);
+}
 
 //************************ END of RSF class Definitions ***************************************
 

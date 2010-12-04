@@ -54,26 +54,26 @@
  * @return when hyper_dissipation_switch == 1, 
  *			\f$ V(k) = V(k) * \exp(-\nu K^2 dt) + \exp(-\nu_h)  K^4 dt) \f$
  */
-void IncVF::Mult_field_exp_ksqr_dt(DP dt)
+void IncVF::Mult_field_exp_ksqr_dt(DP dt, DP a)
 {
 	
 	if (hyper_dissipation_switch == 0) 
 	{
-		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, kfactor);
 	}
 	
 	else
 	{
-		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 						
-		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 						
-		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 	}
 
 }
@@ -91,26 +91,26 @@ void IncVF::Mult_field_exp_ksqr_dt(DP dt)
  *			\f$ V(k) = V(k) * \exp(-\nu K^2 dt) + \exp(-\nu_h)  K^4 dt) \f$
  */
 
-void IncVF::Mult_nlin_exp_ksqr_dt(DP dt)
+void IncVF::Mult_nlin_exp_ksqr_dt(DP dt, DP a)
 {
 
 	if (hyper_dissipation_switch == 0) 
 	{
-		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, kfactor);
 	}
 	
 	else
 	{
-		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 						
-		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 						
-		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*dt, 
-						-hyper_dissipation_coefficient*dt, kfactor);
+		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, 
+						-hyper_dissipation_coefficient*a*dt, kfactor);
 	}
 
 }
@@ -127,15 +127,15 @@ void IncVF::Mult_nlin_exp_ksqr_dt(DP dt)
  * @return when hyper_dissipation_switch == 1, 
  *			\f$ F(k) = F(k) * \exp(-\kappa K^2 dt) + \exp(-\kappa_h)  K^4 dt) \f$
  */
-void IncSF::Mult_field_exp_ksqr_dt(DP dt)
+void IncSF::Mult_field_exp_ksqr_dt(DP dt, DP a)
 {
 
 	 if (hyper_diffusion_switch == 0) 
-		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*dt, ISF_kfactor); 
+		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, ISF_kfactor); 
 		
 	 else
-		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*dt, 
-						-hyper_diffusion_coefficient*dt, ISF_kfactor); 	
+		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, 
+						-hyper_diffusion_coefficient*a*dt, ISF_kfactor); 	
 	
 } 
  
@@ -151,15 +151,15 @@ void IncSF::Mult_field_exp_ksqr_dt(DP dt)
  * @return when hyper_dissipation_switch == 1, 
  *			\f$ F(k) = F(k) * \exp(-\kappa K^2 dt) + \exp(-\kappa_h)  K^4 dt) \f$
  */
-void IncSF::Mult_nlin_exp_ksqr_dt(DP dt)
+void IncSF::Mult_nlin_exp_ksqr_dt(DP dt, DP a)
 { 
 
 	if (hyper_diffusion_switch == 0) 						  
-		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*dt, ISF_kfactor); 
+		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, ISF_kfactor); 
 		
 	else
-		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*dt, 
-						-hyper_diffusion_coefficient*dt, ISF_kfactor);
+		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, 
+						-hyper_diffusion_coefficient*a*dt, ISF_kfactor);
 } 
 
 //******************************* End of mult_exp_visc.cc  ************************************

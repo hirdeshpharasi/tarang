@@ -67,7 +67,7 @@ void IncFluid::Time_advance()
 	if (integ_scheme == "EULER") 
 	{
 		Compute_rhs();  
-		Single_time_step_EULER(Tdt);  
+		Single_time_step(Tdt, 1, 1, 1);   
 	}
 	
 	
@@ -83,17 +83,13 @@ void IncFluid::Time_advance()
 		Copy_field_to(Vcopy);
   
 		Compute_rhs();  
-		Single_time_step_EULER(Tdt/2);						// Goto the mid point
+		Single_time_step(Tdt, 0.5, 0.5, 0.5);					// Goto the mid point
   
-		Compute_force();
-		Compute_nlin();										// Compute nlin using V(t+dt/2)
-		Satisfy_reality_condition_nlin();
-		Add_force();										// nlin = nlin - f
-		Compute_pressure();									// Compute pressure using V(t+dt/2)
-		Compute_rhs();										// compute rhs using V(t+dt/2) 
+		Compute_force_TO_rhs();
   
 		Copy_field_from(Vcopy);
-		IncFluid::Single_time_step_RK2(Tdt);							
+		
+		Single_time_step(Tdt, 1, 0.5, 1);						
 		// Time-step by Tdt now using the mid-point slopes 
 	}
 	
@@ -114,59 +110,47 @@ void IncFluid::Time_advance()
 		// Step 1
 		
 		Compute_rhs();    
-		Single_time_step_EULER(Tdt/2);							// u1: Goto the mid point
+		Single_time_step(Tdt, 0.5, 0.5, 0.5);					// u1: Goto the mid point
 
-		Mult_nlin_exp_ksqr_dt(Tdt);								// *nlin = *nlin x exp(-nu k^2 dt)
-		Add_nlin_to_field(tot_Vrhs, 1.0);						// tot_rhs = rhs(t0, u0) 
+		// tot_Vrhs += (Tdt/6)*RHS(t)*exp(-nu k^2 b*dt) with b=1.0
+		//	RHS is contained in *nlin
+		Compute_RK4_parts(tot_Vrhs, Tdt, 1.0, Tdt/6);
 		
 		// Step 2
 		
-		Compute_force();
-		Compute_nlin();											// Compute nlin using V(t+dt/2)
-		Satisfy_reality_condition_nlin();
-		Add_force();											// nlin = nlin - f
-		Compute_pressure();										// Compute pressure using V(t+dt/2)
-		Compute_rhs();
-		Copy_field_from(Vcopy);
-		Single_time_step_Semi_implicit(Tdt/2);						// u2: Goto the mid point
+		Compute_force_TO_rhs();
 		
-		Mult_nlin_exp_ksqr_dt(Tdt/2);							// tot_rhs += rhs(tmid, umid1)	
-		Add_nlin_to_field(tot_Vrhs, 2.0);
+		Copy_field_from(Vcopy);
+		
+		Single_time_step(Tdt, 0.5, 0, 0.5);						// u2: Goto the mid point
+		
+		Compute_RK4_parts(tot_Vrhs, Tdt, 0.5, Tdt/3);
 		
 		// Step 3
 		
-		Compute_force();
-		Compute_nlin();		
-		Satisfy_reality_condition_nlin();											
-		Add_force();													
-		Compute_pressure();												
-		Compute_rhs();
-		Copy_field_from(Vcopy);
-		Single_time_step_RK2(Tdt);								// u3: Go to the end point
+		Compute_force_TO_rhs();
 		
-		Mult_nlin_exp_ksqr_dt(Tdt/2);									
-		Add_nlin_to_field(tot_Vrhs, 2.0);						// tot_rhs += rhs(tmid, umid2)
+		Copy_field_from(Vcopy);
+		
+		Single_time_step(Tdt, 1, 0.5, 1);						// u3: Go to the end point
+		
+		Compute_RK4_parts(tot_Vrhs, Tdt, 0.5, Tdt/3);
 		
 		// Step 4
 		
-		Compute_force();
-		Compute_nlin();	
-		Satisfy_reality_condition_nlin();												
-		Add_force();													
-		Compute_pressure();												
-		Compute_rhs();
+		Compute_force_TO_rhs();
 										
-		Add_nlin_to_field(tot_Vrhs, 1.0);						// tot_rhs += rhs(t+dt, u3)
+		Compute_RK4_parts(tot_Vrhs, Tdt, 0, Tdt/6);				// tot_rhs += rhs(t+dt, u3)
 		
 		// Final result
 		
 		
 		Copy_field_from(Vcopy);
-		Mult_field_exp_ksqr_dt(Tdt);
+		Mult_field_exp_ksqr_dt(Tdt, 1.0);
 			
-		 *V1 = *V1 + (Tdt/6) * (*tot_Vrhs.V1);
-		 *V2 = *V2 + (Tdt/6) * (*tot_Vrhs.V2);
-		 *V3 = *V3 + (Tdt/6) * (*tot_Vrhs.V3);
+		*V1 = *V1 + (*tot_Vrhs.V1);
+		*V2 = *V2 + (*tot_Vrhs.V2);
+		*V3 = *V3 + (*tot_Vrhs.V3);
 		 
 	}		// Of RK4
 	

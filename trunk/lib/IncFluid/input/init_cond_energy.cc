@@ -51,7 +51,7 @@ extern Uniform<DP> SPECrand;
 
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters a = (*init_cond_para)(1).
+ *			Parameters a = (*init_cond_int_para)(1).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k) is constructed so that it has the given energy but the phases
@@ -67,7 +67,7 @@ void  IncFluid::Init_cond_energy_spectrum()
 	int index, maxN3;
 
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
 	
 	
 	if (N[3] > 2)
@@ -135,14 +135,25 @@ void  IncFluid::Init_cond_energy_spectrum()
  */
 void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 {
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_energy_spectrum_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_energy_spectrum_RB(T);
+	
+}
+
+
+void  IncFluid::Init_cond_energy_spectrum_scalar(IncSF& T)
+{
 
 	DP kkmag, ek, ekT;
 	DP amp, phase1, phase2, phase3;
 	DP ampT, phaseT;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(2));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -204,6 +215,89 @@ void  IncFluid::Init_cond_energy_spectrum(IncSF& T)
 }
 
 
+//******************************************************	
+
+void  IncFluid::Init_cond_energy_spectrum_RB(IncSF& T)
+{
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_energy_spectrum();	
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	
+	else if (globalvar_Pr_switch == "PRINFTY")
+	{
+		// first fill T(k) modes and then compute u(k) using the constraint.
+		DP kkmag, ekT;
+		DP ampT, phaseT;
+		int index, maxN3;
+		
+		if (N[3] > 2)
+			maxN3 = N[3]/2;
+		
+		else	// 2D
+			maxN3 = 0;
+		
+		Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(1));
+		
+		for (int i1=0; i1<N[1]; i1++)
+			for (int i2=0; i2<N[2]; i2++) 
+				for (int i3=0; i3<=maxN3; i3++) 
+				{
+					kkmag = Kmagnitude(basis_type, i1, i2, i3, N, kfactor);
+					
+					if (kkmag > MYEPS)
+					{
+						index = (int) ceil(kkmag);
+						
+						ekT= (*T.CS_shell_ek)(index) 
+								/ Approx_number_modes_in_shell(basis_type, N, index, kfactor);
+						
+						ampT = sqrt(2*ekT);
+						
+						phaseT = 2*M_PI * SPECrand.random();
+						
+						T.Put_scalar_amp_phase_comp_conj(i1, i2, i3, N, ampT, phaseT);
+					}	
+				}	
+		
+		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V3)(0,0,0) =  (*T.F)(0,0,0) = 0.0;
+		
+		Satisfy_reality_condition_field(T);
+		
+		if (alias_switch == "DEALIAS")		Dealias(T);
+		
+		if (N[3] == 2)
+		{
+			(*V1)(Range::all(), Range::all(), 1) = 0.0;
+			(*V2)(Range::all(), Range::all(), 1) = 0.0;
+			(*V3)(Range::all(), Range::all(), Range(0,1)) = 0.0;
+			
+			(*T.F)(Range::all(), Range::all(), 1) = 0.0;
+		}
+		
+		if (N[2] == 1)
+		{
+			(*V2)(Range::all(), 0, Range::all()) = 0.0;
+		}
+		
+		Init_cond_Prinfty(T);
+	}
+	
+	else	// PRLARGE or PRSMALL
+		Init_cond_energy_spectrum_scalar(T);
+	
+	
+	Zero_modes_RB_slip(T);
+}	
+
+
+
+
 //*********************************************************************************************
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
@@ -224,8 +318,8 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 	DP ampW, phase1W, phase2W, phase3W;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -303,9 +397,9 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 //*********************************************************************************************
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters: For velocity field a = (*init_cond_para)(1).
- *						For W field a = (*init_cond_para)(2).
- *						For T field a = (*init_cond_para)(3).
+ *			Parameters: For velocity field a = (*init_cond_int_para)(1).
+ *						For W field a = (*init_cond_int_para)(2).
+ *						For T field a = (*init_cond_int_para)(3).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k), W(k), T.F(k) is constructed so that it has the given energy 
@@ -322,9 +416,9 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 	DP ampT, phaseT;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(2));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(3));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(2));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(3));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -426,8 +520,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	complx uperp1, uperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	DP sk = (*init_cond_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	DP sk = (*init_cond_int_para)(2);
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -490,7 +584,18 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
  * 
  * @note	The mean mode has zero energy.
  */
+
 void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
+{
+	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
+		Init_cond_energy_helicity_spectrum_scalar(T);
+	
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+		Init_cond_energy_helicity_spectrum_RB(T);
+}
+
+
+void  IncFluid::Init_cond_energy_helicity_spectrum_scalar(IncSF& T)
 {
 
 	DP kkmag, ek, amp, phase1, phase2, phase3;
@@ -498,10 +603,10 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
 	complx uperp1, uperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	DP sk = (*init_cond_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	DP sk = (*init_cond_int_para)(2);
 	
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(3));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(3));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -569,6 +674,33 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncSF& T)
 }
 
 
+void  IncFluid::Init_cond_energy_helicity_spectrum_RB(IncSF& T)
+{
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+	{
+		Init_cond_energy_helicity_spectrum();	
+		
+		*T.F = *V1; 
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		cout << "Init_cond_energy_helicity_spectrum_RB  NOT possible for PRINFTY condition" 
+		<< endl;
+		exit(0);
+	}
+	
+	else
+		Init_cond_energy_helicity_spectrum_scalar(T);
+	
+	Zero_modes_RB_slip(T);		
+	
+}
+
+
+
 //*********************************************************************************************
 /** @brief Create initial condition based on given spectrum Sk(k). 
  *			Parameters a = IC(1); sk = IC(2); 
@@ -590,13 +722,13 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 	complx uperp1, uperp2, wperp1, wperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_para)(1));
-	DP sk = (*init_cond_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	DP sk = (*init_cond_int_para)(2);
 	
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_para)(3));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(3));
 	
-	DP skW = (*init_cond_para)(4);			// = HM(k) * k / EW(k)
-	h = (*init_cond_para)(5);			// = 2*Hc/(amp*ampW)
+	DP skW = (*init_cond_int_para)(4);			// = HM(k) * k / EW(k)
+	h = (*init_cond_int_para)(5);			// = 2*Hc/(amp*ampW)
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -694,7 +826,7 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 	
 	Init_cond_energy_helicity_spectrum(W);
 	
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_para)(6));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(6));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -753,94 +885,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 	}
 					
 }
-
-//
-//
-
-//*********************************************************************************************		
-
-void  IncFluid::Init_cond_energy_spectrum(string Pr_switch, IncSF& T)
-{ 
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_energy_spectrum();	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_energy_spectrum(T);
-		
-	Zero_modes_RB_slip(T);		
-		
-}	
-
-
-//*********************************************************************************************
-
-void  IncFluid::Init_cond_energy_helicity_spectrum(string Pr_switch, IncSF& T)
-{ 
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_energy_helicity_spectrum();	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_energy_helicity_spectrum(T);
-		
-	Zero_modes_RB_slip(T);		
-		
-}		
-	
-	
-	
-//*********************************************************************************************
-
-void  IncFluid::Init_cond_energy_spectrum(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_energy_spectrum(W);	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_energy_spectrum(W, T);
-		
-	Zero_modes_RB_slip(W, T);		
-		
-}	
-
-
-//*********************************************************************************************
-
-void  IncFluid::Init_cond_energy_helicity_spectrum(string Pr_switch, IncVF& W, IncSF& T)
-{
-
-	if (Pr_switch == "PRZERO") 
-	{
-		Init_cond_energy_helicity_spectrum(W);	
-					
-		*T.F = *V1; 
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
-	}
-	
-	else
-		Init_cond_energy_helicity_spectrum(W, T);
-		
-	Zero_modes_RB_slip(W, T);		
-}		
-
-
 
 //********************************** init_cond_energy.cc **************************************
 

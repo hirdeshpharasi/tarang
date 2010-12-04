@@ -106,19 +106,17 @@ int IMHD_main(string data_dir_name)
 
 
 
-	// Variables connected to the initial conditions
+	// init-cond para
+	Array<int,1>	init_cond_meta_para(MAXSIZE_INIT_COND_META_PARA);
+	Array<int,1>	init_cond_int_para(MAXSIZE_INIT_COND_INT_PARA);
+	Array<DP,1>		init_cond_double_para(MAXSIZE_INIT_COND_DOUBLE_PARA);
+	string			init_cond_string_para[MAXSIZE_INIT_COND_STRING_PARA];
 	
-	Array<int,1>	field_input_meta_para(MAXSIZE_INIT_COND_FIELD_META_PARA);			
-	
-	Array<DP,1>		init_cond_para(MAXSIZE_INIT_COND_FIELD_PARA);	
-	
-	
-	// Variables connected to the force field
-		
-	Array<int,1>	force_field_meta_para(MAXSIZE_FORCE_META_PARA);
-	
-	Array<DP, 1>	force_field_para(MAXSIZE_FORCE_PARA);		
-	
+	// forcing para
+	Array<int,1>	force_meta_para(MAXSIZE_FORCE_META_PARA);
+	Array<int,1>	force_int_para(MAXSIZE_FORCE_INT_PARA);
+	Array<DP,1>		force_double_para(MAXSIZE_FORCE_DOUBLE_PARA);
+	string			force_string_para[MAXSIZE_FORCE_STRING_PARA];		
 	
 	
 	//**************** Program starts here ****************
@@ -130,13 +128,14 @@ int IMHD_main(string data_dir_name)
 	para_file.open(filename.c_str());		// filename = data_dir_name/in/para.d
 		
 	Read_para(para_file, 3, no_of_fields, N, string_switches, switches,
-					diss_coefficients, hyper_diss_coefficients, 
-					solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
-					time_para, time_save, 
-					misc_output_para, ET_parameters, ET_shell_radii_sector_array,
-					no_output_k_r, out_k_r_array,
-					field_input_meta_para, init_cond_para,
-					force_field_meta_para, force_field_para);
+			  diss_coefficients, hyper_diss_coefficients, 
+			  solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+			  time_para, time_save, 
+			  misc_output_para, ET_parameters, ET_shell_radii_sector_array,
+			  no_output_k_r, out_k_r_array,
+			  init_cond_meta_para, init_cond_int_para, 
+			  init_cond_double_para, init_cond_string_para,
+			  force_meta_para, force_int_para, force_double_para, force_string_para);	
 
 	string_switches[0] = data_dir_name;
 	
@@ -162,7 +161,8 @@ int IMHD_main(string data_dir_name)
 	kfactor[2] = solver_double_para(2);
 	kfactor[3] = solver_double_para(3);
 	
-	cout << "kfactor: " << kfactor[1] << " "  << kfactor[2] << " "  << kfactor[3] 
+	if (my_id == master_id)
+		cout << "kfactor: " << kfactor[1] << " "  << kfactor[2] << " "  << kfactor[3] 
 			<< endl << endl;
 	
 	
@@ -218,12 +218,14 @@ int IMHD_main(string data_dir_name)
 	// Constructors of Vector fields
 
 	IncFluid  U(N, string_switches, switches, kfactor, 
-					diss_coefficients[0], hyper_diss_coefficients[0], 
-					time_para, time_save,
-					misc_output_para, no_output_k_r, out_k_r_array,
-					ET_parameters, ET_shell_radii_sector_array,
-					field_input_meta_para, init_cond_para,
-					force_field_meta_para, force_field_para
+				diss_coefficients[0], hyper_diss_coefficients[0],
+				solver_meta_para, solver_int_para, solver_double_para, solver_string_para,
+				time_para, time_save,
+				misc_output_para, no_output_k_r, out_k_r_array,
+				ET_parameters, ET_shell_radii_sector_array,
+				init_cond_meta_para, init_cond_int_para, 
+				init_cond_double_para, init_cond_string_para,
+				force_meta_para, force_int_para, force_double_para, force_string_para
 				);		
 	
 	
