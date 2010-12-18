@@ -54,7 +54,7 @@ void  IncFluid::Init_cond_Rayleigh_Taylor(IncSF& T)
 
 	if (basis_type == "SCFT")
 	{
-		DP		slope = 1000;
+		DP		slope = (*init_cond_double_para)(1);
 		DP		x;
 		
 		*V1 = 0.0;

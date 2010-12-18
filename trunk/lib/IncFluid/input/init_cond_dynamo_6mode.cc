@@ -47,16 +47,16 @@ void IncFluid::Init_cond_DYNAMO_SIX_MODE(IncVF& W)
 
 	if (basis_type == "FOUR")
 	{
-		int k0 = ((int) (*init_cond_int_para)(1));
-		DP amp101 = (*init_cond_int_para)(2);
-		DP amp011 = (*init_cond_int_para)(3);
-		DP amp112 = (*init_cond_int_para)(4);
-		DP h = (*init_cond_int_para)(5);
+		int k0 = ((int) (*init_cond_double_para)(1));
+		DP amp101 = (*init_cond_double_para)(2);
+		DP amp011 = (*init_cond_double_para)(3);
+		DP amp112 = (*init_cond_double_para)(4);
+		DP h = (*init_cond_double_para)(5);
 		
-		DP ampW101 = (*init_cond_int_para)(6);
-		DP ampW011 = (*init_cond_int_para)(7);
-		DP ampW112 = (*init_cond_int_para)(8);
-		DP hW = (*init_cond_int_para)(9);
+		DP ampW101 = (*init_cond_double_para)(6);
+		DP ampW011 = (*init_cond_double_para)(7);
+		DP ampW112 = (*init_cond_double_para)(8);
+		DP hW = (*init_cond_double_para)(9);
 		
 		Setup_SIX_MODE_field(k0, amp101, amp011, amp112, h);
 		W.Setup_SIX_MODE_field(k0, ampW101, ampW011, ampW112, hW);

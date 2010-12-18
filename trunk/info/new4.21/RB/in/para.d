@@ -5,12 +5,9 @@
 
 
 (1)solver-meta-para(int,float,string)		2	6	2
-(2)Solver-para-int		0	1
-(3)Solver-para-float(kfactor,r,pr,u3_factor)	1.0	1.0	1.0	1.5 6.8	1
+(2)Solver-para-int		1	1
+(3)Solver-para-float		1.0	1.0	1.0	10 6.8	1
 (4)Solver-para-string		PRLARGE	USMALL
-
-
-Diagnostic-procedure	0	10000
 
 
 (1)basis_type		SCFT
@@ -28,26 +25,56 @@ Diagnostic-procedure	0	10000
 (6)structure-fn		0
 (7)planar-structure-fn	0
 (8)skpq-switch		0 
-(9)Output-real-space-r 	1
+(9)Output-real-space-r 	0
 (10)sincos-horizintal2d   0
 (11)free-slip-3d	0
-(12)helicity-flux-shells 0
-(13)anisotropy-switch(1,2,3)		3
-(14)waveno(Actual(0)_or_grid(1))	0
- 
+(12)helicity-flux	0
+(13)helicity-shell_ET   0
+(14)anisotropy-switch(1,2,3)		3
+(15)waveno(Actual(0)_or_grid(1))	0
+(16)fixed_dt_switch		0
+(17)apply_reality_cond_IC_switch	0
+(18)apply_reality_cond_alltime_switch	0
+(19)output_vx_vy_switch		1
+(20)input_vx_vy_switch		0
+(21)force_W_switch		1
+(22)force_T_switch		1
 
+ 
 #diss_coeff + diffusion_coefficient (If RB -- ignore it..)
-0.0	0.0
+0	0
 
 #Hyper_dissipation_switch + hyper dissipation coefficient
-0	1
+0	0
 
 
 U.Tinit 	0
-U.Tfinal 	0.1
+U.Tfinal 	0.005
 U.Tdt		0.001	
-U.Tdiag_init	0.0
+U.Tdiag_basic_init	0.0
+U.Tdiag_advanced_init	0.0
 U.Tstructure_fn_start	10.0
+
+
+(1)U.Tglobal_save  		0.001
+(2)U.Tfield_save		0.005
+(3)U.Tfield_frequent_save 	10
+(4)U.Tfield_reduced_save	0.005
+(5)U.Trealfield_save  		10
+(6)U.Tfield_k_save		0.1
+(7)U.Tfield_r_save		0.1
+(8)U.Tspectrum_save 		1000
+(9)U.Tpressure_spectrum_save 	100
+(10)U.Tflux_save		100
+(11)U.Tshell_to_shell_save 	100
+(12)U.Tring_to_ring_Ek_save 	100
+(13)U.Tring_to_ring_Ek_save 	100
+(14)U.TCylring_to_ring_Ek_save 	100
+(15)U.TCylring_to_ring_ET_save 	100
+(16)U.Tstruct_fn_save		100
+(17)U.Tmoment			100
+(18)U.Tskpq			100
+(19)U.Tcout_save 		0.001
 
 
 (1)Ring-spectrum-input-scheme 	0
@@ -55,7 +82,7 @@ U.Tstructure_fn_start	10.0
 (3)Number-slabs-cyl 		5
 (4)qmin 			1
 (5)qmax 			10
-(6-to-5+D)N_out_reduced		4  4  2
+(6-to-5+D)N_out_reduced		4	4	4
 
 
 ET:(1)real-imag-switch	0
@@ -81,7 +108,7 @@ ET:(1)real-imag-switch	0
 	
 
 (1)input-meta-para(int,float,string)		4	3	1
-(2)input-para-int:field_input_proc,N_in_reduceced	3	64 	64	2
+(2)input-para-int:field_input_proc,N_in_reduceced	3	8	8	8
 (3)input-para-float		1.0	1.0	1.0
 (4)input-para-string		TEST
 
@@ -90,6 +117,7 @@ ET:(1)real-imag-switch	0
 (2)force-para-int:field_input_para,N_in_reduceced	51
 (3)force-para-float		5.0	5.0
 (4)force-para-string		TEST
+
 
 
 

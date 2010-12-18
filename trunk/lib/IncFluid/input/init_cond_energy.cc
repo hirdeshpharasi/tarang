@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, U
  */
 
-/*! \file  init_cond_energy.cc
+/*! \file  init_cond_energy.ccinit_cond_double_para
  * 
  * @brief Construct energy spectrum given parameter values.  Given spectrum construct
  *			random initial condition (phases).
@@ -54,7 +54,7 @@ extern Uniform<DP> SPECrand;
 
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters a = (*init_cond_int_para)(1).
+ *			Parameters a = (*init_cond_double_para)(1).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k) is constructed so that it has the given energy but the phases
@@ -70,7 +70,7 @@ void  IncFluid::Init_cond_energy_spectrum()
 	int index, maxN3;
 
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
 	
 	
 	if (N[3] > 2)
@@ -156,8 +156,8 @@ void  IncFluid::Init_cond_energy_spectrum_scalar(IncSF& T)
 	DP ampT, phaseT;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(2));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -322,8 +322,8 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 	DP ampW, phase1W, phase2W, phase3W;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(2));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_double_para)(2));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -401,9 +401,9 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 //*********************************************************************************************
 
 /** @brief Create initial condition based on given spectrum Sk(k). 
- *			Parameters: For velocity field a = (*init_cond_int_para)(1).
- *						For W field a = (*init_cond_int_para)(2).
- *						For T field a = (*init_cond_int_para)(3).
+ *			Parameters: For velocity field a = (*init_cond_double_para)(1).
+ *						For W field a = (*init_cond_double_para)(2).
+ *						For T field a = (*init_cond_double_para)(3).
  *
  * @note  The energy Sk(k) is divided equally among all the modes in the shell.
  *			Then V(k), W(k), T.F(k) is constructed so that it has the given energy 
@@ -420,9 +420,9 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 	DP ampT, phaseT;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(2));
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(3));
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(2));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(3));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -524,8 +524,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	complx uperp1, uperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	DP sk = (*init_cond_int_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	DP sk = (*init_cond_double_para)(2);
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -607,10 +607,10 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_scalar(IncSF& T)
 	complx uperp1, uperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	DP sk = (*init_cond_int_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	DP sk = (*init_cond_double_para)(2);
 	
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(3));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(3));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -726,13 +726,13 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 	complx uperp1, uperp2, wperp1, wperp2;
 	int index, maxN3;
 	
-	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_int_para)(1));
-	DP sk = (*init_cond_int_para)(2);
+	Model_initial_shell_spectrum(N, *CV_shell_ek, (*init_cond_double_para)(1));
+	DP sk = (*init_cond_double_para)(2);
 	
-	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_int_para)(3));
+	Model_initial_shell_spectrum(N, *W.CV_shell_ek, (*init_cond_double_para)(3));
 	
-	DP skW = (*init_cond_int_para)(4);			// = HM(k) * k / EW(k)
-	h = (*init_cond_int_para)(5);			// = 2*Hc/(amp*ampW)
+	DP skW = (*init_cond_double_para)(4);			// = HM(k) * k / EW(k)
+	h = (*init_cond_double_para)(5);			// = 2*Hc/(amp*ampW)
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;
@@ -830,7 +830,7 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 	
 	Init_cond_energy_helicity_spectrum(W);
 	
-	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_int_para)(6));
+	Model_initial_shell_spectrum(N, *T.CS_shell_ek, (*init_cond_double_para)(6));
 	
 	if (N[3] > 2)
 		maxN3 = N[3]/2;

@@ -52,8 +52,8 @@ void IncFluid::Compute_force_Taylor_Green()
 
 	if (is_force_field_para_read == 0)
 	{
-		int k0 = ((int) (*force_int_para)(1));
-		DP force_amp = (*force_int_para)(2);
+		int k0 = ((int) (*force_double_para)(1));
+		DP force_amp = (*force_double_para)(2);
 		
 		Setup_Taylor_Green_force_field(k0, force_amp);
 		
@@ -93,9 +93,9 @@ void IncFluid::Compute_force_Taylor_Green(IncVF& W)
 	
 	if (is_force_field_para_read == 0)
 	{
-		int k0 = ((int) (*force_int_para)(1));
-		DP force_amp = (*force_int_para)(2);
-		DP forceW_amp = (*force_int_para)(3);
+		int k0 = ((int) (*force_double_para)(1));
+		DP force_amp = (*force_double_para)(2);
+		DP forceW_amp = (*force_double_para)(3);
 		
 		Setup_Taylor_Green_force_field(k0, force_amp);
 		W.Setup_Taylor_Green_force_field(k0, forceW_amp);

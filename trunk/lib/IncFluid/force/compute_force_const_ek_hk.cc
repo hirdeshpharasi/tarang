@@ -66,10 +66,10 @@ void IncFluid::Compute_force_const_energy_helicity()
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_int_para)(1);
-		outer_radius = (*force_int_para)(2);
-		energy_level = (*force_int_para)(3);
-		h_by_k_E = (*force_int_para)(4);				// Hk/(k*e)
+		inner_radius = (*force_double_para)(1);
+		outer_radius = (*force_double_para)(2);
+		energy_level = (*force_double_para)(3);
+		h_by_k_E = (*force_double_para)(4);				// Hk/(k*e)
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
 		
@@ -181,11 +181,11 @@ void IncFluid::Compute_force_const_energy_helicity(IncSF& T)
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_int_para)(1);
-		outer_radius = (*force_int_para)(2);
-		energy_level = (*force_int_para)(3);
-		h_by_k_E	 = (*force_int_para)(4);				// Hk/(k*e)
-		energy_scalar_level = (*force_int_para)(5);
+		inner_radius = (*force_double_para)(1);
+		outer_radius = (*force_double_para)(2);
+		energy_level = (*force_double_para)(3);
+		h_by_k_E	 = (*force_double_para)(4);				// Hk/(k*e)
+		energy_scalar_level = (*force_double_para)(5);
 		
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -312,12 +312,12 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W)
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_int_para)(1);
-		outer_radius = (*force_int_para)(2);
-		energy_level = (*force_int_para)(3);
-		h_by_k_E = (*force_int_para)(4);				// Hk/(k*e)
-		energyW_level = (*force_int_para)(5);
-		h_by_k_E_W = (*force_int_para)(6);	
+		inner_radius = (*force_double_para)(1);
+		outer_radius = (*force_double_para)(2);
+		energy_level = (*force_double_para)(3);
+		h_by_k_E = (*force_double_para)(4);				// Hk/(k*e)
+		energyW_level = (*force_double_para)(5);
+		h_by_k_E_W = (*force_double_para)(6);	
 	
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);
@@ -467,13 +467,13 @@ void IncFluid::Compute_force_const_energy_helicity(IncVF& W, IncSF& T)
 	
 	if (is_force_field_para_read == 0)
 	{
-		inner_radius = (*force_int_para)(1);
-		outer_radius = (*force_int_para)(2);
-		energy_level = (*force_int_para)(3);
-		h_by_k_E = (*force_int_para)(4);				// Hk/(k*e)
-		energyW_level = (*force_int_para)(5);
-		h_by_k_E_W = (*force_int_para)(6);	
-		energy_scalar_level = (*force_int_para)(7);
+		inner_radius = (*force_double_para)(1);
+		outer_radius = (*force_double_para)(2);
+		energy_level = (*force_double_para)(3);
+		h_by_k_E = (*force_double_para)(4);				// Hk/(k*e)
+		energyW_level = (*force_double_para)(5);
+		h_by_k_E_W = (*force_double_para)(6);	
+		energy_scalar_level = (*force_double_para)(7);
 		
 		
 		nf = Get_number_modes_in_shell(basis_type, N, inner_radius, outer_radius, kfactor);

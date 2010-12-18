@@ -56,11 +56,11 @@ void IncFluid::Compute_force_ABC()
 	{
 		if (basis_type == "FOUR")
 		{
-			int k0 = ((int) (*force_int_para)(1));
-			DP A = (*force_int_para)(2);
-			DP B = (*force_int_para)(3);
-			DP C = (*force_int_para)(4);
-			DP force_amp = (*force_int_para)(5);
+			int k0 = ((int) (*force_double_para)(1));
+			DP A = (*force_double_para)(2);
+			DP B = (*force_double_para)(3);
+			DP C = (*force_double_para)(4);
+			DP force_amp = (*force_double_para)(5);
 			
 			Setup_ABC_force_field(k0, force_amp, A, B, C);
 		
@@ -119,12 +119,12 @@ void IncFluid::Compute_force_ABC(IncVF& W)
 	{
 		if (basis_type == "FOUR")
 		{
-			int k0 = ((int) (*force_int_para)(1));
-			DP A = (*force_int_para)(2);
-			DP B = (*force_int_para)(3);
-			DP C = (*force_int_para)(4);
-			DP force_amp = (*force_int_para)(5);
-			DP forceW_amp = (*force_int_para)(6);
+			int k0 = ((int) (*force_double_para)(1));
+			DP A = (*force_double_para)(2);
+			DP B = (*force_double_para)(3);
+			DP C = (*force_double_para)(4);
+			DP force_amp = (*force_double_para)(5);
+			DP forceW_amp = (*force_double_para)(6);
 			
 			Setup_ABC_force_field(k0, force_amp, A, B, C);
 			W.Setup_ABC_force_field(k0, forceW_amp, A, B, C);

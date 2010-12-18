@@ -52,8 +52,8 @@
 void IncFluid::Init_cond_Taylor_Green()
 {
 	
-	int k0 = (*init_cond_int_para)(1);
-	DP amp = (*init_cond_double_para)(1);
+	int k0 = ((int) (*init_cond_double_para)(1));
+	DP amp = (*init_cond_double_para)(2);
 	
 	Setup_Taylor_Green_field(k0, amp);
 }
@@ -111,8 +111,8 @@ void  IncFluid::Init_cond_Taylor_Green_RB(IncSF& T)
 void IncFluid::Init_cond_Taylor_Green(IncVF& W)
 {
 
-	int k0 = (*init_cond_int_para)(1);
-	DP amp = (*init_cond_double_para)(1);
+	int k0 = ((int) (*init_cond_double_para)(1));
+	DP amp = (*init_cond_double_para)(2);
 	DP ampW = (*init_cond_double_para)(3);
 	
 	Setup_Taylor_Green_field(k0, amp);
