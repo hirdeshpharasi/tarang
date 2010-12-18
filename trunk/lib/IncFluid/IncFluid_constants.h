@@ -42,7 +42,7 @@
 #define _H_IF_constants
 
 const int MAXSIZE_STRING_SWITCHES_ARRAY = 20;
-const int MAXSIZE_SWITCHES_ARRAY = 20;
+const int MAXSIZE_SWITCHES_ARRAY = 30;
 
 const int MAXSIZE_SOLVER_META_PARA = 10;
 const int MAXSIZE_SOLVER_INT_PARA = 10;

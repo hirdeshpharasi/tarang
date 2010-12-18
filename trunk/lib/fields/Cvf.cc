@@ -712,11 +712,11 @@ void CVF::CV_Dealias()
 **********************************************************************************************/
 
 
-void CVF::CV_output(ofstream& file_out, Array<complx,3> temp_array)
+void CVF::CV_output(ofstream& file_out, Array<complx,3> temp_array, string format)
 {
-	Write_data_MPI(file_out, Ncv, *V1, temp_array);
-	Write_data_MPI(file_out, Ncv, *V2, temp_array);
-	Write_data_MPI(file_out, Ncv, *V3, temp_array);
+	Write_data_MPI(CV_basis_type, file_out, Ncv, *V1, temp_array, format);
+	Write_data_MPI(CV_basis_type, file_out, Ncv, *V2, temp_array, format);
+	Write_data_MPI(CV_basis_type, file_out, Ncv, *V3, temp_array, format);
 }
 
 /*
@@ -729,26 +729,27 @@ void CVF::CV_output_hdf5(DataSet* dataset1R, DataSet* dataset1C, DataSet* datase
 	Write_data_MPI_hdf5(dataset3R, dataset3C, Ncv, *V1, temp_array);
 }
 */
-void CVF::CV_output(ofstream& file_out, int Nreduced[], Array<complx,3> temp_array)
+void CVF::CV_output(ofstream& file_out, int Nreduced[], string format)
 {
-	Write_data_MPI(file_out, Ncv, Nreduced, *V1, temp_array);
-	Write_data_MPI(file_out, Ncv, Nreduced, *V2, temp_array);
-	Write_data_MPI(file_out, Ncv, Nreduced, *V3, temp_array);
+	Write_data_MPI(CV_basis_type, file_out, Ncv, Nreduced, *V1, format );
+	Write_data_MPI(CV_basis_type, file_out, Ncv, Nreduced, *V2, format);
+	Write_data_MPI(CV_basis_type, file_out, Ncv, Nreduced, *V3, format);
 }
 
-void CVF::CV_input(ifstream& file_in, Array<complx,3> temp_array)
+void CVF::CV_input(ifstream& file_in, Array<complx,3> temp_array, string format)
 {
-
-	Read_data_MPI(file_in, Ncv, *V1, temp_array);
-	Read_data_MPI(file_in, Ncv, *V2, temp_array);
-	Read_data_MPI(file_in, Ncv, *V3, temp_array);  
+	Read_data_MPI(CV_basis_type, file_in, Ncv, *V1, temp_array, format);
+	Read_data_MPI(CV_basis_type, file_in, Ncv, *V2, temp_array, format);
+	Read_data_MPI(CV_basis_type, file_in, Ncv, *V3, temp_array, format);	
 }
 
-void CVF::CV_input(ifstream& file_in, int Nreduced[], Array<complx,3> temp_array)
+
+void CVF::CV_input(ifstream& file_in, int Nreduced[], string format)
 {
-	Read_data_MPI(file_in, Ncv, Nreduced, *V1, temp_array);  
-	Read_data_MPI(file_in, Ncv, Nreduced, *V2, temp_array);	
-	Read_data_MPI(file_in, Ncv, Nreduced, *V3, temp_array);
+	Read_data_MPI(CV_basis_type, file_in, Ncv, Nreduced, *V1, format);  
+	Read_data_MPI(CV_basis_type, file_in, Ncv, Nreduced, *V2, format);	
+	Read_data_MPI(CV_basis_type, file_in, Ncv, Nreduced, *V3, format);
+	
 }
 
 

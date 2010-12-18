@@ -87,8 +87,8 @@ public:
 	string			data_dir_name;
 	
 	string			integ_scheme;
-	string			nos_output_field_mode;			// ASCII or BINARY
-	string			nos_input_field_mode;
+	string			output_field_format;			// ASCII or HDF
+	string			input_field_format;
 
 /*
 	string 			filename_hdf5;
@@ -110,8 +110,18 @@ public:
 	int				les_switch;						// 1 if les on
 	int				skpq_switch;
 	int				output_field_r_switch;
-	int				sincos_horizontal_2D_switch;	
-	// 1 if horizontal basis function is cos(k0 z) or sin(k0 z).
+	int				free_slip_verticalwall_switch;
+	
+	int				helicity_flux_switch;
+	int				helicity_shell_ET_switch;
+	int				fixed_dt_switch;
+	int				apply_realitycond_IC_switch;
+	int				apply_realitycond_alltime_switch;
+	int				output_vx_vy_switch;
+	int				input_vx_vy_switch;
+	int				force_W_switch;					// 1 if force for the secondary IncVF is present
+	int				force_T_switch;					// 1 if force for the IncSF is present
+	
 	
 	string			string_switches_all[MAXSIZE_STRING_SWITCHES_ARRAY];
 	Array<int,1>	*switches_all;
@@ -512,8 +522,6 @@ public:
 	
 	void Output_flux();
 	void Output_flux(IncSF& T);
-	void Output_flux_scalar(IncSF& T);
-	void Output_flux_RB(IncSF& T);
 	void Output_flux(IncVF& W);
 	void Output_flux(IncVF& W, IncSF& T);	
 	

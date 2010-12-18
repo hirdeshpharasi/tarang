@@ -226,24 +226,18 @@ void RVF::RV_Dealias()
    
 **********************************************************************************************/
 
-void RVF::RV_Output(ofstream& fileout, Array<complx,3> temp)
-{	
-
-	Output_asreal(fileout, Nrv, *V1r, temp);
-	
-	Output_asreal(fileout, Nrv, *V2r, temp); 
-	
-	Output_asreal(fileout, Nrv, *V3r, temp);
+void RVF::RV_Output(ofstream& fileout, Array<complx,3> temp, string format)
+{		
+	Output_asreal(fileout, Nrv, *V1r, temp, format);
+	Output_asreal(fileout, Nrv, *V2r, temp, format); 
+	Output_asreal(fileout, Nrv, *V3r, temp, format);
 }
 
-void RVF::RV_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_array)
+void RVF::RV_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_array, string format)
 {	
-	
-	Output_asreal_transpose_order(fileout, Nrv, *V1r, temp_array);
-	
-	Output_asreal_transpose_order(fileout, Nrv, *V2r, temp_array); 
-	
-	Output_asreal_transpose_order(fileout, Nrv, *V3r, temp_array);
+	Output_asreal_transpose_order(fileout, Nrv, *V1r, temp_array, format);
+	Output_asreal_transpose_order(fileout, Nrv, *V2r, temp_array, format); 
+	Output_asreal_transpose_order(fileout, Nrv, *V3r, temp_array, format);
 }
 
 /*

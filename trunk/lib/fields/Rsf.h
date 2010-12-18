@@ -147,9 +147,9 @@ public:
 	//*****************************************************************************************
 	
 	/// Output F to fileout as real.
-	void RS_Output(ofstream& fileout, Array<complx,3> temp_array);
+	void RS_Output(ofstream& fileout, Array<complx,3> temp_array, string format);
 	
-	void RS_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_r);
+	void RS_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_r, string format);
 	
 }; 
 

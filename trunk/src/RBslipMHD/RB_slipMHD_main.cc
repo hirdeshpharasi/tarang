@@ -291,8 +291,6 @@ int RB_slipMHD_main(string data_dir_name)
 		U.Output_field_k_inloop(W, T, Pr_switch);						
 		// T(k) in the output computation needs nlin at the present time
 		
-		U.Satisfy_reality_condition(W, T);
-		
 		U.Add_force(W, T, Pr_switch);															
 		
 		U.Compute_pressure();  
@@ -314,6 +312,12 @@ int RB_slipMHD_main(string data_dir_name)
 			cout << "ERROR: Numerical Overflow " << endl;  
 			break; 
 		}
+		
+		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
+			U.free_slip_verticalwall(W, T);
+		
+		if (U.apply_realitycond_alltime_switch == 1)
+			U.Satisfy_reality_condition_field(W. T);
 		
 		U.Output_all_inloop(W, T, Ra, Pr, Pr_switch, RB_Uscaling);
 		

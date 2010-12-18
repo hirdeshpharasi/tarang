@@ -142,8 +142,8 @@ int RB_slip_main(string data_dir_name)
 
 	string_switches[0] = data_dir_name;
 	
-	globalvar_anisotropy_switch = switches(13);
-	globalvar_waveno_switch = switches(14);
+	globalvar_anisotropy_switch = switches(14);
+	globalvar_waveno_switch = switches(15);
 	
 
 	if (my_id == master_id)
@@ -377,8 +377,6 @@ int RB_slip_main(string data_dir_name)
 		U.Output_field_k_inloop(T);						
 		// T(k) in the output computation needs nlin at the present time
 		
-		U.Satisfy_reality_condition(T);
-		
 		U.Add_force(T);															
 		
 		U.Compute_pressure();  
@@ -399,6 +397,12 @@ int RB_slip_main(string data_dir_name)
 		{ 
 			cout << "ERROR: Numerical Overflow " << endl;  break; 
 		}
+		
+		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
+			U.free_slip_verticalwall(T);
+		
+		if (U.apply_realitycond_alltime_switch == 1)
+			U.Satisfy_reality_condition_field(T);
 		
 		U.Output_all_inloop(T);
 	}

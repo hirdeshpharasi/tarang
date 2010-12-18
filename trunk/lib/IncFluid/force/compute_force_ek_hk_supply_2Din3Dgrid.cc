@@ -105,8 +105,6 @@ void IncFluid::Compute_force_const_energy_helicity_supply_2Din3Dgrid()
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1,	outer_radius, kfactor) == 1) )
 		Dealias_force();
-	
-	Satisfy_reality_condition_force_field();
 						
 }
 
@@ -189,8 +187,6 @@ void IncFluid::Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncSF& T)
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1, outer_radius, kfactor) == 1) )
 		Dealias_force();
-	
-	Satisfy_reality_condition_force_field(T);
 						
 }
 
@@ -273,10 +269,7 @@ void IncFluid::Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncVF& W)
 			
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1, outer_radius, kfactor) == 1) )
-		Dealias_force(W);
-					
-
-	Satisfy_reality_condition_force_field(W);
+		Dealias_force(W);					
 }
 
 
@@ -379,8 +372,6 @@ void IncFluid::Compute_force_const_energy_helicity_supply_2Din3Dgrid(IncVF& W, I
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1, outer_radius, kfactor) == 1) )
 		Dealias_force(W, T);
-	
-	Satisfy_reality_condition_force_field(W, T);
 					
 }
 

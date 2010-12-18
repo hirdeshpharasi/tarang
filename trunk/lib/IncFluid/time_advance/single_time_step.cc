@@ -353,7 +353,7 @@ void IncFluid::Compute_force_TO_rhs()
 	
 	Compute_nlin();										// Compute nlin using V(t+dt/2)
 	
-	Satisfy_reality_condition_nlin();
+//	Satisfy_reality_condition_nlin();
 	
 	Add_force();										// nlin = nlin - f
 	
@@ -369,7 +369,7 @@ void IncFluid::Compute_force_TO_rhs(IncSF& T)
 	
 	Compute_nlin(T);									// Compute nlin using V(t+dt/2)
 	
-	Satisfy_reality_condition_nlin(T);
+//	Satisfy_reality_condition_nlin(T);
 	
 	Add_force(T);										// nlin = nlin - f
 	
@@ -385,7 +385,7 @@ void IncFluid::Compute_force_TO_rhs(IncVF& W)
 	
 	Compute_nlin(W);										// Compute nlin using V(t+dt/2)
 	
-	Satisfy_reality_condition_nlin(W);
+//	Satisfy_reality_condition_nlin(W);
 	
 	Add_force(W);											// nlin = nlin - f
 	
@@ -401,7 +401,7 @@ void IncFluid::Compute_force_TO_rhs(IncVF& W, IncSF& T)
 	
 	Compute_nlin(W, T);										// Compute nlin using V(t+dt/2)
 	
-	Satisfy_reality_condition_nlin(W, T);
+//	Satisfy_reality_condition_nlin(W, T);
 	
 	Add_force(W, T);										// nlin = nlin - f
 	

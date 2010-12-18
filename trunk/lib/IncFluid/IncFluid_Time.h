@@ -49,7 +49,8 @@ class Time
 	DP		Tinit; 
 	DP		Tfinal;
 	DP		Tdt_fixed;
-	DP		Tdiagnostics_init;								// Start diagnostics from
+	DP		Tdiagnostics_basic_init;						// Start basic diagnostics from
+	DP		Tdiagnostics_advanced_init;						// Start advanced diagnostics from
 	DP		Tstructure_fn_start;
 	
 	DP		Tdt;											// variable time including CFL

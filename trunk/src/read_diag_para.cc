@@ -332,7 +332,7 @@ void Read_diag_para
 	//
 	// Switches
 	//
-	for (i=1; i<=14; i++)
+	for (i=1; i<=22; i++)
 	{
 		para_file >> s;  
 		para_file >> switches(i);
@@ -349,11 +349,18 @@ void Read_diag_para
 		cout << "planar_structure_fn_switch: "		<< switches(7) << endl;
 		cout << "skpq_switch: "						<< switches(8) << endl;
 		cout << "output_real_space_switch: "		<< switches(9) << endl;
-		cout << "sincos_horizontal_2D_switch: "		<< switches(10) << endl;
-		cout << "free-slio-3d_switch: "				<< switches(11) << endl;
-		cout << "helicity-flux-shells: "			<< switches(12) << endl;
-		cout << "anisotropic-switch(1,2,3): "		<< switches(13) << endl;
-		cout << "waveno-switch: actual(0) or grid(1) -- "		<< switches(14) << endl;
+		cout << "free-slip-verticalwall-switch: "	<< switches(11) << endl;
+		cout << "helicity-flux_switch: "			<< switches(12) << endl;
+		cout << "helicity-shells_switch: "			<< switches(13) << endl;
+		cout << "anisotropic-switch(1,2,3): "		<< switches(14) << endl;
+		cout << "waveno-switch: actual(0) or grid(1) -- " << switches(15) << endl;
+		cout << "fixed_dt_switch: "					<< switches(16) << endl;
+		cout << "apply_realitycond_IC_switch "		<< switches(17) << endl;
+		cout << "apply_realitycond_alltime_switch "	<< switches(18) << endl;
+		cout << "output_vx_vy_switch	"			<< switches(19) << endl;
+		cout << "input_vx_vy_switch	"				<< switches(20) << endl;
+		cout << "force_W_switch (1 if present)"		<< switches(21) << endl;
+		cout << "force_T_switch (1 if present)"		<< switches(22) << endl;
 		cout << endl << endl;
 	}	
 	

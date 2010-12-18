@@ -56,25 +56,25 @@
  */
 void IncVF::Mult_field_exp_ksqr_dt(DP dt, DP a)
 {
-	
-	if (hyper_dissipation_switch == 0) 
-	{
-		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, kfactor);
-	}
-	
-	else
-	{
-		Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-						
-		Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-						
-		Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-	}
+	if (abs(a) > MYEPS)
+		if (hyper_dissipation_switch == 0) 
+		{
+			Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, kfactor);
+			Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, kfactor);
+			Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, kfactor);
+		}
+		
+		else
+		{
+			Array_exp_ksqr(basis_type, N,  *V1, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+							
+			Array_exp_ksqr(basis_type, N,  *V2, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+							
+			Array_exp_ksqr(basis_type, N,  *V3, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+		}
 
 }
 
@@ -93,25 +93,25 @@ void IncVF::Mult_field_exp_ksqr_dt(DP dt, DP a)
 
 void IncVF::Mult_nlin_exp_ksqr_dt(DP dt, DP a)
 {
-
-	if (hyper_dissipation_switch == 0) 
-	{
-		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, kfactor);
-		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, kfactor);
-	}
-	
-	else
-	{
-		Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-						
-		Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-						
-		Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, 
-						-hyper_dissipation_coefficient*a*dt, kfactor);
-	}
+	if (abs(a) > MYEPS)
+		if (hyper_dissipation_switch == 0) 
+		{
+			Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, kfactor);
+			Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, kfactor);
+			Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, kfactor);
+		}
+		
+		else
+		{
+			Array_exp_ksqr(basis_type, N,  *nlin1, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+							
+			Array_exp_ksqr(basis_type, N,  *nlin2, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+							
+			Array_exp_ksqr(basis_type, N,  *nlin3, -dissipation_coefficient*a*dt, 
+							-hyper_dissipation_coefficient*a*dt, kfactor);
+		}
 
 }
 
@@ -129,13 +129,13 @@ void IncVF::Mult_nlin_exp_ksqr_dt(DP dt, DP a)
  */
 void IncSF::Mult_field_exp_ksqr_dt(DP dt, DP a)
 {
-
-	 if (hyper_diffusion_switch == 0) 
-		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, ISF_kfactor); 
-		
-	 else
-		Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, 
-						-hyper_diffusion_coefficient*a*dt, ISF_kfactor); 	
+	if (abs(a) > MYEPS)
+		if (hyper_diffusion_switch == 0) 
+			Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, ISF_kfactor); 
+			
+		else
+			Array_exp_ksqr(ISF_basis_type, NIs,  *F, -diffusion_coefficient*a*dt, 
+							-hyper_diffusion_coefficient*a*dt, ISF_kfactor); 	
 	
 } 
  
@@ -153,13 +153,13 @@ void IncSF::Mult_field_exp_ksqr_dt(DP dt, DP a)
  */
 void IncSF::Mult_nlin_exp_ksqr_dt(DP dt, DP a)
 { 
-
-	if (hyper_diffusion_switch == 0) 						  
-		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, ISF_kfactor); 
-		
-	else
-		Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, 
-						-hyper_diffusion_coefficient*a*dt, ISF_kfactor);
+	if (abs(a) > MYEPS)
+		if (hyper_diffusion_switch == 0) 						  
+			Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, ISF_kfactor); 
+			
+		else
+			Array_exp_ksqr(ISF_basis_type, NIs,  *nlin, -diffusion_coefficient*a*dt, 
+							-hyper_diffusion_coefficient*a*dt, ISF_kfactor);
 } 
 
 //******************************* End of mult_exp_visc.cc  ************************************

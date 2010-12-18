@@ -49,8 +49,9 @@ Time::Time(Array<DP,1> time_para, Array<DP,1> time_save_interval)   // time init
 	Tinit				= time_para(1);
 	Tfinal				= time_para(2);
 	Tdt_fixed			= time_para(3);
-	Tdiagnostics_init	= time_para(4);
-	Tstructure_fn_start = time_para(5);
+	Tdiagnostics_basic_init		= time_para(4);
+	Tdiagnostics_advanced_init	= time_para(5);
+	Tstructure_fn_start			= time_para(6);
 	
 	Tnow = Tinit;
   
@@ -74,24 +75,32 @@ Time::Time(Array<DP,1> time_para, Array<DP,1> time_save_interval)   // time init
 	TSkpq_save_interval				= time_save_interval(18);		
 	Tcout_save_interval				= time_save_interval(19);  
 	
+	// When to save the data
 	Tglobal_save_next				= Tinit;	
-	Tfield_save_next				= Tinit;
-	Tfield_frequent_save_next		= Tinit + Tfield_frequent_save_interval; 
-	Tfield_reduced_save_next		= Tinit;
-	Trealfield_save_next			= Tinit;
-	Tfield_k_save_next				= Tinit;
-	Tfield_r_save_next				= Tdiagnostics_init;
-	Tspectrum_save_next				= Tinit;
-	Tspectrum_pressure_save_next	= Tspectrum_save_next;
-	Tflux_save_next					= Tdiagnostics_init;
-	Tshell_to_shell_save_next		= Tdiagnostics_init;	
-	Tring_spectrum_save_next		= Tdiagnostics_init;
-	Tring_to_ring_save_next			= Tdiagnostics_init;
-	Tcylinder_ring_spectrum_save_next  = Tdiagnostics_init;
-	Tcylinder_ring_to_ring_save_next   = Tdiagnostics_init;
+	
+	Tfield_reduced_save_next		= Tdiagnostics_basic_init;
+	Trealfield_save_next			= Tdiagnostics_basic_init;
+	Tfield_k_save_next				= Tdiagnostics_basic_init;
+	
+	Tspectrum_save_next				= Tdiagnostics_basic_init;
+	Tspectrum_pressure_save_next	= Tdiagnostics_basic_init;
+	
+	Tfield_r_save_next				= Tdiagnostics_advanced_init;
+	Tflux_save_next					= Tdiagnostics_advanced_init;
+	Tshell_to_shell_save_next		= Tdiagnostics_advanced_init;	
+	Tring_spectrum_save_next		= Tdiagnostics_advanced_init;
+	Tring_to_ring_save_next			= Tdiagnostics_advanced_init;
+	Tcylinder_ring_spectrum_save_next  = Tdiagnostics_advanced_init;
+	Tcylinder_ring_to_ring_save_next   = Tdiagnostics_advanced_init;
+	Tmoment_save_next				= Tdiagnostics_advanced_init;
+	TSkpq_save_next					= Tdiagnostics_advanced_init;
+	
+	Tfield_frequent_save_next		= Tinit + Tfield_frequent_save_interval;
+	
+	Tfield_save_next				= Tdiagnostics_advanced_init + Trealfield_save_next;
+	
 	Tstructure_fn_save_next			= Tstructure_fn_start;
-	Tmoment_save_next				= Tdiagnostics_init;
-	TSkpq_save_next					= Tdiagnostics_init;
+
 	Tcout_save_next					= Tinit;
 }
 

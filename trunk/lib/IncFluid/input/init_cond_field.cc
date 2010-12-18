@@ -51,7 +51,33 @@ void  IncFluid::Init_cond()
 
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0;
 	
-	CV_input(field_in_file, *VF_temp);
+	if (input_vx_vy_switch == 0)
+		CV_input(field_in_file, *VF_temp, input_field_format);
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					
+					(*V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field();
 
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -80,8 +106,35 @@ void  IncFluid::Init_cond_scalar(IncSF& T)
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0; 
 	(*T.F) = 0.0;
 	
-	CV_input(field_in_file, *VF_temp);
-	T.CS_input(field_in_file, *VF_temp);
+	if (input_vx_vy_switch == 0)
+		CV_input(field_in_file, *VF_temp, input_field_format);
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					
+					(*V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	T.CS_input(field_in_file, *VF_temp, input_field_format);
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(T);
 
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -98,12 +151,15 @@ void  IncFluid::Init_cond_RB(IncSF& T)
 		Init_cond();	
 		
 		*T.F = *V1;  
-		Array_divide_ksqr(basis_type, N, *T.F, kfactor);		
+		Array_divide_ksqr(basis_type, N, *T.F, kfactor);	
 	}
 	
 	else if (globalvar_Pr_switch == "PRINFTY") 
 	{
-		T.CS_input(field_in_file, *VF_temp);
+		T.CS_input(field_in_file, *VF_temp, input_field_format);
+		
+		if (apply_realitycond_IC_switch == 1)
+			Satisfy_reality_array(basis_type, N, *T.F);
 		
 		Init_cond_Prinfty(T);
 	}
@@ -112,9 +168,6 @@ void  IncFluid::Init_cond_RB(IncSF& T)
 		Init_cond_scalar(T);
 	
 	Zero_modes_RB_slip(T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);		
 		
 }
 
@@ -129,8 +182,42 @@ void  IncFluid::Init_cond(IncVF& W)
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0; 
 	(*W.V1) = 0.0;  (*W.V2) = 0.0;  (*W.V3) = 0.0;
 	
-	CV_input(field_in_file, *VF_temp);
-	W.CV_input(field_in_file, *VF_temp);
+	if (input_vx_vy_switch == 0) {
+		CV_input(field_in_file, *VF_temp, input_field_format);
+		W.CV_input(field_in_file, *VF_temp, input_field_format);
+	}
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *V3, input_field_format);
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *W.V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *W.V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *W.V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					(*V3)(lx,ly,lz) = vz; 
+					
+					Last_component(kx, ky, kz, (*W.V1)(lx,ly,lz), (*W.V2)(lx,ly,lz), vz);
+					(*W.V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(W);
 	
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -148,9 +235,44 @@ void  IncFluid::Init_cond(IncVF& W, IncSF& T)
 	(*W.V1) = 0.0;  (*W.V2) = 0.0;  (*W.V3) = 0.0; 
 	(*T.F) = 0.0;
 	
-	CV_input(field_in_file, *VF_temp);
-	W.CV_input(field_in_file, *VF_temp);
-	T.CS_input(field_in_file, *VF_temp);
+	if (input_vx_vy_switch == 0) {
+		CV_input(field_in_file, *VF_temp, input_field_format);
+		W.CV_input(field_in_file, *VF_temp, input_field_format);
+	}
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *V3, input_field_format);
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, *W.V1, *VF_temp, input_field_format);
+		Read_data_MPI(CV_basis_type, field_in_file, N, *W.V2, *VF_temp, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, *W.V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					(*V3)(lx,ly,lz) = vz; 
+					
+					Last_component(kx, ky, kz, (*W.V1)(lx,ly,lz), (*W.V2)(lx,ly,lz), vz);
+					(*W.V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	T.CS_input(field_in_file, *VF_temp, input_field_format);
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(W, T);
 	
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -175,7 +297,34 @@ void  IncFluid::Init_cond_reduced()
 
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0;
 	
-	CV_input(field_in_file, N_in_reduced, *VF_temp);
+	if (input_vx_vy_switch == 0)
+		CV_input(field_in_file, N_in_reduced, input_field_format);
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V2, input_field_format);
+		
+		*V3 = 0.0;
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					
+					(*V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field();
 	
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -204,8 +353,35 @@ void  IncFluid::Init_cond_reduced_scalar(IncSF& T)
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0; 
 	(*T.F) = 0.0;
 	
-	CV_input(field_in_file, N_in_reduced, *VF_temp);
-	T.CS_input(field_in_file, N_in_reduced, *VF_temp);
+	if (input_vx_vy_switch == 0)
+		CV_input(field_in_file, N_in_reduced, input_field_format);
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V2, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(Ncv[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					
+					(*V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	T.CS_input(field_in_file, N_in_reduced, input_field_format);
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(T);
 
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -227,7 +403,10 @@ void  IncFluid::Init_cond_reduced_RB(IncSF& T)
 	if (globalvar_Pr_switch == "PRINFTY") 
 	{
 		
-		T.CS_input(field_in_file, N_in_reduced, *VF_temp);
+		T.CS_input(field_in_file, N_in_reduced, input_field_format);
+		
+		if (apply_realitycond_IC_switch == 1)
+			Satisfy_reality_array(basis_type, N, *T.F);
 		
 		Init_cond_Prinfty(T);
 	}
@@ -235,12 +414,7 @@ void  IncFluid::Init_cond_reduced_RB(IncSF& T)
 	else
 		Init_cond_reduced_scalar(T);
 	
-	
-	
 	Zero_modes_RB_slip(T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);
 }
 
 //*********************************************************************************************
@@ -253,8 +427,42 @@ void  IncFluid::Init_cond_reduced(IncVF& W)
 	(*V1) = 0.0;  (*V2) = 0.0;  (*V3) = 0.0; 
 	(*W.V1) = 0.0;  (*W.V2) = 0.0;  (*W.V3) = 0.0;
 	
-	CV_input(field_in_file, N_in_reduced, *VF_temp);
-	W.CV_input(field_in_file, N_in_reduced, *VF_temp);
+	if (input_vx_vy_switch == 0) {
+		CV_input(field_in_file, N_in_reduced, input_field_format);
+		W.CV_input(field_in_file, N_in_reduced, input_field_format);
+	}
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V2, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V3, input_field_format);
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V2, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(Ncv[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					(*V3)(lx,ly,lz) = vz; 
+					
+					Last_component(kx, ky, kz, (*W.V1)(lx,ly,lz), (*W.V2)(lx,ly,lz), vz);
+					(*W.V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(W);
 
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 
@@ -274,9 +482,44 @@ void  IncFluid::Init_cond_reduced(IncVF& W, IncSF& T)
 	(*W.V1) = 0.0;  (*W.V2) = 0.0;  (*W.V3) = 0.0; 
 	(*T.F) = 0.0;
 	
-	CV_input(field_in_file, N_in_reduced, *VF_temp);
-	W.CV_input(field_in_file, N_in_reduced, *VF_temp);
-	T.CS_input(field_in_file, N_in_reduced, *VF_temp);
+	if (input_vx_vy_switch == 0) {
+		CV_input(field_in_file, N_in_reduced, input_field_format);
+		W.CV_input(field_in_file, N_in_reduced, input_field_format);
+	}
+	
+	else {
+		int kx, ky, kz;
+		complx vz;
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V2, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *V3, input_field_format);
+		
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V1, input_field_format);  
+		Read_data_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V2, input_field_format);
+		
+		Read_data_kz0plane_MPI(CV_basis_type, field_in_file, N, N_in_reduced, *W.V3, input_field_format);
+		
+		for (int lx=0; lx<local_N1; lx++)
+			for (int ly=0; ly<N[2]; ly++)
+				for (int lz=1; lz<=(N[3]/2); lz++) {
+					kx = Get_kx(basis_type, lx, N);
+					ky = Get_ky3D(basis_type, ly, N);
+					kz = lz;
+					
+					Last_component(kx, ky, kz, (*V1)(lx,ly,lz), (*V2)(lx,ly,lz), vz);
+					(*V3)(lx,ly,lz) = vz; 
+					
+					Last_component(kx, ky, kz, (*W.V1)(lx,ly,lz), (*W.V2)(lx,ly,lz), vz);
+					(*W.V3)(lx,ly,lz) = vz; 
+				}
+	}
+	
+	T.CS_input(field_in_file, N_in_reduced, input_field_format);
+	
+	if (apply_realitycond_IC_switch == 1)
+		Satisfy_reality_condition_field(W, T);
 
 	if (my_id == master_id) 
 		cout  << "Reading of field configurations ended successfully" << endl; 

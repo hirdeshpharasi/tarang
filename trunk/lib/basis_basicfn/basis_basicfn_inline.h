@@ -64,6 +64,9 @@
 	inline DP  min(DP a, DP b)   { return a < b ? a : b; }
 	
 	inline int minimum(ptrdiff_t a, int b) { return a < b ? a : b; }
+	inline int maximum(ptrdiff_t a, int b) { return (b < a) ? a : b; }
+
+	inline int newdivision(ptrdiff_t a, ptrdiff_t b) { return ((a%b) == 0) ? (a/b) : (a/b+1);}
 	
 #endif 
 

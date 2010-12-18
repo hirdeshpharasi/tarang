@@ -77,6 +77,9 @@ void IncFluid::Read_init_cond()
 		case (8) : Init_cond_ABC(); break;
 	
 	}
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall();
 }
 
 //
@@ -119,7 +122,9 @@ void IncFluid::Read_init_cond(IncSF& T)
 		// initialize For Rayleigh Taylor instability.	
 		
 	}
-
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall(T);
 }
 
 //
@@ -156,7 +161,9 @@ void IncFluid::Read_init_cond(IncVF& W)
 		
 		case (11) : Init_cond_DYNAMO_SIX_MODE(W); break;
 	}
-
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall(W);
 }
 
 
@@ -193,7 +200,9 @@ void IncFluid::Read_init_cond(IncVF& W, IncSF& T)
 		// initialize V, W field
 	
 	}
-
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall(W, T);
 }
 
 

@@ -98,10 +98,10 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid()
 		
 	if (my_id == master_id)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V3)(0,0,0) = 0.0;
-	
-	Satisfy_reality_condition_field();
 
 	if (alias_switch == "DEALIAS")		Dealias();
+	
+	Satisfy_reality_condition_field();
 }
 
 
@@ -167,10 +167,10 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncSF& T)
 		(*T.F)(0,0,0) = 0.0;
 	}	
 		
-	Satisfy_reality_condition_field(T);
-		
 
 	if (alias_switch == "DEALIAS")		Dealias(T);
+	
+	Satisfy_reality_condition_field(T);
 }
 
 
@@ -238,11 +238,10 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V2)(0,0,0) = 0.0;
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 	}	
-		
-	Satisfy_reality_condition_field(W);
 				
-
 	if (alias_switch == "DEALIAS")		Dealias(W);
+	
+	Satisfy_reality_condition_field(W);
 	
 }
 
@@ -323,8 +322,6 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(IncVF& W, IncSF& T)
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 		(*T.F)(0,0,0) = 0.0;
 	}	
-		
-	Satisfy_reality_condition_field(W, T);
 
 	if (alias_switch == "DEALIAS")		Dealias(W, T);
 	
@@ -348,9 +345,6 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(string Pr_switch, IncSF& T)
 		Init_cond_energy_spectrum_2Din3Dgrid(T);
 		
 	Zero_modes_RB_slip(T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);		
 }	
 	
 	
@@ -370,11 +364,7 @@ void  IncFluid::Init_cond_energy_spectrum_2Din3Dgrid(string Pr_switch, IncVF& W,
 	else
 		Init_cond_energy_spectrum_2Din3Dgrid(W, T);
 		
-	Zero_modes_RB_slip(W, T);		
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(W, T);
-
+	Zero_modes_RB_slip(W, T);	
 }	
 
 //*********************************************************************************************
@@ -441,9 +431,7 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W)
 	{
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V2)(0,0,0) = 0.0;
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
-	}	
-	
-	Satisfy_reality_condition_field(W);
+	}
 	
 	
 	if (alias_switch == "DEALIAS")		Dealias(W);
@@ -530,8 +518,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_2Din3Dgrid(IncVF& W, IncSF& T
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 		(*T.F)(0,0,0) = 0.0;
 	}	
-	
-	Satisfy_reality_condition_field(W, T);
 	
 	if (alias_switch == "DEALIAS")		Dealias(W, T);
 	

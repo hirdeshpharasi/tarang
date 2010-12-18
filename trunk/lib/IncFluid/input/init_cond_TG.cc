@@ -101,10 +101,7 @@ void  IncFluid::Init_cond_Taylor_Green_RB(IncSF& T)
 	else
 		Init_cond_Taylor_Green(T);
 	
-	Zero_modes_RB_slip(T);	
-	
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(T);		
+	Zero_modes_RB_slip(T);			
 }
 
 //

@@ -105,7 +105,7 @@ void IncFluid::Time_advance
 		Compute_nlin(W, T, Pr_switch);								
 		// Compute nlin using V(t+dt/2),T.F(t+dt/2)
 		
-		Satisfy_reality_condition_nlin(W, T);
+//		Satisfy_reality_condition_nlin(W, T);
 		
 		Add_force(W, T, Pr_switch);									
 		// nlin = nlin - f (for V and B)
@@ -257,8 +257,6 @@ void IncFluid::Time_advance
 	// For all schemes
 	if (alias_switch == "DEALIAS")		Dealias(W, T);					// Keep V(k) dealiased	
 
-	if (sincos_horizontal_2D_switch == 1)
-		Sincos_horizontal(W, T);
 }
 
 //*****************************   End of time_advance_RBslipMHD.cc  ***************************

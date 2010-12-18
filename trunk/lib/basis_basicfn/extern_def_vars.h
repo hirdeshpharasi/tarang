@@ -75,7 +75,7 @@ const complx  minus2I = complx(0,-2.0);
 
 // Number of digits for output files
 // NOTE:  for double only.. For float put MY_PRECISION = 6
-const int MY_PRECISION = 8;
+const int MY_PRECISION = 12;
 
 
 const DP  MYEPS = 1E-15;
@@ -115,6 +115,7 @@ extern fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT,
 					isintr_plan_SCFT, icostr_plan_SCFT; 
 
 extern fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;
+
 
 extern int	globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
 extern int	globalvar_waveno_switch;				// 0 for actual (default), 1 for grid

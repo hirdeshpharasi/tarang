@@ -112,7 +112,8 @@ void Output_asreal
 	ofstream& file_out, 
 	int N[], 
 	Array<complx,3> A, 
-	Array<complx,3> temp_array
+	Array<complx,3> temp_array,
+	string format
 );
 
 
@@ -121,7 +122,8 @@ void Output_asreal_transpose_order
 	 ofstream& file_out, 
 	 int N[], 
 	 Array<complx,3> A, 
-	 Array<complx,3> temp_r
+	 Array<complx,3> temp_r,
+	string format
  );
 
 /*
@@ -152,10 +154,21 @@ void Output_asreal_hdf5
  */
 void Read_data_MPI
 (
+	string basis_type,
 	ifstream& file_in, 
 	int N[], 
 	Array<complx,3> A, 
-	Array<complx,3> temp_array
+	Array<complx,3> temp_array,
+	string format
+);
+
+void Read_data_kz0plane_MPI
+(
+	string basis_type,
+	ifstream& file_in, 
+	int N[], 
+	Array<complx,3> A,
+	string format
 );
 
 
@@ -193,13 +206,23 @@ void Read_data_MPI
  */
 void Read_data_MPI
 (
+	string basis_type,
 	ifstream& file_in, 
 	int N[], 
 	int Nreduced[], 
-	Array<complx,3> A,  
-	Array<complx,3> temp_array
+	Array<complx,3> A,
+	string format
 );
 
+void Read_data_kz0plane_MPI
+(
+ string basis_type,
+ ifstream& file_in, 
+ int N[], 
+ int Nreduced[], 
+ Array<complx,3> A,
+ string format
+);
 
 //*********************************************************************************************
 
@@ -220,10 +243,21 @@ void Read_data_MPI
  */
 void Write_data_MPI
 (
+	string basis_type,
 	ofstream& file_out, 
 	int N[], 
 	Array<complx,3> A,  
-	Array<complx,3> temp_array
+	Array<complx,3> temp_array,
+	string format
+);
+
+void Write_data_kz0plane_MPI
+(
+ string basis_type,
+ ofstream& file_out, 
+ int N[], 
+ Array<complx,3> A,
+ string format
 );
 
 /*
@@ -270,11 +304,22 @@ void Write_data_MPI_hdf5
  */
 void Write_data_MPI
 (
+	string basis_type,
 	ofstream& file_out, 
 	int N[], 
 	int Nreduced[], 
-	Array<complx,3> A, 
-	Array<complx,3> temp_array
+	Array<complx,3> A,
+	string format
+);
+
+void Write_data_kz0plane_MPI
+(
+ string basis_type,
+ ofstream& file_out, 
+ int N[], 
+ int Nreduced[], 
+ Array<complx,3> A,
+ string format
 );
 
 //*********************************************************************************************

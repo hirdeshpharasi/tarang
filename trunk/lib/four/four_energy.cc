@@ -77,7 +77,6 @@ DP Get_local_energy_FOUR(string alias_switch, int N[], Array<complx,3> A)
 	else if (my_id == numprocs/2)
 		total +=  -sum(sqr(abs(A(0, Range::all(), 0))))/2;					// kx = -N[1]/2	
 	
-			 	
 	// Origin			
 	if (my_id == master_id)  
 		total += - pow2(abs(A(0,0,0)))/2;  

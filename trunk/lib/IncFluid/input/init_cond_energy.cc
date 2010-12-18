@@ -33,6 +33,9 @@
  *		Sk(k) = a k^4 exp(-b k^1.1) / (k^4 + q^4)^(2.8/12)
  *		with q = 1.5, b = 0.02
  *
+ * @note:   Satisfy reality condition is critical here for kz=0 and N[3]/2 planes.   
+ *			Do not remove this function.
+ *
  *	Notation:  (Ki =) kki = ki * kfactor[i]
  *
  * @author  M. K. Verma
@@ -102,8 +105,6 @@ void  IncFluid::Init_cond_energy_spectrum()
 		
 	if (my_id == master_id)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V3)(0,0,0) = 0.0;
-	
-	Satisfy_reality_condition_field();
 
 	if (alias_switch == "DEALIAS")		Dealias();
 	
@@ -118,6 +119,9 @@ void  IncFluid::Init_cond_energy_spectrum()
 	{
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field();
+	
 }
 
 
@@ -194,8 +198,6 @@ void  IncFluid::Init_cond_energy_spectrum_scalar(IncSF& T)
 	if (my_id == master_id)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V3)(0,0,0) =  (*T.F)(0,0,0) = 0.0;
 		
-	Satisfy_reality_condition_field(T);
-		
 
 	if (alias_switch == "DEALIAS")		Dealias(T);
 	
@@ -212,6 +214,8 @@ void  IncFluid::Init_cond_energy_spectrum_scalar(IncSF& T)
 	{
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(T);
 }
 
 
@@ -267,8 +271,6 @@ void  IncFluid::Init_cond_energy_spectrum_RB(IncSF& T)
 		
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V3)(0,0,0) =  (*T.F)(0,0,0) = 0.0;
 		
-		Satisfy_reality_condition_field(T);
-		
 		if (alias_switch == "DEALIAS")		Dealias(T);
 		
 		if (N[3] == 2)
@@ -284,6 +286,8 @@ void  IncFluid::Init_cond_energy_spectrum_RB(IncSF& T)
 		{
 			(*V2)(Range::all(), 0, Range::all()) = 0.0;
 		}
+		
+		Satisfy_reality_array(basis_type, N, *T.F);
 		
 		Init_cond_Prinfty(T);
 	}
@@ -367,8 +371,6 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V2)(0,0,0) = 0.0;
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 	}	
-		
-	Satisfy_reality_condition_field(W);
 				
 
 	if (alias_switch == "DEALIAS")		Dealias(W);
@@ -390,6 +392,8 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W)
 		
 		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(W);
 	
 }
 
@@ -475,8 +479,6 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 		(*T.F)(0,0,0) = 0.0;	
 	}
-		
-	Satisfy_reality_condition_field(W, T);	
 	
 
 	if (alias_switch == "DEALIAS")		Dealias(W, T);
@@ -498,6 +500,8 @@ void  IncFluid::Init_cond_energy_spectrum(IncVF& W, IncSF& T)
 		
 		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(W, T);
 }
 
 
@@ -554,8 +558,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	
 	if (my_id == master_id)
 		(*V1)(0,0,0) = (*V2)(0,0,0) = (*V2)(0,0,0) = 0.0;
-			
-	IncFluid::Satisfy_reality_condition_field();	
 
 	if (alias_switch == "DEALIAS")		Dealias();
 	
@@ -570,6 +572,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum()
 	{
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field();
 
 }
 
@@ -653,8 +657,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_scalar(IncSF& T)
 		(*T.F)(0,0,0) = 0.0;
 	}	
 	
-	IncFluid::Satisfy_reality_condition_field(T);	
-	
 	if (alias_switch == "DEALIAS")		Dealias(T);
 	
 	if (N[3] == 2)
@@ -670,6 +672,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum_scalar(IncSF& T)
 	{
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(T);
 	
 }
 
@@ -781,8 +785,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 		(*V1)(0,0,0) = 	(*V2)(0,0,0) = (*V2)(0,0,0) = 0.0;
 		(*W.V1)(0,0,0) = (*W.V2)(0,0,0) = (*W.V2)(0,0,0) = 0.0;
 	}	
-		
-	Satisfy_reality_condition_field(W);	
 
 	if (alias_switch == "DEALIAS")		Dealias(W);
 	
@@ -802,6 +804,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W)
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(W);
 }
 
 
@@ -861,8 +865,6 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 		(*T.F)(0,0,0) = 0.0;
 	}		
 	
-	Satisfy_reality_condition_field(W, T);	
-	
 	if (alias_switch == "DEALIAS")		Dealias(W, T);	
 	
 	if (N[3] == 2)
@@ -883,6 +885,8 @@ void  IncFluid::Init_cond_energy_helicity_spectrum(IncVF& W, IncSF& T)
 		(*V2)(Range::all(), 0, Range::all()) = 0.0;
 		(*W.V2)(Range::all(), 0, Range::all()) = 0.0;
 	}
+	
+	Satisfy_reality_condition_field(W, T);
 					
 }
 

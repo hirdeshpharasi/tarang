@@ -45,7 +45,15 @@ void IncFluid::Output_field()
 	if (my_id == master_id)	
 		field_out_file << "%% Time = " << Tnow << endl; 
 	
-	CV_output(field_out_file, *VF_temp);		
+	if (output_vx_vy_switch == 0)
+		CV_output(field_out_file, *VF_temp, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *V3, output_field_format);
+	}
 	// *VF_temp is the temporary array useful in this operation
 }
   
@@ -73,8 +81,17 @@ void IncFluid::Output_field_scalar(IncSF& T)
 	if (my_id == master_id)	
 		field_out_file << "%% Time = " << Tnow << endl; 
 	
-	CV_output(field_out_file, *VF_temp);
-	T.CS_output(field_out_file, *VF_temp);		
+	if (output_vx_vy_switch == 0)
+		CV_output(field_out_file, *VF_temp, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *V3, output_field_format);
+	}
+	
+	T.CS_output(field_out_file, *VF_temp, output_field_format);		
 	// *VF_temp is the temporary array useful in this operation
 }
 
@@ -89,7 +106,7 @@ void IncFluid::Output_field_RB(IncSF& T)
 		if (my_id == master_id)	
 			field_out_file << "%% Time = " << Tnow << endl; 
 		
-		T.CS_output(field_out_file, *VF_temp);
+		T.CS_output(field_out_file, *VF_temp, output_field_format);
 	}
 	
 	else
@@ -101,8 +118,22 @@ void IncFluid::Output_field(IncVF& W)
 	if (my_id == master_id)	
 		field_out_file << "%% Time = " << Tnow << endl; 
 	
-	CV_output(field_out_file, *VF_temp);
-	W.CV_output(field_out_file, *VF_temp);		
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_out_file, *VF_temp, output_field_format);
+		W.CV_output(field_out_file, *VF_temp, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_out_file, N, *W.V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *W.V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *W.V3, output_field_format);
+	}
 	// *VF_temp is the temporary array useful in this operation
 }
 
@@ -112,9 +143,24 @@ void IncFluid::Output_field(IncVF& W, IncSF& T)
 	if (my_id == master_id)	
 		field_out_file << "%% Time = " << Tnow << endl; 
 	
-	CV_output(field_out_file, *VF_temp);
-	W.CV_output(field_out_file, *VF_temp);	
-	T.CS_output(field_out_file, *VF_temp);	
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_out_file, *VF_temp, output_field_format);
+		W.CV_output(field_out_file, *VF_temp, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_out_file, N, *W.V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_out_file, N, *W.V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_file, N, *W.V3, output_field_format);
+	}
+	
+	T.CS_output(field_out_file, *VF_temp, output_field_format);	
 	// *VF_temp is the temporary array useful in this operation
 }
 
@@ -136,8 +182,15 @@ void IncFluid::Output_field_frequent()
 	//	field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	}
 	
-	CV_output(field_frequent_out_file, *VF_temp);
-	// *VF_temp is the temporary array useful in this operation
+	if (output_vx_vy_switch == 0)
+		CV_output(field_frequent_out_file, *VF_temp, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *V3, output_field_format);
+	}
 
 	if (my_id == master_id)	
 		field_frequent_out_file.close();
@@ -166,9 +219,18 @@ void IncFluid::Output_field_frequent_scalar(IncSF& T)
 	}
 	
 	
-	CV_output(field_frequent_out_file, *VF_temp);
-	T.CS_output(field_frequent_out_file, *VF_temp);
-	// *VF_temp is the temporary array useful in this operation
+	if (output_vx_vy_switch == 0)
+		CV_output(field_frequent_out_file, *VF_temp, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *V3, output_field_format);
+	}
+	
+	T.CS_output(field_frequent_out_file, *VF_temp, output_field_format);	
+	
 
 	if (my_id == master_id)	
 		field_frequent_out_file.close();
@@ -190,7 +252,7 @@ void IncFluid::Output_field_frequent_RB(IncSF& T)
 		
 //		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 		
-		T.CS_output(field_frequent_out_file, *VF_temp);
+		T.CS_output(field_frequent_out_file, *VF_temp, output_field_format);
 		
 		if (my_id == master_id)	
 			field_frequent_out_file.close();
@@ -213,8 +275,22 @@ void IncFluid::Output_field_frequent(IncVF& W)
 //		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	}
 	
-	CV_output(field_frequent_out_file, *VF_temp);
-	W.CV_output(field_frequent_out_file,  *VF_temp);
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_out_file, *VF_temp, output_field_format);
+		W.CV_output(field_frequent_out_file, *VF_temp, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *W.V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *W.V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *W.V3, output_field_format);
+	}
 
 	if (my_id == master_id)	
 		field_frequent_out_file.close();
@@ -231,9 +307,24 @@ void IncFluid::Output_field_frequent(IncVF& W, IncSF& T)
 //		field_frequent_out_file << "%% Time = " << Tnow << endl; 
 	} 
 	
-	CV_output(field_frequent_out_file, *VF_temp);
-	W.CV_output(field_frequent_out_file, *VF_temp);
-	T.CS_output(field_frequent_out_file, *VF_temp);
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_frequent_out_file, *VF_temp, output_field_format);
+		W.CV_output(field_frequent_out_file, *VF_temp, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *W.V1, *VF_temp, output_field_format);
+		Write_data_MPI(basis_type, field_frequent_out_file, N, *W.V2, *VF_temp, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_frequent_out_file, N, *W.V3, output_field_format);
+	}
+	
+	T.CS_output(field_frequent_out_file, *VF_temp, output_field_format);
 
 	if (my_id == master_id)	
 		field_frequent_out_file.close();
@@ -255,7 +346,7 @@ void IncFluid::Output_realfield()
 
 #ifdef TRANSPOSE
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
-	RV_Output_transpose_order(realfield_out_file, *VF_temp_r); 
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format); 
 
 #else	
 	*V1r = *V1;  
@@ -264,7 +355,7 @@ void IncFluid::Output_realfield()
 	
 	RV_Inverse_transform(*VF_temp_r);
 
-	RV_Output(realfield_out_file, *VF_temp);  
+	RV_Output(realfield_out_file, *VF_temp, output_field_format);  
 #endif	
 }
 
@@ -290,8 +381,8 @@ void IncFluid::Output_realfield_scalar(IncSF& T)
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
 	T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp); 
 	
-	RV_Output_transpose_order(realfield_out_file, *VF_temp_r); 
-	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format); 
+	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
 	
 #else	
 
@@ -303,8 +394,8 @@ void IncFluid::Output_realfield_scalar(IncSF& T)
 	*T.Fr = *T.F;   
 	T.RS_Inverse_transform(*VF_temp_r);
   
-	RV_Output(realfield_out_file, *VF_temp); 
-	T.RS_Output(realfield_out_file, *VF_temp);
+	RV_Output(realfield_out_file, *VF_temp, output_field_format); 
+	T.RS_Output(realfield_out_file, *VF_temp, output_field_format);
 #endif	
 }
 
@@ -319,12 +410,12 @@ void IncFluid::Output_realfield_RB(IncSF& T)
 	{
 #ifdef TRANSPOSE		
 		T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp);
-		T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
+		T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
 		
 #else
 		*T.Fr = *T.F;
 		T.RS_Inverse_transform(*VF_temp_r);	
-		T.RS_Output(realfield_out_file, *VF_temp);
+		T.RS_Output(realfield_out_file, *VF_temp, output_field_format);
 #endif
 		
 	}
@@ -344,8 +435,8 @@ void IncFluid::Output_realfield(IncVF& W)
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp); 
 	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp);
 	
-	RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
-	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
+	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
 	
 #else
 	*V1r = *V1;  
@@ -358,8 +449,8 @@ void IncFluid::Output_realfield(IncVF& W)
 	*W.V3r = *W.V3; 
 	W.RV_Inverse_transform(*VF_temp_r);
 	
-	RV_Output(realfield_out_file, *VF_temp); 
-	W.RV_Output(realfield_out_file, *VF_temp);
+	RV_Output(realfield_out_file, *VF_temp, output_field_format); 
+	W.RV_Output(realfield_out_file, *VF_temp, output_field_format);
 #endif
 }
 
@@ -375,9 +466,9 @@ void IncFluid::Output_realfield(IncVF& W, IncSF& T)
 	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp); 
 	T.RS_Inverse_transform_transpose_order(*T.F, *VF_temp); 
 	
-	RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
-	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r);
-	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r);
+	RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
+	W.RV_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
+	T.RS_Output_transpose_order(realfield_out_file, *VF_temp_r, output_field_format);
 	
 #else	
 	*V1r = *V1;  
@@ -393,9 +484,9 @@ void IncFluid::Output_realfield(IncVF& W, IncSF& T)
 	*T.Fr = *T.F;   
 	T.RS_Inverse_transform(*VF_temp_r);
 	
-	RV_Output(realfield_out_file, *VF_temp); 
-	W.RV_Output(realfield_out_file, *VF_temp);
-	T.RS_Output(realfield_out_file, *VF_temp);
+	RV_Output(realfield_out_file, *VF_temp, output_field_format); 
+	W.RV_Output(realfield_out_file, *VF_temp, output_field_format);
+	T.RS_Output(realfield_out_file, *VF_temp, output_field_format);
 #endif
 }  
 
@@ -404,6 +495,7 @@ void IncFluid::Output_realfield(IncVF& W, IncSF& T)
 //*********************************************************************************************
 
 //			IncFluid::Output_field_reduced()
+//			IN ASCII FORMAT
 
 //********************************************************************************************* 
 
@@ -413,7 +505,16 @@ void IncFluid::Output_field_reduced()
 	if (my_id == master_id)	
 		field_out_reduced_file << "%% Time = " << Tnow << endl;
 
-	CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+	if (output_vx_vy_switch == 0)
+		CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*V3, output_field_format);
+	}
 } 
 
 //*********************************************************************************************
@@ -436,8 +537,18 @@ void IncFluid::Output_field_reduced_scalar(IncSF& T)
 	if (my_id == master_id)	
 		field_out_reduced_file << "%% Time = " << Tnow << endl;
 
-	CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);		
-	T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+	if (output_vx_vy_switch == 0)
+		CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+	
+	else {
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*V3, output_field_format);
+	}	
+	
+	T.CS_output(field_out_reduced_file, N_out_reduced, output_field_format);
 }
 
 //		RB-Convection		//
@@ -452,7 +563,7 @@ void IncFluid::Output_field_reduced_RB(IncSF& T)
 		if (my_id == master_id)
 			field_out_reduced_file << "%% Time = " << Tnow << endl; 
 		
-		T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+		T.CS_output(field_out_reduced_file, N_out_reduced, output_field_format);
 	}
 	
 	else
@@ -466,8 +577,24 @@ void IncFluid::Output_field_reduced(IncVF& W)
 	if (my_id == master_id)	
 		field_out_reduced_file << "%% Time = " << Tnow << endl;
 
-	CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);		
-	W.CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+		W.CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *W.V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *W.V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*W.V3, output_field_format);
+	}
 
 } 
 
@@ -480,9 +607,26 @@ void IncFluid::Output_field_reduced(IncVF& W, IncSF& T)
 	if (my_id == master_id)	
 		field_out_reduced_file << "%% Time = " << Tnow << endl;
 
-	CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);		
-	W.CV_output(field_out_reduced_file, N_out_reduced, *VF_temp);
-	T.CS_output(field_out_reduced_file, N_out_reduced, *VF_temp);
+	if (output_vx_vy_switch == 0) {
+		CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+		W.CV_output(field_out_reduced_file, N_out_reduced, output_field_format);
+	}
+	
+	else {
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*V3, output_field_format);
+		
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *W.V1, output_field_format);
+		Write_data_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, *W.V2, output_field_format);
+		
+		Write_data_kz0plane_MPI(basis_type, field_out_reduced_file, N, N_out_reduced, 
+								*W.V3, output_field_format);
+	}
+
+	T.CS_output(field_out_reduced_file, N_out_reduced, output_field_format);
 
 }
 

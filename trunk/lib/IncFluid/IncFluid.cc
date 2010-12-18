@@ -79,14 +79,24 @@ IncFluid:: IncFluid
 	data_dir_name				= string_switches[0];
 
 	integ_scheme				= string_switches[3];
-	nos_input_field_mode		= string_switches[4];
-	nos_output_field_mode		= string_switches[5];
+	input_field_format			= string_switches[4];
+	output_field_format			= string_switches[5];
 
 	low_dim_switch				= switches(2);
 	les_switch					= switches(3);
 	skpq_switch					= switches(8);
 	output_field_r_switch		= switches(9);
-	sincos_horizontal_2D_switch  = switches(10);
+	free_slip_verticalwall_switch = switches(11);
+	
+	helicity_flux_switch		= switches(12);
+	helicity_shell_ET_switch	= switches(13);
+	fixed_dt_switch				= switches(16);
+	apply_realitycond_IC_switch	= switches(17);
+	apply_realitycond_alltime_switch	= switches(18);
+	output_vx_vy_switch			= switches(19);
+	input_vx_vy_switch			= switches(20);
+	force_W_switch				= switches(21);
+	force_T_switch				= switches(22);
 	
 	// string_switches_all and *switches_all are useful in time_advance functions only.	
 	for (int i=0; i<MAXSIZE_STRING_SWITCHES_ARRAY; i++)
@@ -172,8 +182,8 @@ IncFluid:: IncFluid
 	field_input_proc			= (*init_cond_int_para)(1);
 	
 	if (field_input_proc == 2)
-		for (int i=2; i<=4; i++)
-			N_in_reduced[i] = (*init_cond_int_para)(i);
+		for (int i=1; i<=3; i++)
+			N_in_reduced[i] = (*init_cond_int_para)(i+1);
 		
 	
 	// field_modes for initial condition

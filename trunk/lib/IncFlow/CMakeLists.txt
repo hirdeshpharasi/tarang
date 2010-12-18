@@ -55,6 +55,7 @@ ADD_LIBRARY(IncFlow
 	misc/field_k_fns.cc
 	misc/force_alpha_beta.cc
 	misc/force_model.cc
+	misc/free_slip_vertical.cc
 	misc/getmagV0.cc
 	misc/hc.cc
 	misc/ic_amp_phase.cc
@@ -62,7 +63,6 @@ ADD_LIBRARY(IncFlow
 	misc/mult_exp_visc.cc
 	misc/nusselt.cc
 	misc/reality_cond.cc
-	misc/sincos_horizontal.cc
 	misc/zero_mode_RB_slip.cc
 	EnergyTrdir/compute_cylin_ring_tr.cc  
 	EnergyTrdir/compute_flux.cc

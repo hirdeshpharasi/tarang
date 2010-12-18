@@ -515,10 +515,10 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	
 	// Misc functions
-	void Sincos_horizontal();
-	void Sincos_horizontal(IncSF& T);
-	void Sincos_horizontal(IncVF& W);	
-	void Sincos_horizontal(IncVF& W, IncSF& T);
+	void free_slip_verticalwall();
+	void free_slip_verticalwall(IncSF& T);
+	void free_slip_verticalwall(IncVF& W);	
+	void free_slip_verticalwall(IncVF& W, IncSF& T);
 	
 	DP Get_mag_V0();
 			

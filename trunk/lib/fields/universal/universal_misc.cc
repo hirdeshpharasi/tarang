@@ -102,6 +102,7 @@ void Satisfy_reality_array(string basis_type,  int N[], Array<complx,3> A)
 		{
 			positive_iy = -Get_ky3D_SCFT(ly, N);			
 			A(Range::all(), ly, 0) = conj( A(Range::all(), positive_iy, 0) );
+			A(Range::all(), ly, N[3]/2) = conj( A(Range::all(), positive_iy, N[3]/2) );
 		}
 	}
 

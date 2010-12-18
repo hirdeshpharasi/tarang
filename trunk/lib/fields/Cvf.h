@@ -425,20 +425,20 @@ public:
 	//*****************************************************************************************																																			
 	 
 	/// Output \f$ \vec{V} \f$  to file_out.	temp_array is a temporary array.																																			
-	void CV_output(ofstream& file_out, Array<complx,3> temp_array);
+	void CV_output(ofstream& file_out, Array<complx,3> temp_array, string format);
 	
 //	void CV_output_hdf5(DataSet* dataset1R, DataSet* dataset1C, DataSet* dataset2R,
 //			DataSet* dataset2C, DataSet* dataset3R, DataSet* dataset3C,
 //		       	Array<complx,3> temp_array);
 
-	/// Output reduced \f$ \vec{V} \f$  to file_out.	temp_array is a temporary array.
-	void CV_output(ofstream& file_out, int Nreduced[], Array<complx,3> temp_array);
+	/// Output reduced \f$ \vec{V} \f$  to file_out.	
+	void CV_output(ofstream& file_out, int Nreduced[], string format);
 	
 	/// Input \f$ \vec{V} \f$ from file_in.  temp_array is a temporary array.
-	void CV_input(ifstream& file_in, Array<complx,3> temp_array);
+	void CV_input(ifstream& file_in, Array<complx,3> temp_array, string format);
 	
-	/// Input reduced \f$ \vec{V} \f$ from file_in.  temp_array is a temporary array.
-	void CV_input(ifstream& file_in, int Nreduced[], Array<complx,3> temp_array);
+	/// Input reduced \f$ \vec{V} \f$ from file_in.  
+	void CV_input(ifstream& file_in, int Nreduced[], string format);
 	
 	//*****************************************************************************************
 	

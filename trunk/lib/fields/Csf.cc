@@ -40,7 +40,6 @@
 
 #include "Csf.h" 
 
-
 //*********************************************************************************************
 
 CSF::CSF
@@ -76,6 +75,7 @@ CSF::CSF
 		CS_kfactor[i] = kfactor[i];
 		CS_xfactor[i] = 1/kfactor[i];
 	}
+	
 
 	CS_total_energy = CS_total_dissipation = 0.0;
  
@@ -443,24 +443,24 @@ void CSF::CS_Dealias()
 
 **********************************************************************************************/
 
-void CSF::CS_output(ofstream& file_out, Array<complx,3> temp_array)
+void CSF::CS_output(ofstream& file_out, Array<complx,3> temp_array, string format)
 {
-	Write_data_MPI(file_out, Ncs, *F, temp_array);
+	Write_data_MPI(CS_basis_type, file_out, Ncs, *F, temp_array, format);
 }
 
-void CSF::CS_output(ofstream& file_out, int Nreduced[], Array<complx,3> temp_array)
+void CSF::CS_output(ofstream& file_out, int Nreduced[], string format)
 {
-	Write_data_MPI(file_out, Ncs, Nreduced, *F, temp_array);
+	Write_data_MPI(CS_basis_type, file_out, Ncs, Nreduced, *F, format);
 }
 
-void CSF::CS_input(ifstream& file_in, Array<complx,3> temp_array)
+void CSF::CS_input(ifstream& file_in, Array<complx,3> temp_array, string format)
 {
-	Read_data_MPI(file_in, Ncs, *F, temp_array);
+	Read_data_MPI(CS_basis_type, file_in, Ncs, *F, temp_array, format);
 }
 
-void CSF::CS_input(ifstream& file_in, int Nreduced[], Array<complx,3> temp_array)
+void CSF::CS_input(ifstream& file_in, int Nreduced[], string format)
 {
-	Read_data_MPI(file_in, Ncs, Nreduced, *F, temp_array);
+	Read_data_MPI(CS_basis_type, file_in, Ncs, Nreduced, *F, format);
 }
 
 

@@ -32,6 +32,9 @@
  * @note 3D;   F(k) = alpha * V(k) + beta(k) * Omega(k)
  *				alpha and beta determined from the supply rates
  *
+ * @note:   Satisfy reality condition is critical here for kz=0 and N[3]/2 planes.   
+ *			Do not remove this function.
+ *
  * @author  M. K. Verma
  * @version 4.0 MPI
  * @date Dec. 2008
@@ -424,8 +427,7 @@ void IncFluid::Compute_force_const_energy_helicity_supply(IncVF& W)
 	if ( (alias_switch == "DEALIAS") 
 			&& (Is_alias_array(basis_type, N, *V1, outer_radius, kfactor) == 1) )
 		Dealias_force(W);
-					
-
+	
 	Satisfy_reality_condition_force_field(W);
 }
 

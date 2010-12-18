@@ -312,16 +312,16 @@ public:
 	//*****************************************************************************************	
 	
 	/// Output Csf F to file_out.	temp_array is a temporary array.			
-	void CS_output(ofstream& file_out, Array<complx,3> temp_array);
+	void CS_output(ofstream& file_out, Array<complx,3> temp_array, string format);
 	
-	/// Output reduced F to file_out.	temp_array is a temporary array.
-	void CS_output(ofstream& file_out, int Nreduced[], Array<complx,3> temp_array);
+	/// Output reduced F to file_out.	
+	void CS_output(ofstream& file_out, int Nreduced[], string format);
 	
 	/// Input F from file_in.  temp_array is a temporary array.
-	void CS_input(ifstream& file_in, Array<complx,3> temp_array);
+	void CS_input(ifstream& file_in, Array<complx,3> temp_array, string format);
 	
-	/// Input reduced F from file_in.  temp_array is a temporary array.
-	void CS_input(ifstream& file_in, int Nreduced[], Array<complx,3> temp_array);
+	/// Input reduced F from file_in.  
+	void CS_input(ifstream& file_in, int Nreduced[], string format);
 	
 	
 }; 

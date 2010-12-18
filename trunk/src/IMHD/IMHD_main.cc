@@ -139,7 +139,8 @@ int IMHD_main(string data_dir_name)
 
 	string_switches[0] = data_dir_name;
 	
-			
+	globalvar_anisotropy_switch = switches(14);
+	globalvar_waveno_switch = switches(15);		
 
 	// Construct output prefix for all the output files
 	string prefix_str,  nu_str, kappa_str;							
@@ -270,8 +271,6 @@ int IMHD_main(string data_dir_name)
 		U.Compute_nlin(W);						
 		U.Output_field_k_inloop(W);					// T(k) in the output computation needs nlin
 													// Output at the present time.
-			
-		U.Satisfy_reality_condition(W);
 				
 		U.Add_force(W);		
 					
@@ -296,11 +295,17 @@ int IMHD_main(string data_dir_name)
 			cout << "ERROR: Numerical Overflow " << endl;  break; 
 		}
 		
-		U.Output_all_inloop(W);
-		
 		U.Compute_divergence_field();
 		
 		W.Compute_divergence_field();
+		
+		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
+			U.free_slip_verticalwall(W);
+		
+		if (U.apply_realitycond_alltime_switch == 1)
+			U.Satisfy_reality_condition_field(W);
+		
+		U.Output_all_inloop(W);
 			
 	}
 	while (U.Tnow < U.Tfinal);

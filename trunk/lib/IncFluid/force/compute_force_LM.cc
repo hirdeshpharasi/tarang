@@ -66,8 +66,6 @@ void IncFluid::Compute_force_Liquid_metal()
 	*Force3 = complx(-1,0) * (*Force3);
 	
 	if (alias_switch == "DEALIAS")   Dealias_force();
-	
-	Satisfy_reality_condition_force_field();
 
 }	
 

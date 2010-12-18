@@ -216,9 +216,9 @@ public:
 	
 	//*****************************************************************************************
 	/// Output \f$ \vec{Vr} \f$ as real to fileout.
-	void RV_Output(ofstream& fileout, Array<complx,3> temp_array);
+	void RV_Output(ofstream& fileout, Array<complx,3> temp_array, string format);
 	
-	void RV_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_array);
+	void RV_Output_transpose_order(ofstream& fileout, Array<complx,3> temp_array, string format);
 	
 	//void RV_Output_hdf5(DataSet* dataset1, DataSet* dataset2, DataSet* dataset3,
 	//	       	 Array<complx,3> temp_array);

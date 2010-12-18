@@ -154,6 +154,11 @@ void IncFluid::Time_advance()
 		 
 	}		// Of RK4
 	
+	// if free_slip_verticalwall condition is initialized as IC, it should
+	// be satisfied at all times, yet we set it again just to make sure everytime step.
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall();
+	
 	if (alias_switch == "DEALIAS")		Dealias();					// Keep V(k) dealiased	
 }
 

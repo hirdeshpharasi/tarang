@@ -226,6 +226,9 @@ void IncFluid::Open_output_files(string prefix_str)
 		field_k_out_file.setf(ios::fixed, ios::floatfield);
 		field_k_out_file.precision(MY_PRECISION); 
 		
+		field_out_file.setf(ios::fixed, ios::floatfield);
+		field_out_file.precision(MY_PRECISION);
+		
 		field_r_out_file.setf(ios::fixed, ios::floatfield);
 		field_r_out_file.precision(MY_PRECISION); 
 		

@@ -144,8 +144,8 @@ int IMHD_diag_main(string data_dir_name)
 
 	string_switches[0] = data_dir_name;
 	
-	globalvar_anisotropy_switch = switches(13);
-	globalvar_waveno_switch = switches(14);		
+	globalvar_anisotropy_switch = switches(14);
+	globalvar_waveno_switch = switches(15);	
 
 	// Construct output prefix for all the output files
 	string prefix_str,  nu_str, kappa_str;							
