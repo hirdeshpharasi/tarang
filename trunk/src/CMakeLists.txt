@@ -35,56 +35,7 @@
 #Choose compiler
 #CC=gcc-3.3 CXX=g++-3.3 cmake
 
-# Make sure the compiler can find include files from our lib library.
-INCLUDE_DIRECTORIES(
-${CMAKE_SOURCE_DIR}/lib/basis_basicfn
-${CMAKE_SOURCE_DIR}/lib/scft 
-${CMAKE_SOURCE_DIR}/lib/four 
-${CMAKE_SOURCE_DIR}/lib/plainfields
-${CMAKE_SOURCE_DIR}/lib/fields
-${CMAKE_SOURCE_DIR}/lib/IncFlow 
-${CMAKE_SOURCE_DIR}/lib/IncFluid
-)
-
-# Make sure the linker can find the Hello library once it is built.
-LINK_DIRECTORIES(
-${CMAKE_SOURCE_DIR}/lib/basis_basicfn
-${CMAKE_SOURCE_DIR}/lib/scft 
-${CMAKE_SOURCE_DIR}/lib/four 
-${CMAKE_SOURCE_DIR}/lib/plainfields
-${CMAKE_SOURCE_DIR}/lib/fields
-${CMAKE_SOURCE_DIR}/lib/IncFlow 
-${CMAKE_SOURCE_DIR}/lib/IncFluid
-)
 
 #SET(CMAKE_BUILD_TYPE distribution)
 #SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
-#SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3 -pipe")
-
-# Add executable called "helloDemo" that is built from the source files
-# "demo.cxx" and "demo_b.cxx".  The extensions are automatically found.
-ADD_EXECUTABLE(../tarangMPI  main.h main.cc  
-	read_prog_para.cc
-	read_para.cc 
-	read_diag_para.cc
-	IFluid/Ifluid_main.h  
-	IFluid/Ifluid_main.cc 
-	IFluid/Ifluid_diag_main.cc 
-	IScalar/Iscalar_main.h  
-	IScalar/Iscalar_main.cc
-	IScalar/Iscalar_diag_main.cc
-	IMHD/IMHD_main.h  
-	IMHD/IMHD_main.cc
-	IMHD/IMHD_diag_main.cc
-	RBslip/RB_slip_main.h   
-	RBslip/RB_slip_main.cc 
-	RBslip/RB_slip_diag_main.cc
-	)
-
-
-# Link the executable to the Hello library.
-TARGET_LINK_LIBRARIES(../tarangMPI IncFluid IncFlow fields plainfields four scft basis_basic m blitz fftw3_mpi fftw3 mpi)
-
-SET(CMAKE_BUILD_TYPE distribution)
-SET(CMAKE_CXX_FLAGS_DISTRIBUTION "-O3")
-SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3")
+#SET(CMAKE_C_FLAGS_DISTRIBUTION "-O3")

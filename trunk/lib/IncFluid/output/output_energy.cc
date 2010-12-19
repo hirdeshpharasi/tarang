@@ -53,7 +53,7 @@ void IncFluid::Output_global()
 		
 		DP total_diss = dissipation_coefficient*CV_total_dissipation;
 		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		DP kolm_scale_u = sqrt(sqrt((pow3(dissipation_coefficient) / total_diss)));
 		
 		DP kmax_eta = kmax*kolm_scale_u;
 		
@@ -109,11 +109,13 @@ void IncFluid::Output_global_scalar(IncSF& T)
 		
 		DP total_diss = dissipation_coefficient*CV_total_dissipation;
 		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		DP kolm_scale_u = sqrt(sqrt((pow3(dissipation_coefficient) / total_diss)));
 		
 		DP kmax_eta1 = kmax * kolm_scale_u;
 		
-		DP kmax_eta2 = kmax_eta1 * pow( (dissipation_coefficient/T.diffusion_coefficient), -3.0/4);
+		DP tempvar = dissipation_coefficient/T.diffusion_coefficient;
+		DP kmax_eta2 = kmax_eta1 * sqrt(sqrt(tempvar))/tempvar;
+	
 		
 		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss));  
 			
@@ -171,11 +173,12 @@ void IncFluid::Output_global_RB(IncSF& T)
 		
 		DP total_diss = dissipation_coefficient*CV_total_dissipation;
 		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		DP kolm_scale_u = sqrt(sqrt((pow3(dissipation_coefficient) / total_diss)));
 		
 		DP kmax_eta1 = kmax * kolm_scale_u;
 		
-		DP kmax_eta2 = kmax_eta1 * pow( (dissipation_coefficient/T.diffusion_coefficient), -3.0/4);
+		DP tempvar = dissipation_coefficient/T.diffusion_coefficient;
+		DP kmax_eta2 = kmax_eta1 * sqrt(sqrt(tempvar))/tempvar;
 		
 		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss));  
 		
@@ -235,11 +238,12 @@ void IncFluid::Output_global(IncVF& W)
 		
 		DP total_diss = dissipation_coefficient*CV_total_dissipation;
 		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		DP kolm_scale_u = sqrt(sqrt((pow3(dissipation_coefficient) / total_diss)));
 		
 		DP kmax_eta1 = kmax * kolm_scale_u;
 		
-		DP kmax_eta2 = kmax_eta1*pow( (dissipation_coefficient/W.dissipation_coefficient),-3.0/4);
+		DP tempvar = dissipation_coefficient/W.dissipation_coefficient;
+		DP kmax_eta2 = kmax_eta1 * sqrt(sqrt(tempvar))/tempvar;
 		
 		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss)); 
 		
@@ -303,12 +307,15 @@ void IncFluid::Output_global(IncVF& W, IncSF& T)
 		
 		DP total_diss = dissipation_coefficient*CV_total_dissipation;
 		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
+		DP kolm_scale_u = sqrt(sqrt((pow3(dissipation_coefficient) / total_diss)));
 		
 		DP kmax_eta1 = kmax * kolm_scale_u;
-		DP kmax_eta2 = kmax_eta1*pow( (dissipation_coefficient/W.dissipation_coefficient),-3.0/4);
 		
-		DP kmax_eta3 = kmax_eta1*pow( (dissipation_coefficient/T.diffusion_coefficient),-3.0/4);
+		DP tempvar = dissipation_coefficient/W.dissipation_coefficient;
+		DP kmax_eta2 = kmax_eta1 * sqrt(sqrt(tempvar))/tempvar;
+		
+		tempvar = dissipation_coefficient/T.diffusion_coefficient;
+		DP kmax_eta3 = kmax_eta1 * sqrt(sqrt(tempvar))/tempvar;
 		
 		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss)); 
 		 
@@ -353,98 +360,6 @@ void IncFluid::Output_global(IncVF& W, IncSF& T)
 	}
 		 
 }
-
-
-
-//
-//
-//*********************************************************************************************
-
-/*
-void IncFluid::Output_global
-(
-	IncVF& W, IncSF& T, 
-	DP Ra, DP Pr, 
-	string Pr_switch, string RB_Uscaling
-)	
-{
-	static DP Hc;
-	static DP nusselt_no;
-
-	CV_Compute_totalenergy_diss(); 
-	W.CV_Compute_totalenergy_diss();
-	T.CS_Compute_totalenergy_diss();
-	
-	CV_Compute_total_helicity();
-	W.CV_Compute_total_helicity();
-	
-	CV_Compute_entropy();
-	W.CV_Compute_entropy();	
-	T.CS_Compute_entropy();
-	
-	Hc = Get_cross_helicity(W);
-	nusselt_no = Get_Nusselt_no(T, Ra, Pr, Pr_switch, RB_Uscaling);
-	
-	if (my_id == master_id) 
-	{
-		DP kmax = Max_radius_inside(basis_type, alias_switch, N, kfactor);
-		
-		DP total_diss = dissipation_coefficient*CV_total_dissipation;
-		
-		DP kolm_scale_u = pow( (pow3(dissipation_coefficient) / total_diss) , 1.0/4);
-		
-		DP kmax_eta1 = kmax * kolm_scale_u;
-		DP kmax_eta2 = kmax_eta1*pow( (dissipation_coefficient/W.dissipation_coefficient),-3.0/4);
-		
-		DP kmax_eta3 = kmax_eta1*pow( (dissipation_coefficient/T.diffusion_coefficient),-3.0/4);
-		
-		DP Rlambda = 2*CV_total_energy* sqrt(15/(dissipation_coefficient* total_diss)); 
-		 
-			
-		global_file  << Tnow											<< "	"  
-			<<	CV_total_energy											<< " " 
-			<<	W.CV_total_energy										<< "  "
-			<<	T.CS_total_energy										<< "    " 
-			<<	CV_total_dissipation									<< " " 
-			<<	W.CV_total_dissipation									<< " " 
-			<<	T.CS_total_dissipation									<< "	"
-			<<	total_diss												<< " " 
-			<<	(W.dissipation_coefficient)*(W.CV_total_dissipation)	<< " "
-			<<	(T.diffusion_coefficient)*(T.CS_total_dissipation)		<< "    " 
-			<<	nusselt_no												<< "    "
-			<<	Hc														<< "    "
-			<<	CV_total_helicity1										<< " " 
-			<<  CV_total_helicity2										<< " " 
-			<<	W.CV_total_helicity1									<< " " 
-			<<  W.CV_total_helicity2									<< "     "
-			<<	CV_total_dissipation_H1									<< " " 
-			<<  CV_total_dissipation_H2									<< "    "
-			<<	W.CV_total_dissipation_H1								<< " " 
-			<<  W.CV_total_dissipation_H2								<< "    "
-			<<	CV_entropy												<< " " 
-			<<	W.CV_entropy											<<  " " 
-			<<	T.CS_entropy											<< "    " 
-			<<	kmax_eta1												<< " " 
-			<<	kmax_eta2												<< " " 
-			<<	kmax_eta3												<< "    "
-			<<  dissipation_coefficient									<< " " 
-			<<  W.dissipation_coefficient								<< " " 
-			<<  T.diffusion_coefficient									<< "    "
-			<<	Rlambda													<< "    "
-			<<	Tdt														<< "    "
-			<<	real((*V1)(0,0,0))										<< " "	
-			<<  real((*V2)(0,0,0))										<< " " 
-			<<  real((*V3)(0,0,0))										<< "	"
-			<<	real((*W.V1)(0,0,0))									<< " "	
-			<<  real((*W.V2)(0,0,0))									<< " " 
-			<<  real((*W.V3)(0,0,0))									<< "    "
-			<<	real((*T.F)(0,0,0))
-			<<	endl;
-	}
-
-}
-
- */
 
 //*********************************************************************************************
 //*********************************************************************************************

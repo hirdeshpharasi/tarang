@@ -1408,7 +1408,7 @@ void Model_initial_shell_spectrum(int N[],  Array<DP,1> Sk, DP a)
 	for (int i=0; i < (Sk.length())(0); i++)
 	{	
 		k = 1.0*i;
-		Sk(i) = a * pow(k,4) * exp(- b * pow(k,1.1)) /pow( (pow(k,4)+pow(q,4)), c);
+		Sk(i) = a * my_pow(k,4) * exp(- b * pow(k,1.1)) /pow( (my_pow(k,4)+my_pow(q,4)), c);
     }
 
 }

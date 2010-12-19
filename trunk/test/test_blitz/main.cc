@@ -17,6 +17,13 @@ using namespace blitz;
 // fftw_plan c2r,r2c;
 void xderiv(int NN[],Array<complex<double>,2> A, Array<complex<double>,2> B);
 
+inline double my_pow(double x, int n) {		// n=0,2,4 only
+	if (n==0) return 1.0;
+	else if (n==2) return (x*x);
+	else if (n==4) return (x*x*x*x);
+		}
+
+
 int main()
 {
   
@@ -26,8 +33,8 @@ int main()
   char* test;
   char* test1;
   
-  test = "HI_S";
-test1 = test;
+//  test = "HI_S";
+// test1 = test;
 	cout << test << " " << test1 << endl;
   int dim=3;
   int NN[3]={0,8,8};
@@ -58,8 +65,12 @@ test1 = test;
  
 	double q = 2.0;
   B = complex<double>(q,0)*(1.0*i1)* A;
-     cout << A << B << endl;
+    // cout << A << B << endl;
+	
+	cout << "my_pow " << my_pow(3.0,0) << " " << my_pow(3.0,2) << " " << my_pow(3.0,4) << endl;
+	cout << "pow(3.0,0) " << pow(3.0,0) << endl;
 
+	
 //  global_file << sum(A*conj(B)) << real(sum(A*conj(B))) << endl; 
   /*
   int i=-3; int j=4;

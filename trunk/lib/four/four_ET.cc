@@ -939,7 +939,7 @@ DP Local_shell_mult_vector_potential_FOUR
 						Compute_Modal_vorticity_FOUR(i1, i2, i3, N, 
 													 Bx, By, Bz, kfactor, vorticity);
 						
-						result += 2 * Multiplicity_factor_FOUR(i1, i2, i3, N)/pow(kkmag,2)
+						result += 2 * Multiplicity_factor_FOUR(i1, i2, i3, N)/pow2(kkmag)
 						* real( Ax(i1,i2,i3)*conj(vorticity(0)) 
 							   + Ay(i1,i2,i3)*conj(vorticity(1)) 
 							   + Az(i1,i2,i3)*conj(vorticity(2)) );
@@ -952,7 +952,7 @@ DP Local_shell_mult_vector_potential_FOUR
 																 Bx, By, Bz, kfactor, vort_y);
 						
 						result += 2 * Multiplicity_factor_FOUR(i1, 0, i3, N)
-						* real( Ay(i1,i2,i3)*conj(vort_y) )/pow(kkmag,2);
+						* real( Ay(i1,i2,i3)*conj(vort_y) )/pow2(kkmag);
 							// nlin2 contains U.grad a; a(k) = curl(b)/k^2
 							// factor 2 to account for the absent complex conj modes. 
 						
@@ -1138,7 +1138,7 @@ void Local_shell_mult_vector_potential_all_FOUR
 												 * real( Ax(i1,i2,i3)*conj(vorticity(0)) 
 													   + Ay(i1,i2,i3)*conj(vorticity(1)) 
 													   + Az(i1,i2,i3)*conj(vorticity(2)) )
-												 /pow(kkmag,2);
+												 /pow2(kkmag);
 						
 					}	
 					
@@ -1151,7 +1151,7 @@ void Local_shell_mult_vector_potential_all_FOUR
 							// factor 2 to account for the absent complex conj modes. 
 						result(shell_index) += 2 * Multiplicity_factor_FOUR(i1, 0, i3, N)
 												 * real( Ay(i1,i2,i3)*conj(vort_y) )
-												 / pow(kkmag,2);
+												 / pow2(kkmag);
 						
 					}
 				}							

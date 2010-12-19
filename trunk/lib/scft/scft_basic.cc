@@ -275,6 +275,7 @@ void Array_divide_ksqr_SCFT(int N[], Array<complx,3> A, DP kfactor[])
 
 ***********************************************************************************************/
 
+/*
 void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP kfactor[])
 {
 	firstIndex l2;
@@ -298,6 +299,36 @@ void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP kfactor[])
 	}
   
 }
+*/
+
+void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP kfactor[])
+{
+	
+	int k1;
+	DP kksqr;
+	
+	for (int l1 = 0; l1 < local_N1; l1++) 
+	{
+		k1 = Get_kx_SCFT(l1, N);
+		
+		for (int l2=0; l2<=N[2]/2; l2++) 
+			for (int l3=0; l3<=N[3]/2; l3++) {
+				kksqr = (pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) + pow2(l3*kfactor[3]));
+				
+				A(l1, l2, l3) *= exp(factor*kksqr); 
+			}
+		
+		if (N[2] >1)
+			for (int l2=N[2]/2+1; l2<N[2]; l2++) 
+				for (int l3=0; l3<=N[3]/2; l3++) {
+					kksqr = (pow2(k1*kfactor[1]) + pow2((l2-N[2])*kfactor[2]) + pow2(l3*kfactor[3]));
+					
+					A(l1, l2, l3) *= exp(factor*kksqr); 
+				}
+		
+	}
+	
+}
 
 
 /**********************************************************************************************
@@ -306,6 +337,7 @@ void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP kfactor[])
 
 ***********************************************************************************************/
 
+/*
 void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP hyper_factor, DP kfactor[])
 {
 	firstIndex l2;
@@ -333,7 +365,35 @@ void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP hyper_factor,
 	}
 
 }
+*/
 
+void Array_exp_ksqr_SCFT(int N[], Array<complx,3> A, DP factor, DP hyper_factor, DP kfactor[])
+{
+	int k1;
+	DP kksqr;
+	
+	for (int l1 = 0; l1 < local_N1; l1++) 
+	{
+		k1 = Get_kx_SCFT(l1, N);
+		
+		for (int l2=0; l2<=N[2]/2; l2++) 
+			for (int l3=0; l3<=N[3]/2; l3++) {
+				kksqr = (pow2(k1*kfactor[1]) + pow2(l2*kfactor[2]) + pow2(l3*kfactor[3]));
+				
+				A(l1, l2, l3) *= exp((factor+hyper_factor*kksqr)* kksqr);
+			}
+		
+		if (N[2] >1)
+			for (int l2=N[2]/2+1; l2<N[2]; l2++) 
+				for (int l3=0; l3<=N[3]/2; l3++) {
+					kksqr = (pow2(k1*kfactor[1]) + pow2((l2-N[2])*kfactor[2]) + pow2(l3*kfactor[3]));
+					
+					A(l1, l2, l3) *= exp((factor+hyper_factor*kksqr)* kksqr);
+				}
+		
+	}
+	
+}
 
 
 /**********************************************************************************************

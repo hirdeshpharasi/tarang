@@ -185,13 +185,14 @@ DP Get_local_Sn_SCFT(string alias_switch, int N[], Array<complx,3> A, DP n, DP k
 				kkmag = Kmagnitude_SCFT(l1, l2, l3, N, kfactor);
 				
 				if (kkmag <= kkmax);
-					Sn +=  Multiplicity_factor_SCFT(l1, l2, l3, N) * pow(kkmag,n) 
+					Sn +=  Multiplicity_factor_SCFT(l1, l2, l3, N) * my_pow(kkmag,n) 
 															   * pow2(abs(A(l1,l2,l3)));
 			}
 				
-	// Subtract the contribution from the origin
-	if (my_id == master_id)
-		Sn += -Multiplicity_factor_SCFT(0, 0, 0, N) * pow(0,n) * pow2(abs(A(0,0,0)));	
+	// The above sum adds for k=0 mode for n=0 since my_pow(0,0) = 1.
+	// Subtract the contribution from the origin only for n=0.
+	if ((my_id == master_id) && (n==0))
+		Sn += -Multiplicity_factor_SCFT(0, 0, 0, N) * pow2(abs(A(0,0,0)));	
 							
 	return Sn; 	
 }
@@ -273,7 +274,7 @@ void Compute_local_shell_spectrum_SCFT
 				{								
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
-					local_Sk(index) = local_Sk(index) + factor * pow(kkmag,n) 
+					local_Sk(index) = local_Sk(index) + factor * my_pow(kkmag,n) 
 																* pow2(abs(A(l1,l2,l3)));
 					local_Sk_count(index) = local_Sk_count(index) + factor/2;
 					// Division by 2 because factor =2 for normal modes.
@@ -374,7 +375,7 @@ void Compute_local_shell_spectrum_SCFT
 				{								
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
-					local_Sk(index) = local_Sk(index) + factor * pow(kkmag,n) * real(A(l1,l2,l3)
+					local_Sk(index) = local_Sk(index) + factor * my_pow(kkmag,n) * real(A(l1,l2,l3)
 															*conj(B(l1,l2,l3)));
 					local_Sk_count(index) = local_Sk_count(index) + factor/2;
 					// Division by 2 because factor =2 for normal modes.
@@ -884,10 +885,10 @@ void Compute_local_ring_spectrum_SCFT
 							anisV2 = Ay(l1, l2, l3);
 						}	
 
-						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n)  
+						local_S1k(shell_index, sector_index) += factor * my_pow(kkmag,n)  
 																	   * pow2(abs(anisV1));
 																
-						local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+						local_S2k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 																	   * pow2(abs(anisV2));					
 					}
 
@@ -911,13 +912,13 @@ void Compute_local_ring_spectrum_SCFT
 								anisV1 = VcrossK(2)/kkperp;
 
 						
-							local_S1k(shell_index, sector_index) += pow(kkmag,n)  
+							local_S1k(shell_index, sector_index) += my_pow(kkmag,n)  
 																	* pow2(abs(anisV1));
 							
 							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
 											+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
 							
-							local_S2k(shell_index, sector_index) += pow(kkmag,n)  * V2sqr;
+							local_S2k(shell_index, sector_index) += my_pow(kkmag,n)  * V2sqr;
 						}
 						else // 2D
 						{
@@ -926,7 +927,7 @@ void Compute_local_ring_spectrum_SCFT
 							V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
 										+  pow2(abs(Az(l1,l2,l3)));
 							
-							local_S2k(shell_index, sector_index) += pow(kkmag,n)  * V2sqr;
+							local_S2k(shell_index, sector_index) += my_pow(kkmag,n)  * V2sqr;
 						}
 				
 					}	// of inner else
@@ -1050,10 +1051,10 @@ void Compute_local_ring_spectrum_SCFT
 							anisW2 = By(l1, l2, l3);
 						}	
 
-						local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
+						local_S1k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 															* real( anisV1*conj(anisW1) );
 															
-						local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+						local_S2k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 															* real( anisV2*conj(anisW2) );		
 					}
 				
@@ -1108,17 +1109,17 @@ void Compute_local_ring_spectrum_SCFT
 							}
 
 						
-							local_S1k(shell_index, sector_index) += factor * pow(kkmag,n) 
+							local_S1k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 																	* real( anisV1*conj(anisW1) );
 							
-							local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+							local_S2k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 																	* real( anisV2*conj(anisW2) );
 						}
 						else  // 2D
 						{
 							local_S1k(shell_index, sector_index)  = 0.0;
 							
-							local_S2k(shell_index, sector_index) += factor * pow(kkmag,n) 
+							local_S2k(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 											* real( Ax(l1,l2,l3) * conj(Bx(l1,l2,l3))
 												   +Ay(l1,l2,l3) * conj(By(l1,l2,l3)) 
 												   +Az(l1,l2,l3) * conj(Bz(l1,l2,l3)) );
@@ -1207,7 +1208,7 @@ void Compute_local_ring_spectrum_SCFT
 					
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 						
-					local_Sk(shell_index, sector_index) += factor * pow(kkmag,n) 
+					local_Sk(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 															* pow2(abs(F(l1,l2,l3)));
 				}											
 			} 
@@ -1288,7 +1289,7 @@ void Compute_local_ring_spectrum_SCFT
 					
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 						
-					local_Sk(shell_index, sector_index) += factor * pow(kkmag,n) 
+					local_Sk(shell_index, sector_index) += factor * my_pow(kkmag,n) 
 												* real(F(l1,l2,l3) * conj(G(l1,l2,l3)));
 				}											
 			} 
@@ -1472,13 +1473,13 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 						anisV1 = Az(l1, l2, l3);
 
 					
-					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n)  
+					local_S1k(shell_index, slab_index) += factor * my_pow(kkmag,n)  
 															* pow2(abs(anisV1));
 					
 					V2sqr = pow2(abs(Ax(l1,l2,l3))) +  pow2(abs(Ay(l1,l2,l3))) 
 							+  pow2(abs(Az(l1,l2,l3))) - pow2(abs(anisV1));
 					
-					local_S2k(shell_index, slab_index) += factor * pow(kkmag,n)  * V2sqr;
+					local_S2k(shell_index, slab_index) += factor * my_pow(kkmag,n)  * V2sqr;
 				}	
 			}
 	
@@ -1598,10 +1599,10 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 																complx(0.0,0.0);
 					}	
 					
-					local_S1k(shell_index, slab_index) += factor * pow(kkmag,n)  
+					local_S1k(shell_index, slab_index) += factor * my_pow(kkmag,n)  
 														   * real(anisV1*conj(anisW1));
 					
-					local_S2k(shell_index, slab_index) += factor * pow(kkmag,n)  
+					local_S2k(shell_index, slab_index) += factor * my_pow(kkmag,n)  
 														   * real(dot(Vrho, Wrho_conj));
 				}											
 			}
@@ -1683,7 +1684,7 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 					
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
-					local_Sk(shell_index, slab_index) += factor * pow(kkmag,n)  
+					local_Sk(shell_index, slab_index) += factor * my_pow(kkmag,n)  
 														  * pow2(abs(F(l1,l2,l3)));
 				}	
 			}	
@@ -1758,7 +1759,7 @@ void Compute_local_cylinder_ring_spectrum_SCFT
 					
 					factor = Multiplicity_factor_SCFT(l1, l2, l3, N);
 					
-					local_Sk(shell_index, slab_index) += factor * pow(kkmag,n)  
+					local_Sk(shell_index, slab_index) += factor * my_pow(kkmag,n)  
 													* real(F(l1,l2,l3) * conj(G(l1,l2,l3)));
 				}	
 			}	

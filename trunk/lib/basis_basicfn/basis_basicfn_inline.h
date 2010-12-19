@@ -65,11 +65,16 @@
 	
 	inline int minimum(ptrdiff_t a, int b) { return a < b ? a : b; }
 	inline int maximum(ptrdiff_t a, int b) { return (b < a) ? a : b; }
-
-	inline int newdivision(ptrdiff_t a, ptrdiff_t b) { return ((a%b) == 0) ? (a/b) : (a/b+1);}
 	
 #endif 
 
+inline int newdivision(ptrdiff_t a, ptrdiff_t b) { return ((a%b) == 0) ? (a/b) : (a/b+1);}
+
+inline DP my_pow(DP x, int n) {		// n=0,2,4 only
+	if (n==0) return 1.0;
+	else if (n==2) return (x*x);
+	else if (n==4) return (x*x*x*x);
+}
 
 //
 //

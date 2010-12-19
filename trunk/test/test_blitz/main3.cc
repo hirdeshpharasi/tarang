@@ -24,6 +24,12 @@ inline double my_arg(complex<double> z)
 	return (temp >= 0) ? temp : temp + 2*M_PI; 
 }
 
+inline double my_pow(double x, int n) {		// n=0,2,4 only
+	if (n==0) return 1.0;
+	else if (n==2) return (x*x);
+	else if (n==4) return (x*x*x*x);
+}
+
 
 void test_fn();
 
@@ -48,6 +54,9 @@ int main()
 		cout << arg(z) << " "  <<  my_arg(z)*180/M_PI << "  " << angle << endl << endl;
 	}	
  
+	cout << "HI "<< endl;
+	cout << "my_pow " << my_pow(3.0,0) << " " << my_pow(3.0,2) << " " << my_pow(3.0,4) << endl;
+	cout << "pow(3.0,0) " << pow(0.0,0) << " " << pow(0.0,2) << endl;
 	
 	
 } 
