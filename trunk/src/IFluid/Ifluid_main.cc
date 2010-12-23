@@ -229,7 +229,6 @@ int Ifluid_main(string data_dir_name)
 				);
 	
 	// Create FFTW plans
-																			
 	 U.Init_fftw_plan();	
 		
 	// Initialize vector fields;
@@ -242,7 +241,6 @@ int Ifluid_main(string data_dir_name)
 	if (my_id == master_id)	 
 		U.Close_field_input_files();
 	
-
 	//
 	//
 	

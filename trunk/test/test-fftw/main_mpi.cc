@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 {
          const int N0 =4, N1 = 4, N2 = 4;
 		 int NN[4]; 
-         fftw_plan plan;
+         fftw_plan plan, c2c_2d_forward_plan_FOUR;
 	//	 Array<complex<double>,3>  *A;
       //   fftw_complex *data;
          int alloc_local, i, j;
@@ -85,6 +85,11 @@ int main(int argc, char **argv)
 	   c2r_plan_FOUR = fftw_mpi_plan_dft_c2r_3d(NN[1], NN[2], NN[3], reinterpret_cast<fftw_complex*>((*A).data()), 
 			     reinterpret_cast<double*>((*A).data()), MPI_COMM_WORLD, FFTW_MEASURE);
 
+	c2c_2d_forward_plan_FOUR = fftw_plan_dft_2d(NN[2], NN[3],
+												reinterpret_cast<fftw_complex*>((*A).data()), 
+												reinterpret_cast<fftw_complex*>((*A).data()),	
+												FFTW_FORWARD, FFTW_MEASURE);
+	
 	  if (my_id == 0) 
 			real((*A)(0,0,2)) = 1.0; 
 		

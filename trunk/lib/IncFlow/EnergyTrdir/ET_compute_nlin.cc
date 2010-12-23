@@ -109,7 +109,7 @@ void IncVF::EnergyTr_Compute_nlin()
 #else	
 	RV_Inverse_transform_transpose_order(*V1, *V2, *V3, *VF_temp);
 	
-	ET_Inverse_transform_G_transpose_order();
+	ET_Inverse_transform_G_transpose_order(*VF_temp);
 						                      
 	Compute_RSprod_diag_ft_derivativeET();			
  
@@ -162,7 +162,7 @@ void IncVF::EnergyTr_Compute_nlin(IncVF& W)
 #else
 	W.RV_Inverse_transform_transpose_order(*W.V1, *W.V2, *W.V3, *W.VF_temp);  
 	
-	ET_Inverse_transform_G_transpose_order();
+	ET_Inverse_transform_G_transpose_order(*W.VF_temp);
 					                      
 	Compute_RSprod_diag_ft_derivativeET(W);			
  

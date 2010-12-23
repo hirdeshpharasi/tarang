@@ -66,11 +66,11 @@ void IncVF::Compute_RSprod_diag_ft_derivativeET()
 	
 	Array_real_mult(N, *V2r, *G2, *VF_temp_r);
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *nlin2, 0);
-	Yderiv(basis_type, N, *nlin2, *nlin2, kfactor);
+	Yderiv(basis_type, N, *nlin2, *nlin2, kfactor, 0);
 	
 	Array_real_mult(N, *V3r, *G3, *VF_temp_r); 
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *nlin3, 0);
-	Zderiv(basis_type, N, *nlin3, *nlin3, kfactor);	 	
+	Zderiv(basis_type, N, *nlin3, *nlin3, kfactor, 0);	 	
 #endif	
 }
 
@@ -94,13 +94,13 @@ void IncVF::Compute_RSprod_diag_ft_derivativeET(IncVF& W)
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *nlin1, 0);
 	Xderiv(basis_type, N, *nlin1, *nlin1, kfactor, 0);
 	
-	Array_real_mult(N, *W.V2r, *G2r, *VF_temp_r);
+	Array_real_mult(N, *W.V2r, *G2, *VF_temp_r);
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *nlin2, 0);
-	Yderiv(basis_type, N, *nlin2, *nlin2, kfactor);
+	Yderiv(basis_type, N, *nlin2, *nlin2, kfactor, 0);
 	
-	Array_real_mult(N, *W.V3r, *G3r, *VF_temp_r); 
+	Array_real_mult(N, *W.V3r, *G3, *VF_temp_r); 
 	Forward_transform_array_transpose_order(basis_type, N, *VF_temp_r, *nlin3, 0);
-	Zderiv(basis_type, N, *nlin3, *nlin3, kfactor);	 	
+	Zderiv(basis_type, N, *nlin3, *nlin3, kfactor, 0);	 	
 #endif	
 }
 
@@ -138,11 +138,11 @@ void IncVF::Forward_transform_derivative_RSprod_offdiagET()
 	Yderiv_RSprod_VV(*VF_temp, *VF_temp);   
 	*nlin1 = *nlin1 + *VF_temp; 
 	
-	Forward_transform_array_transpose_order(basis_type, N, *G2r, *VF_temp, 0);	
+	Forward_transform_array_transpose_order(basis_type, N, *G2, *VF_temp, 0);	
 	Zderiv_RSprod_VV(*VF_temp, *VF_temp);   
 	*nlin2 = *nlin2 + *VF_temp; 
 	
-	Forward_transform_array_transpose_order(basis_type, N, *G3r, *VF_temp, 1);
+	Forward_transform_array_transpose_order(basis_type, N, *G3, *VF_temp, 1);
 	Xderiv_RSprod_VV(*VF_temp, *VF_temp);   
 	*nlin3 = *nlin3 + *VF_temp;
 #endif	

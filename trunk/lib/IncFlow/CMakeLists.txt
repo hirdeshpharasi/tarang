@@ -42,12 +42,13 @@ ADD_LIBRARY(IncFlow
 	compute_divergence.cc
 	compute_pressure.cc
 	force_spectrum.cc
-	nlin_calc/RSprod.cc 
 	nlin_calc/compute_derivative.cc	
-	nlin_calc/compute_nlin.cc 
 	nlin_calc/compute_nlin_SF.cc 
 	nlin_calc/compute_nlin_VF_MHD.cc
 	nlin_calc/compute_nlin_VF_SF.cc
+	nlin_calc/compute_nlin.cc 
+	nlin_calc/RSprod_transpose.cc
+	nlin_calc/RSprod.cc 
 	misc/add_nlin_dt.cc
 	misc/copy_field.cc
 	misc/dealias.cc
@@ -74,6 +75,7 @@ ADD_LIBRARY(IncFlow
 	EnergyTrdir/energy_tr_B0.cc
 	EnergyTrdir/EnergyTr.cc 
 	EnergyTrdir/ET_compute_nlin.cc	
+	EnergyTrdir/ET_RSprod_transpose.cc 
 	EnergyTrdir/ET_RSprod.cc 
 	EnergyTrdir/ET_transform.cc
 	EnergyTrdir/fill_ring.cc

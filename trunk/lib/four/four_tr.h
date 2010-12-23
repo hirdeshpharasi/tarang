@@ -92,6 +92,13 @@ void Init_fftw_plan_FOUR(int N[], Array<complx,3> A);
 	//void Init_fftw_plan_2D_FOUR(int NN[], Array<complx,2> A);
 
 
+void FTr2c_plane_FOUR(int N[], Array<complx,2> Plane);
+void FTc2r_plane_FOUR(int N[], Array<complx,2> Plane);
+
+void FT_col_FOUR(int N[], Array<complx,1> Col);
+void IFT_col_FOUR(int N[], Array<complx,1> Col);
+
+
 //*********************************************************************************************
 
 /** @brief Inplace FFTW Forward Fourier transform of 3D Array A[N].
@@ -107,8 +114,20 @@ void Init_fftw_plan_FOUR(int N[], Array<complx,3> A);
  * @return  Partial Complex A(k). The full array has \f$ k_x=-N_1/2+1:N_1/2; 
  *			k_y=-N_2/2+1:N_2/2;  k_z=0:N_3/2 \f$, and it is divided over all the procs.
  */
-void ArrayFFTW_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A); 
+//void ArrayFFTW_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A); 
+void ArrayFFTW_FOUR
+( 
+ int N[], 
+ Array<complx,3> A,
+ Array<complx,3> temp_r
+);
 
+void ArrayFFTW_FOUR_transpose_order
+(
+ int N[], 
+ Array<complx,3> Atr, 
+ Array<complx,3> A
+);
 
 //*********************************************************************************************
 
@@ -126,7 +145,20 @@ void ArrayFFTW_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A);
  * @return   Partial complex A(k).   
  * 
  */
-void ArrayFFT_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A); 
+//void ArrayFFT_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A); 
+void ArrayFFT_FOUR
+(
+ int N[], 
+ Array<complx,3> A,
+ Array<complx,3> temp_r
+);
+
+void ArrayFFT_FOUR_transpose_order
+(
+ int N[], 
+ Array<complx,3> Atr, 
+ Array<complx,3> A
+);
 
 //*********************************************************************************************
 
@@ -142,8 +174,20 @@ void ArrayFFT_FOUR(fftw_plan r2c_plan_FOUR, int N[], Array<complx,3> A);
  * 
  * @return  Partial real array \f$ A [ 0:local_N1-1, 0:N_2-1, 0:N_3-1 ] \f$.
  */
-void ArrayIFFT_FOUR(fftw_plan c2r_plan_FOUR, int N[], Array<complx,3> A);
+//void ArrayIFFT_FOUR(fftw_plan c2r_plan_FOUR, int N[], Array<complx,3> A);
+void ArrayIFFT_FOUR
+(
+ int N[], 
+ Array<complx,3> A,
+ Array<complx,3> temp_r
+);
 
+void ArrayIFFT_FOUR_transpose_order
+(
+ int N[], 
+ Array<complx,3> A, 
+ Array<complx,3> Atr
+);
 
 //*********************************************************************************************
 

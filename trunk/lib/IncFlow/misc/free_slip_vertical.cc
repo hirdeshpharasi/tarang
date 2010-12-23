@@ -63,12 +63,14 @@ void IncVF::free_slip_verticalwall()
 	for (int i2=1; i2<N[2]/2; i2++)
 		(*V2)(Range::all(),N[2]-i2,Range::all()) = -(*V2)(Range::all(),i2,Range::all());
 	
-	(*V2)(Range::all(),0,Range::all()) = 0.0;
-	(*V2)(Range::all(),N[2]/2,Range::all()) = 0.0;
+	imag((*V2)(Range::all(),0,Range::all())) = 0.0;
+	imag((*V2)(Range::all(),N[2]/2,Range::all())) = 0.0;
 	
 	real(*V3) = 0.0;
 	for (int i2=1; i2<N[2]/2; i2++)
 		(*V3)(Range::all(),N[2]-i2,Range::all()) = (*V3)(Range::all(),i2,Range::all());
+	
+	Satisfy_reality_condition_field();
 	
 }	
 

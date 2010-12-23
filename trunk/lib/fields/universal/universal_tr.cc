@@ -73,7 +73,7 @@ void Forward_transform_array
 )										
 {	
 	if (basis_type == "FOUR")
-		ArrayFFT_FOUR(r2c_plan_FOUR, N, A);
+		ArrayFFT_FOUR(N, A, temp_r);
 		
 	else if (basis_type == "SCFT")
 	{
@@ -101,7 +101,7 @@ void Forward_transform_array_transpose_order
 )
 {
 	if (basis_type == "FOUR")
-		cout << "ERROR: Not implemented at present for FOUR in transpose order" << endl;
+		ArrayFFT_FOUR_transpose_order(N, Atr, A);
 		
 	else if (basis_type == "SCFT") 
 	{
@@ -133,7 +133,7 @@ void Inverse_transform_array
 ) 							
 {
 	if (basis_type == "FOUR")
-		ArrayIFFT_FOUR(c2r_plan_FOUR, N, A);
+		ArrayIFFT_FOUR(N, A, temp_r);
 	
 	else if (basis_type == "SCFT") 
 	{
@@ -160,7 +160,7 @@ void Inverse_transform_array_transpose_order
 )
 {
 	if (basis_type == "FOUR")
-		cout << "ERROR: Not implemented at presentef for FOUR in transpose order" << endl;
+		ArrayIFFT_FOUR_transpose_order(N, A, Atr);
 	
 	else if (basis_type == "SCFT") 
 	{

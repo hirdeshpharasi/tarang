@@ -51,12 +51,20 @@ ptrdiff_t local_N1, local_N1_start;		// N1 size and start of i1 in the currentpr
 ptrdiff_t local_N2, local_N2_start;
 MPI_Status status;
 
+// for fftw_original
 fftw_plan r2c_plan_FOUR, c2r_plan_FOUR;
+
+// for split fftw
+fftw_plan r2c_2d_plan_FOUR, c2r_2d_plan_FOUR;
+fftw_plan c2c_1d_forward_plan_FOUR, c2c_1d_inverse_plan_FOUR;
+
+// for SCFT
 fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT, 
 					isintr_plan_SCFT, icostr_plan_SCFT;  // i for inverse
 
 fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;  // for 2D
 
+int		globalvar_fftw_original_switch = 0;
 int		globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
 int		globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
 
@@ -94,6 +102,7 @@ int main(int argc, char** argv)
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+
 	
 	time (&start);
 	

@@ -142,7 +142,7 @@ void IncVF::Forward_transform_derivative_RSprod_offdiag(IncVF& W)
 #ifdef TRANSPOSE
 	Forward_transform_array_transpose_order(basis_type, N, *V1r, *VF_temp, 1);		// SFT
 	Yderiv_RSprod_VV(*VF_temp, *VF_temp2);   *nlin1 = *nlin1 + *VF_temp2; 
-	Xderiv_RSprod_VV(*VF_temp, *VF_temp2);   *W.nlin2 = *W.nlin2 + *VF_tem2p; 
+	Xderiv_RSprod_VV(*VF_temp, *VF_temp2);   *W.nlin2 = *W.nlin2 + *VF_temp2; 
 	
 	Forward_transform_array_transpose_order(basis_type, N, *V2r, *VF_temp, 0);		// CFT
 	Zderiv_RSprod_VV(*VF_temp, *VF_temp2);   *nlin2 = *nlin2 + *VF_temp2;

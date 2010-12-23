@@ -1,4 +1,5 @@
 
+#include <iostream> 
 #include <blitz/blitz.h>
 #include <blitz/array.h>
 #include <complex>
@@ -46,6 +47,10 @@ int main()
 
   firstIndex  i1;
 	secondIndex i2; 
+	
+
+	A(2,2) = (9.0,8.0);
+	cout << "A(2,2) " << A(2,2) << endl;
 	
   real(A(2,3))=1.0;
   imag(A(2,3))=2.0;

@@ -108,15 +108,19 @@ extern ptrdiff_t local_N2_start;		/**<	External: start of i2 in the currentproc;
 extern MPI_Status status;
 
 // FFT extern vars
-
+// for fftw_original
 extern fftw_plan r2c_plan_FOUR, c2r_plan_FOUR;
+
+// for split fftw
+extern fftw_plan r2c_2d_plan_FOUR, c2r_2d_plan_FOUR;
+extern fftw_plan c2c_1d_forward_plan_FOUR, c2c_1d_inverse_plan_FOUR;
 
 extern fftw_plan r2c_plan_SCFT, c2r_plan_SCFT, sintr_plan_SCFT, costr_plan_SCFT, 
 					isintr_plan_SCFT, icostr_plan_SCFT; 
 
 extern fftw_plan r2c_1d_plan_SCFT, c2r_1d_plan_SCFT;
 
-
+extern int  globalvar_fftw_original_switch;
 extern int	globalvar_anisotropy_switch;			// 1,2,3 for x,y,z directions
 extern int	globalvar_waveno_switch;				// 0 for actual (default), 1 for grid
 
