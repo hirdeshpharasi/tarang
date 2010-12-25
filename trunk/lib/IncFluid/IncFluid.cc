@@ -91,7 +91,7 @@ IncFluid:: IncFluid
 	helicity_flux_switch		= switches(12);
 	helicity_shell_ET_switch	= switches(13);
 	fixed_dt_switch				= switches(16);
-	apply_realitycond_IC_switch	= switches(17);
+	apply_realitycond_IC_switch	= switches(17);  
 	apply_realitycond_alltime_switch	= switches(18);
 	output_vx_vy_switch			= switches(19);
 	input_vx_vy_switch			= switches(20);

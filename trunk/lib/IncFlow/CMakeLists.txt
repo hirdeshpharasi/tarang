@@ -43,6 +43,7 @@ ADD_LIBRARY(IncFlow
 	compute_pressure.cc
 	force_spectrum.cc
 	nlin_calc/compute_derivative.cc	
+	nlin_calc/compute_nlin_NB.cc 
 	nlin_calc/compute_nlin_SF.cc 
 	nlin_calc/compute_nlin_VF_MHD.cc
 	nlin_calc/compute_nlin_VF_SF.cc

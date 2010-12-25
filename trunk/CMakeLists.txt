@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 2.6)
 
 SUBDIRS(lib src)
 
-ADD_DEFINITIONS(-DTRANSPOSE)
+#ADD_DEFINITIONS(-DTRANSPOSE)
 
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/lib/basis_basicfn
@@ -67,12 +67,14 @@ ADD_EXECUTABLE(tarangMPI  src/main.h src/main.cc
 	src/IFluid/Ifluid_main.h  
 	src/IFluid/Ifluid_main.cc 
 	src/IFluid/Ifluid_diag_main.cc 
-	src/IScalar/Iscalar_main.h  
-	src/IScalar/Iscalar_main.cc
-	src/IScalar/Iscalar_diag_main.cc
 	src/IMHD/IMHD_main.h  
 	src/IMHD/IMHD_main.cc
 	src/IMHD/IMHD_diag_main.cc
+	src/IScalar/Iscalar_main.h  
+	src/IScalar/Iscalar_main.cc
+	src/IScalar/Iscalar_diag_main.cc
+	src/NB/NonBoussinesq_main.cc 
+	src/NB/NonBoussinesq_main.h
 	src/RBslip/RB_slip_main.h   
 	src/RBslip/RB_slip_main.cc 
 	src/RBslip/RB_slip_diag_main.cc

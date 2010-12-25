@@ -250,7 +250,8 @@ public:
 					
 	void Compute_force_RB(IncSF& T);
 	void Compute_force_RB(IncVF& W, IncSF& T);
-	void Compute_force_nonboussenesq(IncSF& T);
+	void Compute_force_RB_rotation(IncSF& T);
+	void Compute_force_RB_rotation(IncVF& W, IncSF& T);
 	
 	void Compute_force_decay();
 	void Compute_force_decay(IncSF& T);
@@ -292,7 +293,11 @@ public:
 	void Compute_force_given_modes_VORTICITY(IncVF& W);
 	void Compute_force_given_modes_VORTICITY(IncVF& W, IncSF& T);
 	
-			
+	void Compute_force_Coriolis();
+	void Compute_force_Coriolis(IncSF& T);
+	void Compute_force_Coriolis(IncVF& W);
+	void Compute_force_Coriolis(IncVF& W, IncSF& T);
+	
 	
 	void Add_force();
 	void Add_force(IncSF& T);
@@ -345,6 +350,8 @@ public:
 	  
 	void Time_advance();			// time advance 
 	void Time_advance(IncSF& T);	//  time advance both V and scalar field T 
+	void Time_advance_NonBoussinesq(IncSF& T);	
+	//  time advance both V and scalar field T  for NonBoussinesq flows
 	void Time_advance(IncVF& W);	//  time advance U and B (MHD) 
 	void Time_advance(IncVF& W, IncSF& T);
 	

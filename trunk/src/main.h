@@ -133,6 +133,8 @@ int RB_slip_diag_main(string data_dir_name);
 
 int RB_slipMHD_main(string data_dir_name);
 
+int NonBoussinesq_main(string data_dir_name);
+
 	
 //********************************** End of main.h ********************************************
 

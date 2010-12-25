@@ -50,9 +50,13 @@ void IncFluid::Compute_force()
 		case (3) : Compute_force_Taylor_Green(); break;
 		case (4) : Compute_force_ABC(); break;
 		case (5) : Compute_force_given_modes_SIMPLE(); break;
-		case (6) : Compute_force_given_modes_VORTICITY(); break;		
-		case (11): Compute_force_Liquid_metal(); break;
-	}	
+		case (6) : Compute_force_given_modes_VORTICITY(); break;
+		case (21) : Compute_force_Coriolis(); break;
+		case (101): Compute_force_Liquid_metal(); break;
+	}
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall_force_field();
 }
 
 //
@@ -69,9 +73,13 @@ void IncFluid::Compute_force(IncSF& T)
 		case (4) : Compute_force_ABC(T); break;
 		case (5) : Compute_force_given_modes_SIMPLE(T); break;
 		case (6) : Compute_force_given_modes_VORTICITY(T); break;
+		case (21) : Compute_force_Coriolis(T); break;	
 		case (51) : Compute_force_RB(T); break;	
-		case (52): Compute_force_nonboussenesq(T); break;	
+		case (52) : Compute_force_RB_rotation(T); break;		
 	}
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall_force_field(T);
 }
 
 //
@@ -88,8 +96,12 @@ void IncFluid::Compute_force(IncVF& W)
 		case (4) : Compute_force_ABC(W); break;
 		case (5) : Compute_force_given_modes_SIMPLE(W); break;
 		case (6) : Compute_force_given_modes_VORTICITY(W); break;
-		case (11): Compute_force_DYNAMO_SIX_MODE(W); break;
-	}	
+		case (21) : Compute_force_Coriolis(W); break;
+		case (101): Compute_force_DYNAMO_SIX_MODE(W); break;
+	}
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall_force_field(W);
 }
 
 //
@@ -106,8 +118,13 @@ void IncFluid::Compute_force(IncVF& W, IncSF& T)
 		case (4) : Compute_force_ABC(W, T); break;
 		case (5) : Compute_force_given_modes_SIMPLE(W, T); break;
 		case (6) : Compute_force_given_modes_VORTICITY(W, T); break;
+		case (21) : Compute_force_Coriolis(W, T); break;
 		case (51) : Compute_force_RB(W,T); break;
+		case (52) : Compute_force_RB_rotation(W, T); break;
 	}
+	
+	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
+		free_slip_verticalwall_force_field(W, T);
 }
 
 

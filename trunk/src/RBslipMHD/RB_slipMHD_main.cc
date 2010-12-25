@@ -314,7 +314,7 @@ int RB_slipMHD_main(string data_dir_name)
 		}
 		
 		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
-			U.free_slip_verticalwall(W, T);
+			U.free_slip_verticalwall_field(W, T);
 		
 		if (U.apply_realitycond_alltime_switch == 1)
 			U.Satisfy_reality_condition_field(W. T);

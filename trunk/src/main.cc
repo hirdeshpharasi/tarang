@@ -79,6 +79,7 @@ DP		globalvar_r;							// normalized Rayleigh number
 DP		globalvar_Pr;							// Prandtl number
 DP		globalvar_temperature_grad;				// +1 for convection; -1 for stratification; 
 												// factor for u3 in temperature eqn
+DP		globalvar_mean_density;					// For NonBoussinesq approximation
 
 Uniform<DP> SPECrand;					// Global variable for random no generation		
 			
@@ -136,6 +137,8 @@ int main(int argc, char** argv)
 	else if (globalvar_prog_kind == "RB_SLIP_DIAG")
 		RB_slip_diag_main(data_dir_name);
 		
+	else if (globalvar_prog_kind == "NonBoussinesq")
+		NonBoussinesq_main(data_dir_name);
 	else
 		if (my_id == master_id)
 			cout << "ERROR: NO CHOICE (e.g., INC_FLUID) WAS MADE " << endl;

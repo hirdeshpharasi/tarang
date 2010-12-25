@@ -276,6 +276,7 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	void Compute_nlin_scalar(IncSF& T);				// scalar convection
 	void Compute_nlin_RB(IncSF& T);					// RB convection
+	void Compute_nlin_NonBoussinesq(IncSF& T);					// NonBoussinesq flows convection
 	void Compute_nlin(IncVF& W);
 	void Compute_nlin(IncVF& W, IncSF& T);  
 
@@ -515,10 +516,15 @@ class IncVF: public CVF, public RVF, public NLIN , public EnergyTr
 	
 	
 	// Misc functions
-	void free_slip_verticalwall();
-	void free_slip_verticalwall(IncSF& T);
-	void free_slip_verticalwall(IncVF& W);	
-	void free_slip_verticalwall(IncVF& W, IncSF& T);
+	void free_slip_verticalwall_field();
+	void free_slip_verticalwall_field(IncSF& T);
+	void free_slip_verticalwall_field(IncVF& W);	
+	void free_slip_verticalwall_field(IncVF& W, IncSF& T);
+	
+	void free_slip_verticalwall_force_field();
+	void free_slip_verticalwall_force_field(IncSF& T);
+	void free_slip_verticalwall_force_field(IncVF& W);	
+	void free_slip_verticalwall_force_field(IncVF& W, IncSF& T);
 	
 	DP Get_mag_V0();
 			

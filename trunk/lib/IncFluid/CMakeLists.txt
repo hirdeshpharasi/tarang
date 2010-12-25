@@ -44,6 +44,7 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	file_operations.cc
 	force/compute_force_ABC.cc
 	force/compute_force_const_ek_hk.cc
+	force/compute_force_Coriolis.cc
 	force/compute_force_decay.cc
 	force/compute_force_dynamo_6mode.cc
 	force/compute_force_ek_hk_supply.cc
@@ -69,6 +70,7 @@ ADD_LIBRARY(IncFluid  IncFluid_constants.h
 	output/output_moment.cc
 	output/output_str_fn.cc
 	time_advance/single_time_step.cc
+	time_advance/time_advance_NB.cc
 #	time_advance/time_advance_RBslip.cc
 #	time_advance/time_advance_RBslipMHD.cc
     	time_advance/time_advance_SF.cc 

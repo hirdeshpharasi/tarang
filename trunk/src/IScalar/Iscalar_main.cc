@@ -181,25 +181,23 @@ int Iscalar_main(string data_dir_name)
 	
 	// Local_N1, local_N2 assignments 
 	
-	if (N[2] > 1)
-	{
-		if (basis_type == "FOUR")
-		{
+	if (N[2] > 1) {	
+		if ((basis_type == "FOUR") && (globalvar_fftw_original_switch == 1))	{
 			
 			int alloc_local;											  
 			alloc_local = fftw_mpi_local_size_3d_transposed(N[1], N[2], N[3], MPI_COMM_WORLD,
-										&local_N1, &local_N1_start, &local_N2, &local_N2_start);
+															&local_N1, &local_N1_start, &local_N2, &local_N2_start);
 		}
-		else if (basis_type == "SCFT")
-		{
-			local_N1 = N[1]/numprocs;			// basis_type = SCFT
-			local_N2 = N[2]/numprocs;
-			local_N1_start = my_id * local_N1;
-			local_N2_start = my_id * local_N2;		
-		}
+			
+			else {
+				local_N1 = N[1]/numprocs;			
+				local_N2 = N[2]/numprocs;
+				local_N1_start = my_id * local_N1;
+				local_N2_start = my_id * local_N2;		
+			}
 	}
 	
-	else if (N[2] == 1)
+	else if (N[2] == 1)		// WORK ON IT
 	{
 		if (basis_type == "FOUR")
 		{
@@ -300,7 +298,7 @@ int Iscalar_main(string data_dir_name)
 		}
 		
 		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
-			U.free_slip_verticalwall(T);
+			U.free_slip_verticalwall_field(T);
 		
 		if (U.apply_realitycond_alltime_switch == 1)
 			U.Satisfy_reality_condition_field(T);

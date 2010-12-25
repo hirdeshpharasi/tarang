@@ -79,7 +79,7 @@ void IncFluid::Read_init_cond()
 	}
 	
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall();
+		free_slip_verticalwall_field();
 }
 
 //
@@ -124,7 +124,7 @@ void IncFluid::Read_init_cond(IncSF& T)
 	}
 	
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall(T);
+		free_slip_verticalwall_field(T);
 }
 
 //
@@ -159,11 +159,11 @@ void IncFluid::Read_init_cond(IncVF& W)
 		case (8) : Init_cond_ABC(W); break;			
 		// initialize V,W  field
 		
-		case (11) : Init_cond_DYNAMO_SIX_MODE(W); break;
+		case (101) : Init_cond_DYNAMO_SIX_MODE(W); break;
 	}
 	
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall(W);
+		free_slip_verticalwall_field(W);
 }
 
 
@@ -202,7 +202,7 @@ void IncFluid::Read_init_cond(IncVF& W, IncSF& T)
 	}
 	
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall(W, T);
+		free_slip_verticalwall_field(W, T);
 }
 
 

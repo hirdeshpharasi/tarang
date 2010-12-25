@@ -88,7 +88,7 @@ void Zero_pad_lastplane_SCFT(int N[], Array<complx,3> A)
 
 void Norm_SCFT(int N[], Array<complx,3> A) 
 {  
-	A = A/(DP(2*N[1]*N[2]*N[3])); 
+	A = A/(2*  DP(N[1]) *  DP(N[2]) * DP(N[3]));
 }
 
 

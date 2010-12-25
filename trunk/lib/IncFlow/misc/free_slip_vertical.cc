@@ -52,33 +52,46 @@
 
 //*********************************************************************************************
 
-void IncVF::free_slip_verticalwall()
+void IncVF::free_slip_verticalwall_field()
 {
 
-	imag(*V1) = 0.0;
-	for (int i2=1; i2<N[2]/2; i2++)
-		(*V1)(Range::all(),N[2]-i2,Range::all()) = (*V1)(Range::all(),i2,Range::all());
+	if (N[2] >1) {		// 3D
+		imag(*V1) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*V1)(Range::all(),N[2]-i2,Range::all()) = (*V1)(Range::all(),i2,Range::all());
+		
+		real(*V2) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*V2)(Range::all(),N[2]-i2,Range::all()) = -(*V2)(Range::all(),i2,Range::all());
+		
+		imag((*V2)(Range::all(),0,Range::all())) = 0.0;
+		imag((*V2)(Range::all(),N[2]/2,Range::all())) = 0.0;
+		
+		// satisfy reality condition for *V2.  *V1 and *V3 automatically satisfy reality condition.
+		(*V2)(Range::all(), Range::all(), 0) = 0.0;
+		(*V2)(Range::all(), Range::all(), N[3]/2) = 0.0;
+		
+		real(*V3) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*V3)(Range::all(),N[2]-i2,Range::all()) = (*V3)(Range::all(),i2,Range::all());
+	}
 	
-	real(*V2) = 0.0;
-	for (int i2=1; i2<N[2]/2; i2++)
-		(*V2)(Range::all(),N[2]-i2,Range::all()) = -(*V2)(Range::all(),i2,Range::all());
+	else if (N[2] == 1) {
+		*V2 = 0.0;
+		
+		imag(*V1) = 0.0;
+		real(*V3) = 0.0;
+	}
 	
-	imag((*V2)(Range::all(),0,Range::all())) = 0.0;
-	imag((*V2)(Range::all(),N[2]/2,Range::all())) = 0.0;
 	
-	real(*V3) = 0.0;
-	for (int i2=1; i2<N[2]/2; i2++)
-		(*V3)(Range::all(),N[2]-i2,Range::all()) = (*V3)(Range::all(),i2,Range::all());
-	
-	Satisfy_reality_condition_field();
 	
 }	
 
 //*********************************************************************************************
 
-void IncVF::free_slip_verticalwall(IncSF& T)
+void IncVF::free_slip_verticalwall_field(IncSF& T)
 {
-	free_slip_verticalwall();
+	free_slip_verticalwall_field();
 	
 	imag((*T.F)) = 0.0;
 }
@@ -86,23 +99,92 @@ void IncVF::free_slip_verticalwall(IncSF& T)
 
 //*********************************************************************************************
 
-void IncVF::free_slip_verticalwall(IncVF& W)
+void IncVF::free_slip_verticalwall_field(IncVF& W)
 {
-	free_slip_verticalwall();
+	free_slip_verticalwall_field();
 	
-	W.free_slip_verticalwall();
+	W.free_slip_verticalwall_field();
 }
 
 
 //*********************************************************************************************
 
-void IncVF::free_slip_verticalwall(IncVF& W, IncSF& T)
+void IncVF::free_slip_verticalwall_field(IncVF& W, IncSF& T)
 {
-	free_slip_verticalwall();
+	free_slip_verticalwall_field();
 	
-	W.free_slip_verticalwall();
+	W.free_slip_verticalwall_field();
 	
 	imag((*T.F)) = 0.0;
+}
+
+
+//*********************************************************************************************
+//*********************************************************************************************
+
+void IncVF::free_slip_verticalwall_force_field()
+{
+	
+	if (N[2] > 1) {	// 3D
+		imag(*Force1) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*Force1)(Range::all(),N[2]-i2,Range::all()) = (*Force1)(Range::all(),i2,Range::all());
+		
+		real(*Force2) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*Force2)(Range::all(),N[2]-i2,Range::all()) = -(*Force2)(Range::all(),i2,Range::all());
+		
+		imag((*Force2)(Range::all(),0,Range::all())) = 0.0;
+		imag((*Force2)(Range::all(),N[2]/2,Range::all())) = 0.0;
+		
+		// satisfy reality condition for *Force2.  
+		// *Force1 and *Force3 automatically satisfy reality condition.
+		(*Force2)(Range::all(), Range::all(), 0) = 0.0;
+		(*Force2)(Range::all(), Range::all(), N[3]/2) = 0.0;
+		
+		real(*Force3) = 0.0;
+		for (int i2=1; i2<N[2]/2; i2++)
+			(*Force3)(Range::all(),N[2]-i2,Range::all()) = (*Force3)(Range::all(),i2,Range::all());
+	}
+	
+	else if (N[2] == 1) {
+		*Force2 = 0.0;
+		
+		imag(*Force1) = 0.0;
+		real(*Force3) = 0.0;
+	}
+	
+}	
+
+//*********************************************************************************************
+
+void IncVF::free_slip_verticalwall_force_field(IncSF& T)
+{
+	free_slip_verticalwall_force_field();
+	
+	imag((*T.Force)) = 0.0;
+}
+
+
+//*********************************************************************************************
+
+void IncVF::free_slip_verticalwall_force_field(IncVF& W)
+{
+	free_slip_verticalwall_force_field();
+	
+	W.free_slip_verticalwall_force_field();
+}
+
+
+//*********************************************************************************************
+
+void IncVF::free_slip_verticalwall_force_field(IncVF& W, IncSF& T)
+{
+	free_slip_verticalwall_force_field();
+	
+	W.free_slip_verticalwall_force_field();
+	
+	imag((*T.Force)) = 0.0;
 }
 
 

@@ -52,8 +52,7 @@ void IncFluid::Compute_force_RB(IncSF& T)
 {
 
 // For the velocity field
-	if (globalvar_Pr_switch == "PRLARGE") 
-	{
+	if (globalvar_Pr_switch == "PRLARGE") {
 		
 		if (globalvar_RB_Uscaling == "USMALL") 		
 			*Force1 =  (globalvar_Ra*globalvar_Pr)*(*T.F);			// (u.grad)u-Ra*Pr*theta	
@@ -62,8 +61,7 @@ void IncFluid::Compute_force_RB(IncSF& T)
 			*Force1 =  (*T.F);					// (u.grad)u-theta			
 	}
 	
-	else if ((globalvar_Pr_switch == "PRSMALL") || (globalvar_Pr_switch == "PRZERO")) 
-	{
+	else if ((globalvar_Pr_switch == "PRSMALL") || (globalvar_Pr_switch == "PRZERO")) {
 		
 		if (globalvar_RB_Uscaling == "USMALL") 
 			*Force1 = (globalvar_Ra)*(*T.F);				// (u.grad)u-theta
@@ -72,8 +70,7 @@ void IncFluid::Compute_force_RB(IncSF& T)
 			*Force1 = (globalvar_Pr)*(*T.F);				// (u.grad)u-theta
 	}
 	
-	else if (globalvar_Pr_switch == "PRINFTY") 
-	{
+	else if (globalvar_Pr_switch == "PRINFTY") {
 		*Force1 = (globalvar_Ra)*(*T.F);
 	}
 
@@ -97,8 +94,7 @@ void IncFluid::Compute_force_RB(IncSF& T)
 		*T.Force =   complex<DP>(globalvar_temperature_grad/globalvar_Pr, 0)*(*V1); 			
 	//F(T) =  globalvar_temperature_grad * ux(k)/Pr
 	
-	else if (globalvar_Pr_switch == "PRINFTY") 
-	{
+	else if (globalvar_Pr_switch == "PRINFTY") {
 		*T.Force =   globalvar_temperature_grad*(*V1);
 	}
 
@@ -130,22 +126,78 @@ void IncFluid::Compute_force_RB
 
 
 //*********************************************************************************************
+//*********************************************************************************************
 
 
-void IncFluid::Compute_force_nonboussenesq(IncSF& T)
+void IncFluid::Compute_force_RB_rotation(IncSF& T)
 {
-	/*
-	DP nonboussenesq_para = 1.0;
+	// For the velocity field
 	
-	Force1 = (*T.F);
-	Force2 = 0.0; 
-	Force3 = 0.0;	
+	Compute_force_Coriolis();
 	
-	if (alias_switch == "DEALIAS")		Dealias_force(T);
-	 */
+	// Appropriate multiplication of Coriolis force + buoyancy force
+	if (globalvar_Pr_switch == "PRLARGE") {
+		
+		if (globalvar_RB_Uscaling == "USMALL") 	{
+			*Force1 = globalvar_Pr*(*Force1) + (globalvar_Ra*globalvar_Pr)*(*T.F);
+			*Force2 = globalvar_Pr*(*Force2);
+			*Force3 = globalvar_Pr*(*Force3);
+		}
+		
+		else if (globalvar_RB_Uscaling  == "ULARGE") {
+			*Force1 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force1) + (*T.F);	
+			*Force2 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force2);
+			*Force3 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force3);
+		}
+	}
+	
+	else if ((globalvar_Pr_switch == "PRSMALL") || (globalvar_Pr_switch == "PRZERO")) {
+		
+		if (globalvar_RB_Uscaling == "USMALL") 
+			*Force1 = *Force1 + (globalvar_Ra)*(*T.F); // Force2, Force3 unchanged (Coriolos only)		
+		
+		else if (globalvar_RB_Uscaling == "ULARGE") {
+			*Force1 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force1) + (globalvar_Pr)*(*T.F);	
+			*Force2 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force2);
+			*Force3 = (sqrt(globalvar_Pr/globalvar_Ra))*(*Force3);
+		}
+	}
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+		*Force1 = *Force1 + (globalvar_Ra)*(*T.F); // Force2, Force3 unchanged (Coriolos only)		
+	
+	
+	// For the temperature field
+	
+	if (globalvar_Pr_switch == "PRZERO") 
+		*T.Force = 0.0;  
+	// Do nothing; Nonlinear term (u.grad)T does not exist- see single-time step
+	
+	else if (globalvar_Pr_switch == "PRLARGE")	
+		*T.Force =   globalvar_temperature_grad*(*V1);										
+	// F(T) = globalvar_temperature_grad * ux(k)	
+	// globalvar_temperature_grad = +1 for RB, and -1 for stratified flows
+	
+	else if (globalvar_Pr_switch == "PRSMALL") 	
+		*T.Force =   complex<DP>(globalvar_temperature_grad/globalvar_Pr, 0)*(*V1); 			
+	//F(T) =  globalvar_temperature_grad * ux(k)/Pr
+	
+	else if (globalvar_Pr_switch == "PRINFTY") 
+	{
+		*T.Force =   globalvar_temperature_grad*(*V1);
+	}
+	
+	
+	if (alias_switch == "DEALIAS")		Dealias_force(T);	
+	
+	
 }
 
-
+//*********************************************************************************************
+void IncFluid::Compute_force_RB_rotation(IncVF& W, IncSF& T)
+{
+	Compute_force_RB_rotation(T);
+}
 
 //************************ End of compute_force_RB.cc *****************************************
 

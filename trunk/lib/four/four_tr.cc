@@ -305,7 +305,7 @@ void Zero_pad_last_plane_FOUR(int N[],  Array<complx,3> A)
 
 void Norm_FOUR(int N[], Array<complx,3> A) 
 {
-	A = A/(DP(N[1]*N[2]*N[3]));  
+	A = A/(DP(N[1]) *  DP(N[2]) * DP(N[3]));
 }
 
 

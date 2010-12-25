@@ -224,7 +224,7 @@ void IncFluid::Time_advance(IncSF& T)
 	// if free_slip_verticalwall condition is initialized as IC, it should
 	// be satisfied at all times, yet we set it again just to make sure everytime step.
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall(T);
+		free_slip_verticalwall_field(T);
 	
 	//
 	// For all schemes
