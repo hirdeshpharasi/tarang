@@ -191,7 +191,7 @@ int RB_slip_diag_main(string data_dir_name)
 	{	
 		cout << " Rayleigh no:  Ra =  " << globalvar_Ra << endl;
 		cout << " Prandtl no:  Pr = " << globalvar_Pr << endl;
-		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow = " 
+		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow) = " 
 		<< globalvar_temperature_grad << endl;
 	}
 	

@@ -93,7 +93,8 @@ void IncFluid::Single_time_step(IncSF& T, DP dt, DP a, DP b, DP c)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Single_time_step_scalar(T,dt, a, b, c);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq")) 
 		Single_time_step_RB(T,dt, a, b, c);
 	
 }	
@@ -411,6 +412,23 @@ void IncFluid::Compute_force_TO_rhs(IncVF& W, IncSF& T)
 }
 
 
+void IncFluid::Compute_force_TO_rhs_NonBoussinesq(IncSF& T)
+{
+	Compute_force(T);
+	
+	Compute_nlin_NonBoussinesq(T);									
+	// Compute nlin using V(t+dt/2)
+	
+	//	Satisfy_reality_condition_nlin(T);
+	
+	Add_force(T);										// nlin = nlin - f
+	
+	Compute_pressure();									// Compute pressure using V(t+dt/2)
+	
+	Compute_rhs(T);		
+}
+
+
 //*********************************************************************************************
 //*********************************************************************************************
 /** @brief Compute_RK4_parts(PlainCVF& tot_Vrhs, DP dt, DP b, DP factor) conmputes Ci's for 
@@ -432,7 +450,8 @@ void IncFluid::Compute_RK4_parts(IncSF& T, PlainCVF& tot_Vrhs, PlainCSF& tot_Srh
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Compute_RK4_parts_scalar(T,tot_Vrhs, tot_Srhs, dt, b, factor);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Compute_RK4_parts_RB(T,tot_Vrhs, tot_Srhs, dt, b, factor);
 }
 
@@ -500,6 +519,34 @@ void IncFluid::Compute_RK4_parts(IncVF& W, IncSF& T, PlainCVF& tot_Vrhs, PlainCV
 	W.Add_nlin_to_field(tot_Wrhs, factor);					// rhs(t0, u0) in nlin
 }
 
+
+//*********************************************************************************************
+// total_rho = rho'+ rho(x) + mean density(=1); rho(x) = -x
+// z=0 plane is the reference plane where the total density = 1.
+// delta_rho/rho = alpha DT * (T_cond + theta)
+// Density at the bottom plate is rho_0 (mean density). Here normalized to 1.
+
+void IncFluid::Compute_density(IncSF& T)
+{
+	*T.Fr = *T.F;
+	T.RS_Inverse_transform(*VF_temp_r);	
+	
+	int kx;
+	DP x;
+	for (int l1=0; l1<local_N1; l1++) {
+		kx = Get_kx("SCFT", l1, N);
+		x = (kx+0.5)/N[1];
+		
+		for (int l2=0; l2<N[2]; l2++)
+			for (int l3=0; l3<(N[3]/2); l3++)
+				(*T.Fr)(l1, l2, l3) += (-x);
+	}
+	
+	real(*T.Fr) = globalvar_alpha_DT*real(*T.Fr) + 1.0; 
+	imag(*T.Fr) = globalvar_alpha_DT*imag(*T.Fr) + 1.0; // mean density = 1.0
+	
+	
+}
 
 //**********************************   End of Single_time_step.cc  ****************************
 

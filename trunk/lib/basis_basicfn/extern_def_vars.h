@@ -134,7 +134,7 @@ extern DP		globalvar_r;						// normalized Rayleigh number
 extern DP		globalvar_Pr;						// Prandtl number
 extern DP		globalvar_temperature_grad;			// +1 for convection; -1 for stratification; 
 													// factor for u3 in temperature eqn
-extern DP		globalvar_mean_density;					// For NonBoussinesq approximation
+extern DP		globalvar_alpha_DT;	
 
 
 // random extern vars

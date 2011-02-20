@@ -303,8 +303,6 @@ public:
 	void Add_force(IncSF& T);
 	void Add_force(IncVF& W);
 	void Add_force(IncVF& W, IncSF& T);	
-	void Add_force(IncSF& T, string Pr_switch);
-	void Add_force(IncVF& W, IncSF& T, string Pr_switch);
 	
 	void Add_pressure_gradient();
 			
@@ -333,6 +331,7 @@ public:
 	void Compute_force_TO_rhs(IncSF& T);
 	void Compute_force_TO_rhs(IncVF& W);
 	void Compute_force_TO_rhs(IncVF& W, IncSF& T);
+	void Compute_force_TO_rhs_NonBoussinesq(IncSF& T);
 	
 	void Compute_RK4_parts(PlainCVF& tot_Vrhs, DP dt, DP b, DP factor);
 	void Compute_RK4_parts(IncSF& T, PlainCVF& tot_Vrhs, PlainCSF& tot_Srhs, 
@@ -347,6 +346,7 @@ public:
 						   PlainCSF& tot_Srhs, DP dt, DP b, DP factor);
 	
 
+	void Compute_density(IncSF& T);
 	  
 	void Time_advance();			// time advance 
 	void Time_advance(IncSF& T);	//  time advance both V and scalar field T 

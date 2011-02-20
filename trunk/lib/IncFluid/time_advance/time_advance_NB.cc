@@ -62,42 +62,32 @@
 void IncFluid::Time_advance_NonBoussinesq(IncSF& T)
 {
 
+	
 //*********************************************************************************************
 //		EULER
 
 	if (integ_scheme == "EULER") 
 	{ 
-		// Allocated once and for all- Vcopy,Scopy  (static)
-		static PlainCVF Vcopy(N);							
-		static PlainCSF Scopy(N); 
 		
-		Copy_field_to(Vcopy); 
-		T.Copy_field_to(Scopy);								// Vcopy[i] <- V[i] ; Scopy <- T.F 
-		
-		
-		Compute_rhs(T);              
+		Compute_rhs(T);  
 	
-		*T.F = *T.F + complex<DP>(Tdt,0)*(*T.nlin);
+		//	Single_time_step(T, Tdt, 1, 1, 1)::: 
+		//  Add_nlin_dt(dt) and Mult_field_exp_ksqr_dt(1, dt);
+		T.Add_nlin_dt(Tdt);
 		T.Mult_field_exp_ksqr_dt(1.0, Tdt);
 		
-		//	Single_time_step(T, Tdt, 1, 1, 1)::: Add_nlin_dt(dt) and Mult_field_exp_ksqr_dt(1, dt);
 		
-		// First compute T(rho u_i)
-		RV_Inverse_transform(*VF_temp_r);	
+		// total_rho = rho'+ rho(x) + mean density(=1); rho(x) = -x
+		// delta_rho/rho = alpha DT * (T_cond + theta)
+		// Density at the bottom plate is rho_0 (mean density). Here normalized to 1.
+		// *T.Fr contains total density rho/rho_0 after this.
+		Compute_density(T); 
 		
-		// total_rho = rho'+mean density + rho(y); rho(x) = 1-x
-		*T.Fr = *T.Fr + globalvar_mean_density;
+		*V1r = *V1;
+		*V2r = *V2;
+		*V3r = *V3;
 		
-		int kx;
-		DP x;
-		for (int l1=0; l1<local_N1; l1++) {
-			kx = Get_kx("SCFT", l1, N);
-			x = kx/N[1];
-			
-			for (int l2=0; l2<N[2]; l2++)
-				for (int l3=0; l3=N[3]/2; l3)
-					(*T.F)(l1, l2, l3) += (1-x);
-		}
+		RV_Inverse_transform(*VF_temp_r);
 		
 		Array_real_mult(N, *V1r, *T.Fr, *V1r);						
 		Array_real_mult(N, *V2r, *T.Fr, *V2r);	
@@ -107,34 +97,31 @@ void IncFluid::Time_advance_NonBoussinesq(IncSF& T)
 		
 		*V1 = *V1r;
 		*V2 = *V2r;
-		*V3 = *V3r;
+		*V3 = *V3r; 
 		
-		*V1 = *V1 + complex<DP>(Tdt,0)*(*nlin1);           // V time-advance
-		*V2 = *V2 + complex<DP>(Tdt,0)*(*nlin2);
-		*V3 = *V3 + complex<DP>(Tdt,0)*(*nlin3);
-		
+		Add_nlin_dt(Tdt);
 		Mult_field_exp_ksqr_dt(1.0, Tdt);				// T(rho u_i) time advanced..
 		
 		// Now get u_i
 		CV_Inverse_transform(*VF_temp_r);
 		
 		// Vi = Vi/rho
-		*V1 = (*V1)/(*T.Fr);
-		*V2 = (*V2)/(*T.Fr);
-		*V3 = (*V3)/(*T.Fr);
+		Array_real_divide(N, *V1, *T.Fr, *V1);						
+		Array_real_divide(N, *V2, *T.Fr, *V2);	
+		Array_real_divide(N, *V3, *T.Fr, *V3); 
 		
-		CV_Forward_transform(*VF_temp_r);
-		// *Vi now has the final field.
+		CV_Forward_transform(*VF_temp_r); 
+		// *Vi now has the final field in the Fourier space.
 		
 		// Add_nlin_dt
 		// For all schemes
 		if (alias_switch == "DEALIAS")		Dealias(T);					// Keep V(k) dealiased	
+	 
 	}
 		
 		
 //*********************************************************************************************		
 //		RK2			
-	/*
 	else if (integ_scheme == "RK2") 
 	{
 		
@@ -148,25 +135,96 @@ void IncFluid::Time_advance_NonBoussinesq(IncSF& T)
   
 		Compute_rhs(T);  
 		  
-		Single_time_step(T, Tdt, 0.5, 0.5, 0.5);			// Goto the mid point
+		// Single_time_step(T, Tdt, 0.5, 0.5, 0.5);		:Goto the mid point
+		T.Add_nlin_dt(0.5*Tdt);
+		T.Mult_field_exp_ksqr_dt(0.5, Tdt);
 		
-		Compute_force_TO_rhs(T);
+		Compute_density(T); 
+		
+		*V1r = *V1;
+		*V2r = *V2;
+		*V3r = *V3;
+		
+		RV_Inverse_transform(*VF_temp_r);
+		
+		Array_real_mult(N, *V1r, *T.Fr, *V1r);						
+		Array_real_mult(N, *V2r, *T.Fr, *V2r);	
+		Array_real_mult(N, *V3r, *T.Fr, *V3r);	
+		
+		RV_Forward_transform(*VF_temp_r);
+		
+		*V1 = *V1r;
+		*V2 = *V2r;
+		*V3 = *V3r; 
+		
+		Add_nlin_dt(Tdt);
+		Mult_field_exp_ksqr_dt(0.5, Tdt);				// T(rho u_i) time advanced..
+		
+		// Now get u_i
+		CV_Inverse_transform(*VF_temp_r);
+		
+		// Vi = Vi/rho
+		Array_real_divide(N, *V1, *T.Fr, *V1);						
+		Array_real_divide(N, *V2, *T.Fr, *V2);	
+		Array_real_divide(N, *V3, *T.Fr, *V3);
+		
+		CV_Forward_transform(*VF_temp_r);
+		// *Vi now has the final field in the Fourier space.
+		
+		
+		Compute_force_TO_rhs_NonBoussinesq(T);
   
 
 		Copy_field_from(Vcopy); 
 		T.Copy_field_from(Scopy);							// Copy back into V[i],T
 
-		Single_time_step(T, Tdt, 1, 0.5, 1);							
+		// Single_time_step(T, Tdt, 1, 0.5, 1);							
 		// Time-step by Tdt now using the mid-point slopes 
+		
+		T.Mult_field_exp_ksqr_dt(0.5, Tdt);
+		T.Add_nlin_dt(Tdt);	
+		T.Mult_field_exp_ksqr_dt(0.5, Tdt);
+		
+		Compute_density(T); 
+		
+		*V1r = *V1;
+		*V2r = *V2;
+		*V3r = *V3;
+		
+		RV_Inverse_transform(*VF_temp_r);
+		
+		Array_real_mult(N, *V1r, *T.Fr, *V1r);						
+		Array_real_mult(N, *V2r, *T.Fr, *V2r);	
+		Array_real_mult(N, *V3r, *T.Fr, *V3r);	
+		
+		RV_Forward_transform(*VF_temp_r);
+		
+		*V1 = *V1r;
+		*V2 = *V2r;
+		*V3 = *V3r; 
+		
+		Mult_field_exp_ksqr_dt(0.5, Tdt);
+		Add_nlin_dt(Tdt);
+		Mult_field_exp_ksqr_dt(0.5, Tdt);				// T(rho u_i) time advanced..
+		
+		// Now get u_i
+		CV_Inverse_transform(*VF_temp_r);
+		
+		// Vi = Vi/rho
+		Array_real_divide(N, *V1, *T.Fr, *V1);						
+		Array_real_divide(N, *V2, *T.Fr, *V2);	
+		Array_real_divide(N, *V3, *T.Fr, *V3);
+		
+		CV_Forward_transform(*VF_temp_r);
+		// *Vi now has the final field in the Fourier space.
 	}
 	
 	// if free_slip_verticalwall condition is initialized as IC, it should
 	// be satisfied at all times, yet we set it again just to make sure everytime step.
 	if ((free_slip_verticalwall_switch == 1) && (basis_type == "SCFT"))
-		free_slip_verticalwall(T);
+		free_slip_verticalwall_field(T);
 	
 	//
-	 */
 
 }
 

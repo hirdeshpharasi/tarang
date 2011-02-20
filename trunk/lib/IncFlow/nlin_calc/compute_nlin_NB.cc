@@ -69,6 +69,7 @@ void IncVF::Compute_nlin_NonBoussinesq(IncSF& T)
 	//	Normal order
 	//
 	
+	
 #ifndef TRANSPOSE
 	
 	*V1r = *V1;  
@@ -111,25 +112,27 @@ void IncVF::Compute_nlin_NonBoussinesq(IncSF& T)
 	
 	// End of Scalar field computation 
 	
-	
 	// Now Compute Dj (totrho Ui Uj)
 	
 	// T.Compute_total_density()::: T.Fr = rho0+(1-x)+rho'
 	//T.Fr contains density in real space
 	// total_rho = rho'+mean density + rho(y); rho(x) = 1-x
-	*T.Fr = *T.Fr + globalvar_mean_density;
-	
 	int kx;
 	DP x;
 	for (int l1=0; l1<local_N1; l1++) {
 		kx = Get_kx("SCFT", l1, N);
-		x = kx/N[1];
+		x = (kx+0.5)/N[1];
 		
 		for (int l2=0; l2<N[2]; l2++)
-			for (int l3=0; l3=N[3]/2; l3)
-				(*T.F)(l1, l2, l3) += (1-x);
+			for (int l3=0; l3<(N[3]/2); l3++) 
+				(*T.Fr)(l1, l2, l3) += (-x);
 	}
 	
+	real(*T.Fr) = globalvar_alpha_DT*real(*T.Fr) + 1.0; 
+	imag(*T.Fr) = globalvar_alpha_DT*imag(*T.Fr) + 1.0;  
+	// mean density = 1.0
+	// *T.Fr contains total rho/rho_0 now. 
+
 	//	Compute_RSprod_diag():   Vr[i] -> rho Vr[i]^2 stored in nlin[i)
 	
 	Array_real_mult(N, *V1r, *V1r, *nlin1);  
@@ -156,11 +159,9 @@ void IncVF::Compute_nlin_NonBoussinesq(IncSF& T)
 	Array_real_mult(N, *V2r, *T.Fr, *V2r);
 	Array_real_mult(N, *V3r, *T.Fr, *V3r);
 	
-	
 	RV_Forward_transform_RSprod(*VF_temp_r);			// Vr[i]=T(rho Vr[i]*Vr[j])
 	
 	Derivative_RSprod_VV();								// nlin[i] = Dj T( Uj Ui)
-	
 	
 	//*********************************************************************************************	
 	// TRANSPOSE ORDER
@@ -191,22 +192,24 @@ void IncVF::Compute_nlin_NonBoussinesq(IncSF& T)
 	
 	// Now for the velocity field
 	
-	// T.Compute_total_density()::: T.Fr = rho0+(1-x)+rho'
-	//T.Fr contains density in real space
-	// total_rho = rho'+mean density + rho(y); rho(x) = 1-x
-	*T.Fr = *T.Fr + globalvar_mean_density;
+	// total_rho = rho'+ rho(x) + mean density(=1); rho(x) = -x 
+	// delta_rho/rho = alpha DT * (T_cond + theta)
+	// Density at the bottom plate is rho_0 (mean density). Here normalized to 1.
 	
 	int kx;
 	DP x;
 	for (int l1=0; l1<local_N1; l1++) {
 		kx = Get_kx("SCFT", l1, N);
-		x = kx/N[1];
+		x = (kx+0.5)/N[1];
 		
 		for (int l2=0; l2<N[2]; l2++)
-			for (int l3=0; l3=N[3]/2; l3)
-				(*T.F)(l1, l2, l3) += (1-x);
+			for (int l3=0; l3<(N[3]/2); l3++)
+				(*T.Fr)(l1, l2, l3) += (-x);
 	}
 	
+	*T.Fr = globalvar_alpha_DT*(*T.Fr) + 1.0;  // mean density = 1.0
+	
+	// *T.Fr contains total rho/rho_0 now. 
 	
 	// Compute_RSprod_diag_ft_derivative();	nlin[i]= Di T[rho Vr[i]^2]
 	

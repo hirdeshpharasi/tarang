@@ -72,7 +72,8 @@ void IncFluid::Output_field(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Output_field_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Output_field_RB(T);
 }
 
@@ -202,7 +203,8 @@ void IncFluid::Output_field_frequent(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Output_field_frequent_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Output_field_frequent_RB(T);
 } 
 
@@ -367,7 +369,8 @@ void IncFluid::Output_realfield(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Output_realfield_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Output_realfield_RB(T);
 }
 
@@ -526,7 +529,8 @@ void IncFluid::Output_field_reduced(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Output_field_reduced_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Output_field_reduced_RB(T);
 }
 

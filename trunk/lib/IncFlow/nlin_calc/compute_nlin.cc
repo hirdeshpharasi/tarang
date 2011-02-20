@@ -67,7 +67,7 @@ void IncVF::Compute_nlin()
 	*V2r = *V2; 
 	*V3r = *V3;	
 
-	RV_Inverse_transform(*VF_temp_r);						
+	RV_Inverse_transform(*VF_temp_r);	
 	
 	// Vr[i] -> Vr[i]^2 stored in nlin[i]				                      
 	Compute_RSprod_diag();										
@@ -82,7 +82,7 @@ void IncVF::Compute_nlin()
 	RV_Forward_transform_RSprod(*VF_temp_r);					
 
 	// nlin[i] = Dj T(Uj * Ui)]
-	Derivative_RSprod_VV();										
+	Derivative_RSprod_VV();		
 	
 //
 //		Transpose order

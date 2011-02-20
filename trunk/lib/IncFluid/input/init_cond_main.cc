@@ -97,7 +97,7 @@ void IncFluid::Read_init_cond(IncSF& T)
 		case (2) : Init_cond_reduced(T);	break;		
 		// read from field_in_file with Nreduced D
 		
-		case (3) : Init_cond_modes_SIMPLE(T);	break;		
+		case (3) : Init_cond_modes_SIMPLE(T); break;		
 		// Modes - ki, Vx, (Vy:3D),Theta
 		
 		case (4) : Init_cond_modes_VORTICITY(T); break;		

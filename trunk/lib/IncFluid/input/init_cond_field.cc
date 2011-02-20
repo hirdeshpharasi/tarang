@@ -94,7 +94,8 @@ void  IncFluid::Init_cond(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Init_cond_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Init_cond_RB(T);
 }
 
@@ -341,7 +342,8 @@ void  IncFluid::Init_cond_reduced(IncSF& T)
 	if ((globalvar_prog_kind == "INC_SCALAR") || (globalvar_prog_kind == "INC_SCALAR_DIAG"))
 		Init_cond_reduced_scalar(T);
 	
-	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG"))
+	else if ((globalvar_prog_kind == "RB_SLIP") || (globalvar_prog_kind == "RB_SLIP_DIAG")
+			 || (globalvar_prog_kind == "NonBoussinesq"))
 		Init_cond_reduced_RB(T);
 }
 

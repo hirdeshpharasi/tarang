@@ -189,7 +189,7 @@ int RB_slip_main(string data_dir_name)
 	{	
 		cout << " Rayleigh no:  Ra =  " << globalvar_Ra << endl;
 		cout << " Prandtl no:  Pr = " << globalvar_Pr << endl;
-		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow = " 
+		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow)  = " 
 				<< globalvar_temperature_grad << endl;
 	}
 	
@@ -373,7 +373,7 @@ int RB_slip_main(string data_dir_name)
 		U.Output_field_k_inloop(T);						
 		// T(k) in the output computation needs nlin at the present time
 		
-		U.Add_force(T);															
+		U.Add_force(T);	
 		
 		U.Compute_pressure();  
 		U.Output_pressure_spectrum_inloop();						
@@ -382,10 +382,9 @@ int RB_slip_main(string data_dir_name)
 		U.Tdt = U.Get_dt(T);
 		U.Tnow = U.Tnow + U.Tdt;
 		iter++;
-	
+		
 		U.Time_advance(T);
 		// fields AT new time.
-		
 		
 		U.CV_Compute_totalenergy_diss(); 
 		T.CS_Compute_totalenergy_diss();

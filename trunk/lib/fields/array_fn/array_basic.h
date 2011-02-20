@@ -91,6 +91,13 @@ void Array_real_mult
 	Array<complx,3> C
 );
 
+void Array_real_divide
+(
+	int N[], 
+	Array<complx,3> A, Array<complx,3> B, 
+	Array<complx,3> C
+);
+
 
 //*********************************************************************************************
 

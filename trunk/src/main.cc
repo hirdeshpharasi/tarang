@@ -79,7 +79,7 @@ DP		globalvar_r;							// normalized Rayleigh number
 DP		globalvar_Pr;							// Prandtl number
 DP		globalvar_temperature_grad;				// +1 for convection; -1 for stratification; 
 												// factor for u3 in temperature eqn
-DP		globalvar_mean_density;					// For NonBoussinesq approximation
+DP		globalvar_alpha_DT;						// nondim number alpha*DT
 
 Uniform<DP> SPECrand;					// Global variable for random no generation		
 			

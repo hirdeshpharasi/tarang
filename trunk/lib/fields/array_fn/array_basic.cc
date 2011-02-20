@@ -70,6 +70,17 @@ void Array_real_mult
 	imag(C) = imag(A) * imag(B);
 }
 
+void Array_real_divide
+(
+ int N[], 
+ Array<complx,3> A, Array<complx,3> B, 
+ Array<complx,3> C
+)
+{
+	real(C) = real(A) / real(B);
+	imag(C) = imag(A) / imag(B);
+}
+
 
 /**********************************************************************************************
 

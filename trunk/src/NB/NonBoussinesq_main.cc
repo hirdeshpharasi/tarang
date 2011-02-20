@@ -33,7 +33,6 @@
  * @date 2 October 2008
  * 
  * @bugs  No known bug
- * @note  USE SCFT basis; EULER time step; kfactor(1)=pi or Lx=1 ONLY.
  */  
 
 
@@ -55,7 +54,7 @@ extern Uniform<DP> SPECrand;					// for random vars--  declared in main.cc
 int NonBoussinesq_main(string data_dir_name)
 {
 	
-	cout << "NonBoussinesq_main :   my_id " << my_id << endl;
+	cout << "ENTERING RB_slip_main :   my_id " << my_id << endl;
 	
 	//**************** Variable declarations *******************
 	
@@ -179,19 +178,22 @@ int NonBoussinesq_main(string data_dir_name)
 	if (solver_int_para(2) == 0)	
 		globalvar_Ra = solver_double_para(4);
 	
+	else if (solver_int_para(2) == 1)		
+		globalvar_Ra = (27.0*pow4(M_PI)/4.0)*solver_double_para(4); 
+	
 	globalvar_Pr = solver_double_para(5);  
 	
 	globalvar_temperature_grad = solver_double_para(6);  // +1 for RB and -1 for stratified
 	
-	globalvar_mean_density = solver_double_para(7); 
+	globalvar_alpha_DT = solver_double_para(7);	
 	
 	if (my_id == master_id) 
 	{	
 		cout << " Rayleigh no:  Ra =  " << globalvar_Ra << endl;
 		cout << " Prandtl no:  Pr = " << globalvar_Pr << endl;
-		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow = " 
+		cout << " Temperature gradient (+1 for RB, -1 for stratififed flow)  = " 
 				<< globalvar_temperature_grad << endl;
-		cout << " Mean density = " << solver_double_para(7);
+		cout << " alpha*Delta T = " << globalvar_alpha_DT << endl;
 	}
 	
 	// Pr_switch and RB_Uscaling
@@ -289,7 +291,7 @@ int NonBoussinesq_main(string data_dir_name)
 		}
 	}
 	
-	else if (N[2] == 1)		// WOrk on it
+	else if (N[2] == 1)
 	{
 		if (basis_type == "FOUR")
 		{
@@ -369,12 +371,12 @@ int NonBoussinesq_main(string data_dir_name)
 		U.Compute_force(T);				
 		// Both for V and Temperature field
 	
-		U.Compute_nlin(T);		
+		U.Compute_nlin_NonBoussinesq(T);		
 		
 		U.Output_field_k_inloop(T);						
 		// T(k) in the output computation needs nlin at the present time
 		
-		U.Add_force(T);															
+		U.Add_force(T);	
 		
 		U.Compute_pressure();  
 		U.Output_pressure_spectrum_inloop();						
@@ -383,9 +385,16 @@ int NonBoussinesq_main(string data_dir_name)
 		U.Tdt = U.Get_dt(T);
 		U.Tnow = U.Tnow + U.Tdt;
 		iter++;
-	
+		
 		U.Time_advance_NonBoussinesq(T);
 		// fields AT new time.
+		
+		if (N[3]==2) {
+			(*U.V1)(Range::all(),Range::all(), 1) = 0.0;
+			(*U.V2)(Range::all(),Range::all(), 1) = 0.0;
+			(*U.V3)(Range::all(),Range::all(), 1) = 0.0;
+			(*T.F)(Range::all(),Range::all(), 1) = 0.0;
+		}
 		
 		
 		U.CV_Compute_totalenergy_diss(); 
@@ -394,6 +403,8 @@ int NonBoussinesq_main(string data_dir_name)
 		{ 
 			cout << "ERROR: Numerical Overflow " << endl;  break; 
 		}
+		
+//		U.Compute_divergence_field();
 		
 		if ((U.free_slip_verticalwall_switch == 1) && (U.basis_type == "SCFT"))
 			U.free_slip_verticalwall_field(T);

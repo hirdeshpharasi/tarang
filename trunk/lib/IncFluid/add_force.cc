@@ -81,24 +81,6 @@ void IncFluid::Add_force(IncVF& W, IncSF& T)
 	Add_force(W);
 	
 	*T.nlin = *T.nlin - *T.Force;						
-}
-
-//		RB Convection	//
-
-void IncFluid::Add_force(IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Add_force();
-	else
-		Add_force(T);
-}		
-
-void IncFluid::Add_force(IncVF& W, IncSF& T, string Pr_switch)
-{
-	if (Pr_switch == "PRZERO")
-		Add_force(W);
-	else
-		Add_force(W, T);
 }	
 
 

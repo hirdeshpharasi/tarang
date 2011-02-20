@@ -67,7 +67,7 @@ void IncFluid::Time_advance(IncSF& T)
 	if (integ_scheme == "EULER") 
 	{ 
 		Compute_rhs(T);              
-		Single_time_step(T, Tdt, 1, 1, 1);     
+		Single_time_step(T, Tdt, 1, 1, 1);  
 	}
 		
 		

@@ -684,7 +684,7 @@ void IncFluid::Output_cout(IncVF& W)
 		cout  << Tnow << " "  << CV_total_energy << " " << W.CV_total_energy << endl;
 }
 
-void IncFluid::Output_cout(IncVF& W, IncSF& T)		// for RB convection
+void IncFluid::Output_cout(IncVF& W, IncSF& T)		
 {
 	CV_Compute_totalenergy_diss(); 
 	W.CV_Compute_totalenergy_diss();
