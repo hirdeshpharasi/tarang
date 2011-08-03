@@ -1,0 +1,7 @@
+Tarang
+[Object-oriented Pseudo-spectral code for turbulence simulation]
+
+The original software was hosted here [1].  I've started building upon
+it after rewriting the history from Hg to Git.
+
+[1]: http://turbulence.phy.iitk.ac.in/downloads
